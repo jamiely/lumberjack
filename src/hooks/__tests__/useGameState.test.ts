@@ -33,10 +33,11 @@ describe('useGameState', () => {
     const initialSegments = result.current.gameState.treeSegments
     const nextBottomSegment = initialSegments[1]
     
-    if (nextBottomSegment.branchSide !== 'none') {
+    if (nextBottomSegment.branchSide === 'left' || nextBottomSegment.branchSide === 'right') {
       // Chop on the side with a branch to trigger collision
+      const chopSide = nextBottomSegment.branchSide as 'left' | 'right'
       act(() => {
-        result.current.chop(nextBottomSegment.branchSide)
+        result.current.chop(chopSide)
       })
       
       expect(result.current.gameState.gameOver).toBe(true)
@@ -93,9 +94,10 @@ describe('useGameState', () => {
     const initialSegments = result.current.gameState.treeSegments
     const nextBottomSegment = initialSegments[1]
     
-    if (nextBottomSegment.branchSide !== 'none') {
+    if (nextBottomSegment.branchSide === 'left' || nextBottomSegment.branchSide === 'right') {
+      const chopSide = nextBottomSegment.branchSide as 'left' | 'right'
       act(() => {
-        result.current.chop(nextBottomSegment.branchSide)
+        result.current.chop(chopSide)
       })
       
       expect(result.current.gameState.gameOver).toBe(true)

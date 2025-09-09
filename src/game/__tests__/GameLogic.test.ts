@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { checkCollision, performChop, resetGame, toggleDebug } from '../GameLogic'
-import { createInitialGameState, GameState, TreeSegment } from '../GameState'
+import type { GameState, TreeSegment } from '../GameState'
+import { createInitialGameState } from '../GameState'
 
 describe('GameLogic', () => {
   describe('checkCollision', () => {

@@ -1,4 +1,4 @@
-import { TreeSegment } from '../game/GameState'
+import type { TreeSegment } from '../game/GameState'
 
 interface GameBoardProps {
   treeSegments: TreeSegment[]

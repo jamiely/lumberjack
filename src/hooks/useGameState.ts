@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { GameState, createInitialGameState } from '../game/GameState'
+import type { GameState } from '../game/GameState'
+import { createInitialGameState } from '../game/GameState'
 import { performChop, resetGame, toggleDebug } from '../game/GameLogic'
 
 export function useGameState() {

@@ -1,4 +1,4 @@
-import { TreeSegment } from './GameState'
+import type { TreeSegment } from './GameState'
 
 export const generateRandomBranch = (): TreeSegment => {
   const random = Math.random()

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
 import GameBoard from '../GameBoard'
-import { TreeSegment } from '../../game/GameState'
+import type { TreeSegment } from '../../game/GameState'
 
 describe('GameBoard', () => {
   const mockTreeSegments: TreeSegment[] = [

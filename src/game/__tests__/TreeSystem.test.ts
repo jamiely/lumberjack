@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { generateRandomBranch, addNewSegmentToTree } from '../TreeSystem'
-import { TreeSegment } from '../GameState'
+import type { TreeSegment } from '../GameState'
 
 describe('TreeSystem', () => {
   describe('generateRandomBranch', () => {

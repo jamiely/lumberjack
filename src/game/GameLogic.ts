@@ -1,4 +1,5 @@
-import { GameState, createInitialGameState } from './GameState'
+import type { GameState } from './GameState'
+import { createInitialGameState } from './GameState'
 import { addNewSegmentToTree } from './TreeSystem'
 
 export const checkCollision = (
