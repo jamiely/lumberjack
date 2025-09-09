@@ -45,14 +45,14 @@
 - ✅ **Run `npm test` to ensure all tests pass**
 - ✅ **Update progress.md and commit changes**
 
-## 6. Setup ESLint
-- Install ESLint with React/TypeScript presets
-- Create `.eslintrc.json` configuration file
-- Add lint scripts to `package.json`
-- Add lint command to build process
-- **Run `npm run lint` to ensure linting passes**
-- **Run `npm test` to ensure all tests still pass**
-- **Update progress.md and commit changes**
+## ✅ 6. Setup ESLint
+- ✅ Install ESLint with React/TypeScript presets
+- ✅ Create `eslint.config.js` configuration file (modern v9 format)
+- ✅ Add lint scripts to `package.json`
+- ✅ Add lint command to build process
+- ✅ **Run `npm run lint` to ensure linting passes**
+- ✅ **Run `npm test` to ensure all tests still pass**
+- ✅ **Update progress.md and commit changes**
 
 ## 7. Update Documentation
 - Update `CLAUDE.md` with new architecture information
