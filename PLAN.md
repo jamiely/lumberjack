@@ -40,10 +40,10 @@
 - ✅ **Update progress.md and commit changes**
 - ⏸️ **PAUSE FOR MANUAL TESTING** - Verify game still works correctly
 
-## 5. Add Integration Test
-- Create `src/__tests__/GameplayIntegration.test.tsx` - test complete gameplay loop
-- **Run `npm test` to ensure all tests pass**
-- **Update progress.md and commit changes**
+## ✅ 5. Add Integration Test
+- ✅ Create `src/__tests__/GameplayIntegration.test.tsx` - test complete gameplay loop
+- ✅ **Run `npm test` to ensure all tests pass**
+- ✅ **Update progress.md and commit changes**
 
 ## 6. Setup ESLint
 - Install ESLint with React/TypeScript presets
