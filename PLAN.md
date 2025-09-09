@@ -30,15 +30,15 @@
 - ✅ **Run `npm test` to ensure all tests pass**
 - ✅ **Update progress.md and commit changes**
 
-## 4. Refactor App.tsx + Update Tests
-- Remove game logic functions (move to game modules)
-- Remove direct state management (use custom hooks)
-- Remove rendering logic (use new components)
-- Keep only high-level component orchestration
-- Replace placeholder tests in `src/App.test.tsx` with actual integration tests
-- **Run `npm test` to ensure all tests pass**
-- **Update progress.md and commit changes**
-- **PAUSE FOR MANUAL TESTING** - Verify game still works correctly
+## ✅ 4. Refactor App.tsx + Update Tests
+- ✅ Remove game logic functions (move to game modules)
+- ✅ Remove direct state management (use custom hooks)
+- ✅ Remove rendering logic (use new components)
+- ✅ Keep only high-level component orchestration
+- ✅ Replace placeholder tests in `src/App.test.tsx` with actual integration tests
+- ✅ **Run `npm test` to ensure all tests pass**
+- ✅ **Update progress.md and commit changes**
+- ⏸️ **PAUSE FOR MANUAL TESTING** - Verify game still works correctly
 
 ## 5. Add Integration Test
 - Create `src/__tests__/GameplayIntegration.test.tsx` - test complete gameplay loop
