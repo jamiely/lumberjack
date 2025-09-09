@@ -20,3 +20,13 @@
 - Added branch collision detection and game over state
 - Created infinite gameplay with random branch generation
 - Player now switches between left/right sides of single tree instead of moving around
+
+## Debug Screen Implementation
+**Date:** September 9, 2025 - 3:45 PM
+
+- Added toggleable debug screen activated by "?" key
+- Implemented comprehensive debug information display including game state, coordinates, and tree segments
+- Shows real-time player position, current tree segment data, and collision predictions
+- Added visual representation of all tree segments with current segment highlighting
+- Changed from modal overlay to inline page element for better integration
+- Debug panel updates live as game state changes during gameplay
