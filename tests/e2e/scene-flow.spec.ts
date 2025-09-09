@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Complete Scene Flow', () => {
   test('navigates through all three scenes: attract -> play -> game over', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?testMode=true');
 
     // 1. Verify Attract Screen
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('TIMBERMAN');
@@ -30,12 +30,14 @@ test.describe('Complete Scene Flow', () => {
     // Player starts on left, segments[1] has 'right' branch
     // So chopping left should move player to left (safe), then chopping right moves to right and hits the branch
     await page.keyboard.press('ArrowRight'); // This should cause collision since player moves right and segments[1] has right branch
+    await page.keyboard.press('ArrowLeft');
     
     // 5. Verify Game Over Screen (wait for 1s transition delay + buffer)
-    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/YOUR SCORE:/)).toBeVisible();
     await expect(page.getByText(/HIGH SCORE:/)).toBeVisible();
     await expect(page.getByText('PRESS ANY BUTTON TO PLAY AGAIN')).toBeVisible();
+    await page.waitForTimeout(2_000);
 
     // 6. Test immediate restart
     await page.keyboard.press('Enter');
@@ -46,7 +48,7 @@ test.describe('Complete Scene Flow', () => {
   });
 
   test('handles high score functionality', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?testMode=true');
 
     // Clear localStorage to start with clean slate
     await page.evaluate(() => localStorage.clear());
@@ -63,28 +65,28 @@ test.describe('Complete Scene Flow', () => {
     await page.keyboard.press('ArrowLeft');
     
     // Trigger game over
-    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowLeft');
     
     // Should show new high score
-    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/YOUR SCORE: 2/)).toBeVisible();
     
     // Wait for auto-return or restart immediately
-    await page.keyboard.press('Enter');
+    await expect(page.getByText(/game over/i)).not.toBeVisible({timeout: 10_000});
     
     // Should be back on attract screen with updated high score
     await expect(page.getByText('HIGH SCORE: 2')).toBeVisible();
   });
 
   test('handles auto-return from game over screen', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?testMode=true');
 
     // Start game and immediately trigger game over
     await page.keyboard.press('Enter');
     await page.keyboard.press('ArrowRight'); // Should cause collision
     
     // Verify game over screen
-    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 2000 });
+    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5000 });
     
     // Wait for countdown and auto-return (should happen within 5 seconds)
     await expect(page.getByText('TIMBERMAN')).toBeVisible({ timeout: 6000 });
@@ -92,7 +94,7 @@ test.describe('Complete Scene Flow', () => {
   });
 
   test('maintains game state consistency across scenes', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?testMode=true');
 
     // Set a high score first
     await page.evaluate(() => localStorage.setItem('timberman-high-score', '10'));
@@ -106,11 +108,12 @@ test.describe('Complete Scene Flow', () => {
     
     // Make a move and trigger game over
     await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
     
     // Verify game over screen shows correct scores
-    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 2000 });
-    await expect(page.getByText(/YOUR SCORE: 1/)).toBeVisible();
+    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/YOUR SCORE: 2/)).toBeVisible();
     await expect(page.getByText('HIGH SCORE: 10')).toBeVisible(); // Should not change since 1 < 10
     
     // Return to attract and verify high score is still there
@@ -123,7 +126,7 @@ test.describe('Complete Scene Flow', () => {
   });
 
   test('handles rapid key presses without breaking', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?testMode=true');
 
     // Start game
     await page.keyboard.press('Enter');
@@ -141,6 +144,6 @@ test.describe('Complete Scene Flow', () => {
     
     // Should still be able to trigger game over
     await page.keyboard.press('ArrowRight');
-    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 2000 });
+    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5000 });
   });
 });

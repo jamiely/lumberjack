@@ -10,8 +10,9 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --reporter=list",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:html": "playwright test --reporter=html",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --max-warnings 0 --fix"
   },
