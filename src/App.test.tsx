@@ -4,9 +4,26 @@ import userEvent from '@testing-library/user-event'
 import App from './App'
 
 describe('App Integration Tests', () => {
-  it('renders all major components', () => {
+  it('renders attract screen initially', () => {
     render(<App />)
     
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('TIMBERMAN')
+    expect(screen.getByText('PRESS ANY BUTTON TO PLAY')).toBeInTheDocument()
+    expect(screen.getByText(/HIGH SCORE:/)).toBeInTheDocument()
+    expect(screen.getByText(/CONTROLS:/)).toBeInTheDocument()
+  })
+
+  it('transitions from attract to play screen', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    
+    // Should start on attract screen
+    expect(screen.getByText('TIMBERMAN')).toBeInTheDocument()
+    
+    // Press any key to start game
+    await user.keyboard('{ArrowLeft}')
+    
+    // Should now be on play screen
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Timberman Game')
     expect(screen.getByText('Score: 0')).toBeInTheDocument()
     expect(screen.getByText(/Use left\/right arrows to chop and switch sides/)).toBeInTheDocument()
@@ -20,7 +37,10 @@ describe('App Integration Tests', () => {
     const user = userEvent.setup()
     render(<App />)
     
-    // Initial state
+    // Start game from attract screen
+    await user.keyboard('{Enter}')
+    
+    // Should be on play screen now
     expect(screen.getByText('Score: 0')).toBeInTheDocument()
     expect(screen.queryByText(/GAME OVER/)).not.toBeInTheDocument()
     
@@ -34,6 +54,9 @@ describe('App Integration Tests', () => {
   it('integrates keyboard input with game actions', async () => {
     const user = userEvent.setup()
     render(<App />)
+    
+    // Start game from attract screen
+    await user.keyboard('{Enter}')
     
     // Toggle debug mode with '?' key
     expect(screen.queryByText('Game State')).not.toBeInTheDocument()
@@ -49,30 +72,42 @@ describe('App Integration Tests', () => {
     expect(screen.queryByText('Game State')).not.toBeInTheDocument()
   })
 
-  it('integrates reset functionality when game is over', async () => {
+  it('integrates scene transitions and game over functionality', async () => {
     const user = userEvent.setup()
     render(<App />)
     
+    // Start game from attract screen
+    await user.keyboard('{Enter}')
+    
+    // Should be on play screen
+    expect(screen.getByText('Timberman Game')).toBeInTheDocument()
+    
     // We need to trigger a game over first
     // Try to find a collision scenario by examining initial state
-    // Since this is integration testing, we'll simulate the key that would cause collision
     // Looking at initial state: segments[1] has 'right' branch, so right chop should cause collision
     await user.keyboard('{ArrowRight}')
     
-    // Should show game over
-    expect(screen.getByText(/GAME OVER/)).toBeInTheDocument()
+    // Should transition to game over screen after delay
+    expect(await screen.findByText('GAME OVER!', {}, { timeout: 2000 })).toBeInTheDocument()
     
-    // Reset with 'r' key
-    await user.keyboard('r')
+    // Should show final score and restart option
+    expect(screen.getByText(/YOUR SCORE:/)).toBeInTheDocument()
+    expect(screen.getByText('PRESS ANY BUTTON TO PLAY AGAIN')).toBeInTheDocument()
     
-    // Should reset to initial state
+    // Press any key to restart
+    await user.keyboard('{Enter}')
+    
+    // Should go back to play screen with new game
     expect(screen.getByText('Score: 0')).toBeInTheDocument()
-    expect(screen.queryByText(/GAME OVER/)).not.toBeInTheDocument()
+    expect(screen.getByText('Timberman Game')).toBeInTheDocument()
   })
 
   it('integrates all components working together', async () => {
     const user = userEvent.setup()
     render(<App />)
+    
+    // Start game from attract screen
+    await user.keyboard('{Enter}')
     
     // Enable debug mode
     await user.keyboard('?')

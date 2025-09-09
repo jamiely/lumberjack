@@ -8,7 +8,13 @@ describe('Complete Gameplay Integration', () => {
     const user = userEvent.setup()
     render(<App />)
     
-    // Initial state verification
+    // Should start on attract screen
+    expect(screen.getByText('TIMBERMAN')).toBeInTheDocument()
+    
+    // Start game to transition to play screen
+    await user.keyboard('{Enter}')
+    
+    // Now verify play screen state
     const initialScoreElements = screen.getAllByText('Score: 0')
     expect(initialScoreElements.length).toBeGreaterThan(0)
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Timberman Game')
@@ -49,6 +55,9 @@ describe('Complete Gameplay Integration', () => {
     const user = userEvent.setup()
     render(<App />)
     
+    // Start game first
+    await user.keyboard('{Enter}')
+    
     // Enable debug to monitor state
     await user.keyboard('?')
     
@@ -67,6 +76,9 @@ describe('Complete Gameplay Integration', () => {
   it('maintains consistent game state across all components', async () => {
     const user = userEvent.setup()
     render(<App />)
+    
+    // Start game first
+    await user.keyboard('{Enter}')
     
     // Enable debug mode
     await user.keyboard('?')
@@ -98,24 +110,29 @@ describe('Complete Gameplay Integration', () => {
     expect(screen.getAllByText('Score: 1')).toHaveLength(2)
   })
 
-  it('handles edge case of game over on first move', async () => {
+  it('handles edge case of game over and scene transitions', async () => {
     // Mock random branch generation to create predictable collision scenario
     vi.spyOn(Math, 'random').mockReturnValue(0.0) // Always generates 'left' branch
     
     const user = userEvent.setup()
     render(<App />)
     
+    // Start game first
+    await user.keyboard('{Enter}')
+    
     // Since initial state has 'right' at segments[1], chop right should cause collision
     await user.keyboard('{ArrowRight}')
     
-    // Should immediately show game over
-    expect(screen.getByText(/GAME OVER/)).toBeInTheDocument()
-    const collisionScoreElements = screen.getAllByText('Score: 0')
-    expect(collisionScoreElements.length).toBeGreaterThan(0) // Score shouldn't increase on collision
+    // Should transition to game over screen after delay
+    expect(await screen.findByText('GAME OVER!', {}, { timeout: 2000 })).toBeInTheDocument()
+    expect(screen.getByText(/YOUR SCORE:/)).toBeInTheDocument()
     
-    // Reset should work
-    await user.keyboard('r')
-    expect(screen.queryByText(/GAME OVER/)).not.toBeInTheDocument()
+    // Press any key to restart
+    await user.keyboard('{Enter}')
+    
+    // Should go back to play screen with new game
+    expect(screen.getByText('Timberman Game')).toBeInTheDocument()
+    expect(screen.getByText('Score: 0')).toBeInTheDocument()
     
     vi.restoreAllMocks()
   })
@@ -123,6 +140,9 @@ describe('Complete Gameplay Integration', () => {
   it('integrates keyboard input filtering correctly', async () => {
     const user = userEvent.setup()
     render(<App />)
+    
+    // Start game first
+    await user.keyboard('{Enter}')
     
     const initialScoreElements = screen.getAllByText('Score: 0')
     expect(initialScoreElements.length).toBeGreaterThan(0)

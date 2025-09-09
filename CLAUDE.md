@@ -90,3 +90,5 @@ This is a Vite + TypeScript + React application with Vitest and React Testing Li
   - Mock external dependencies appropriately
 - **Test Organization**: Tests co-located with source files using `.test.tsx` suffix
 - **Quality Gates**: Before committing, ensure all tests and lint pass
+- When working on RESEARCH.md do not include code
+- Try to implement the MVP of what is requested unless otherwise instructed. At the same time, write clean code with good separation of concerns.
