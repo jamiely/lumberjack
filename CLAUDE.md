@@ -9,8 +9,10 @@ This is a Vite + TypeScript + React application with Vitest and React Testing Li
 
 ### Development
 - `npm run dev` - Start development server with hot reload
-- `npm run build` - TypeScript compilation + production build
+- `npm run build` - Lint, TypeScript compilation + production build
 - `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint to check code quality
+- `npm run lint:fix` - Run ESLint and auto-fix issues
 
 ### Testing
 - `npm test` - Run all tests once
@@ -24,12 +26,13 @@ This is a Vite + TypeScript + React application with Vitest and React Testing Li
 - **Vite**: Modern build tool with ESM support and fast HMR
 - **React Plugin**: `@vitejs/plugin-react` for JSX transformation and Fast Refresh
 - **TypeScript**: Strict configuration with bundler module resolution and React JSX support
+- **ESLint**: Modern v9 flat config with React/TypeScript presets and accessibility rules
 - **ESM-only**: Project uses `"type": "module"` in package.json
 
 ### React Setup
 - **React 19**: Latest React with concurrent features
 - **TypeScript JSX**: Configured with `"jsx": "react-jsx"` for modern JSX transform
-- **Component Architecture**: Functional components with hooks
+- **Modular Architecture**: Game logic, UI components, and custom hooks separated
 - **Entry Point**: `src/main.tsx` renders App component into DOM
 
 ### Testing Setup
@@ -42,11 +45,14 @@ This is a Vite + TypeScript + React application with Vitest and React Testing Li
 
 ### Project Structure
 - `src/main.tsx` - React application entry point with StrictMode
-- `src/App.tsx` - Main App component
-- `src/Counter.tsx` - Example React component with state management
-- `src/*.test.tsx` - React component test files using Testing Library
-- `src/__tests__/setup.ts` - Test environment configuration for React
+- `src/App.tsx` - Main App component with high-level orchestration
+- `src/game/` - Game logic modules (GameState, GameLogic, TreeSystem)
+- `src/components/` - Reusable UI components (GameBoard, ScoreDisplay, DebugPanel)
+- `src/hooks/` - Custom React hooks (useGameState, useKeyboardInput)
+- `src/__tests__/` - Integration tests and test setup
+- `src/**/*.test.tsx` - Unit tests co-located with source files
 - `vite.config.ts` - Contains both Vite and Vitest configuration with React plugin
+- `eslint.config.js` - ESLint v9 flat configuration
 
 ## Development Notes
 
@@ -59,15 +65,28 @@ This is a Vite + TypeScript + React application with Vitest and React Testing Li
 - Testing types included for Vitest and Testing Library
 
 ### React Patterns
-- Functional components with TypeScript interfaces for props
-- React hooks for state management (useState, useEffect, etc.)
-- Component co-location: keep related components, tests, and styles together
+- **Modular Architecture**: Separation of concerns with dedicated modules
+  - Pure game logic functions in `src/game/` (no React dependencies)
+  - Reusable UI components in `src/components/` with typed props
+  - Custom hooks in `src/hooks/` for state management and side effects
+- **Component Design**: Functional components with TypeScript interfaces for props
+- **State Management**: Custom hooks encapsulate state logic (useGameState)
+- **Event Handling**: Dedicated hooks for side effects (useKeyboardInput)
+- **Component co-location**: Tests placed alongside source files using `.test.tsx` suffix
 
 ### Testing Patterns
-- Use React Testing Library for component testing
-- Test user interactions with `@testing-library/user-event`
-- Focus on testing behavior, not implementation details
-- Use semantic queries (`getByRole`, `getByLabelText`, etc.)
-- Component tests co-located with source files using `.test.tsx` suffix
-- Do not include code in RESEARCH.md. That doc is used for finding information
-- Before commiting, ensure all tests and lint pass
+- **Comprehensive Test Coverage**: Unit, integration, and component tests
+- **React Testing Library**: Component testing with user-centric queries
+- **User Event Testing**: Test interactions with `@testing-library/user-event` 
+- **Testing Strategy**:
+  - Unit tests for pure functions in `src/game/`
+  - Component tests for UI components in `src/components/`
+  - Hook tests for custom hooks in `src/hooks/`
+  - Integration tests for complete user workflows in `src/__tests__/`
+- **Best Practices**:
+  - Focus on testing behavior, not implementation details
+  - Use semantic queries (`getByRole`, `getByLabelText`, etc.)
+  - Test user interactions and state changes
+  - Mock external dependencies appropriately
+- **Test Organization**: Tests co-located with source files using `.test.tsx` suffix
+- **Quality Gates**: Before committing, ensure all tests and lint pass
