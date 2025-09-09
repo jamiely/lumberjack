@@ -30,3 +30,23 @@
 - Added visual representation of all tree segments with current segment highlighting
 - Changed from modal overlay to inline page element for better integration
 - Debug panel updates live as game state changes during gameplay
+
+## Collision Detection Bug Fix
+**Date:** September 9, 2025 - 4:30 PM
+
+- Fixed collision detection timing issue where game ended one round late
+- Problem: Collision check was testing current bottom segment instead of next bottom segment
+- Solution: Changed collision detection from `treeSegments[0]` to `treeSegments[1]` with safety check
+- Game now ends immediately when player would actually hit a branch, matching player expectations
+
+## Code Refactoring - Step 1: Game Logic Extraction
+**Date:** September 9, 2025 - 10:16 AM
+
+- ✅ Created `src/game/GameState.ts` with interfaces and initial state
+- ✅ Created `src/game/GameLogic.ts` with pure functions for chop, collision detection, reset
+- ✅ Created `src/game/__tests__/GameLogic.test.ts` - comprehensive tests for collision, scoring, game over
+- ✅ Created `src/game/TreeSystem.ts` with branch generation and segment management  
+- ✅ Created `src/game/__tests__/TreeSystem.test.ts` - tests for branch generation and tree management
+- ✅ Updated App.test.tsx with basic working tests for current game state
+- ✅ All tests passing (22/22 tests)
+- Next: Extract game logic from App.tsx into these modules (Step 2)

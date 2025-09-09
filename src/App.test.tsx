@@ -5,22 +5,23 @@ import App from './App'
 describe('App', () => {
   it('should render the main heading', () => {
     render(<App />)
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Vite + TypeScript + React')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Timberman Game')
   })
 
-  it('should render Vite and TypeScript logos', () => {
+  it('should render the initial score', () => {
     render(<App />)
-    expect(screen.getByAltText('Vite logo')).toBeInTheDocument()
-    expect(screen.getByAltText('TypeScript logo')).toBeInTheDocument()
+    expect(screen.getByText('Score: 0')).toBeInTheDocument()
   })
 
-  it('should render the counter component', () => {
+  it('should render instructions', () => {
     render(<App />)
-    expect(screen.getByRole('button')).toHaveTextContent('count is 0')
+    expect(screen.getByText(/Use left\/right arrows to chop and switch sides/)).toBeInTheDocument()
   })
 
-  it('should render the read-the-docs text', () => {
+  it('should render the game board', () => {
     render(<App />)
-    expect(screen.getByText('Click on the Vite and TypeScript logos to learn more')).toBeInTheDocument()
+    // Check for game board container by style attributes
+    const gameBoard = document.querySelector('[style*="width: 400px"]')
+    expect(gameBoard).toBeInTheDocument()
   })
 })
