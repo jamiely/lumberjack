@@ -49,4 +49,15 @@
 - ✅ Created `src/game/__tests__/TreeSystem.test.ts` - tests for branch generation and tree management
 - ✅ Updated App.test.tsx with basic working tests for current game state
 - ✅ All tests passing (22/22 tests)
-- Next: Extract game logic from App.tsx into these modules (Step 2)
+
+## Code Refactoring - Step 2: UI Components Creation
+**Date:** September 9, 2025 - 10:19 AM
+
+- ✅ Created `src/components/GameBoard.tsx` for tree and player rendering
+- ✅ Created `src/components/__tests__/GameBoard.test.tsx` - comprehensive rendering tests
+- ✅ Created `src/components/DebugPanel.tsx` for debug info display
+- ✅ Created `src/components/__tests__/DebugPanel.test.tsx` - debug display tests
+- ✅ Created `src/components/ScoreDisplay.tsx` for score and game status
+- ✅ Created `src/components/__tests__/ScoreDisplay.test.tsx` - score display tests  
+- ✅ All tests passing (47/47 tests)
+- Next: Create custom hooks for state and input management (Step 3)
