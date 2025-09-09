@@ -2,6 +2,8 @@
 
 A modern React-based lumberjack game built with Vite, TypeScript, and comprehensive testing.
 
+![Game Screenshot](docs/game-screenshot.png)
+
 ## Quick Start
 
 ```bash
