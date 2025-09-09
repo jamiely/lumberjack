@@ -31,9 +31,9 @@ function App() {
   const chop = (side: 'left' | 'right') => {
     if (gameOver) return
 
-    const bottomSegment = treeSegments[0]
+    const nextBottomSegment = treeSegments[1]
     
-    if (bottomSegment.branchSide === side) {
+    if (nextBottomSegment && nextBottomSegment.branchSide === side) {
       setGameOver(true)
       return
     }
