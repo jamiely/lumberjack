@@ -69,3 +69,4 @@ This is a Vite + TypeScript + React application with Vitest and React Testing Li
 - Focus on testing behavior, not implementation details
 - Use semantic queries (`getByRole`, `getByLabelText`, etc.)
 - Component tests co-located with source files using `.test.tsx` suffix
+- Do not include code in RESEARCH.md. That doc is used for finding information
