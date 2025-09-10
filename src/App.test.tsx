@@ -29,7 +29,7 @@ describe('App Integration Tests', () => {
     expect(screen.getByText(/Use left\/right arrows to chop and switch sides/)).toBeInTheDocument()
     
     // Check for game board container
-    const gameBoard = document.querySelector('[style*="width: 400px"]')
+    const gameBoard = document.querySelector('[style*="width: 540px"]')
     expect(gameBoard).toBeInTheDocument()
   })
 

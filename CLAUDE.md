@@ -92,3 +92,5 @@ This is a Vite + TypeScript + React application with Vitest and React Testing Li
 - **Quality Gates**: Before committing, ensure all tests and lint pass
 - When working on RESEARCH.md do not include code
 - Try to implement the MVP of what is requested unless otherwise instructed. At the same time, write clean code with good separation of concerns.
+- Make sure to consult GAME_DESIGN.md when planning or researching
+- When trying to implement a feature, focus on an MVP first, and we'll expand from there if necessary

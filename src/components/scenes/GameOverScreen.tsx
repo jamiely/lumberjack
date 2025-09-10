@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
+import { ScreenContainer } from '../ScreenContainer'
+import GameBoard from '../GameBoard'
+import type { GameState } from '../../game/GameState'
 
 interface GameOverScreenProps {
   finalScore: number
   highScore: number
   isNewHighScore: boolean
+  finalGameState: GameState | null
   onRestart: () => void
   onReturnToAttract: () => void
 }
@@ -12,6 +16,7 @@ export default function GameOverScreen({
   finalScore, 
   highScore, 
   isNewHighScore, 
+  finalGameState,
   onRestart, 
   onReturnToAttract 
 }: GameOverScreenProps) {
@@ -42,83 +47,109 @@ export default function GameOverScreen({
   }, [onReturnToAttract])
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#1a1a1a',
-      color: 'white',
-      fontFamily: 'Arial, sans-serif',
-      textAlign: 'center'
-    }}>
-      <h1 style={{ 
-        fontSize: '4rem', 
-        marginBottom: '2rem',
-        color: '#ff4444',
-        textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-      }}>
-        GAME OVER!
-      </h1>
-      
+    <ScreenContainer backgroundColor="#1a1a1a">
       <div style={{ 
-        fontSize: '2rem', 
-        marginBottom: '2rem',
-        padding: '1rem',
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: '8px'
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        color: 'white',
+        fontFamily: 'Arial, sans-serif',
+        textAlign: 'center'
       }}>
-        YOUR SCORE: {finalScore.toLocaleString()}
-      </div>
+        {/* Full-screen GameBoard */}
+        {finalGameState && (
+          <GameBoard 
+            treeSegments={finalGameState.treeSegments}
+            playerSide={finalGameState.playerSide}
+            gameOver={finalGameState.gameOver}
+            mode="frozen"
+          />
+        )}
 
-      <div style={{ 
-        fontSize: '1.5rem', 
-        marginBottom: '2rem',
-        padding: '1rem',
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: '8px'
-      }}>
-        HIGH SCORE: {highScore.toLocaleString()}
-      </div>
-
-      {isNewHighScore && (
-        <div style={{ 
-          fontSize: '1.8rem', 
-          marginBottom: '2rem',
-          color: '#ffdd44',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-          animation: 'pulse 1.5s infinite'
+        {/* Overlay score and text content */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          backgroundColor: 'rgba(26, 26, 26, 0.9)',
+          padding: '30px',
+          borderRadius: '15px',
+          border: '3px solid rgba(255,68,68,0.5)'
         }}>
-          ★ NEW HIGH SCORE! ★
+          <h1 style={{ 
+            fontSize: '3rem', 
+            margin: '0 0 1rem 0',
+            color: '#ff4444',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+          }}>
+            GAME OVER!
+          </h1>
+          
+          <div style={{ 
+            fontSize: '1.5rem', 
+            marginBottom: '1rem',
+            padding: '0.8rem',
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            borderRadius: '8px'
+          }}>
+            YOUR SCORE: {finalScore.toLocaleString()}
+          </div>
+
+          <div style={{ 
+            fontSize: '1.2rem', 
+            marginBottom: '1rem',
+            padding: '0.8rem',
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            borderRadius: '8px'
+          }}>
+            HIGH SCORE: {highScore.toLocaleString()}
+          </div>
+
+          {isNewHighScore && (
+            <div style={{ 
+              fontSize: '1.5rem', 
+              marginBottom: '1rem',
+              color: '#ffdd44',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+              animation: 'pulse 1.5s infinite'
+            }}>
+              ★ NEW HIGH SCORE! ★
+            </div>
+          )}
+
+          <div style={{ 
+            fontSize: '1rem', 
+            marginBottom: '1rem',
+            animation: 'blink 2s infinite',
+            fontWeight: 'bold'
+          }}>
+            PRESS ANY BUTTON TO PLAY AGAIN
+          </div>
+
+          <div style={{ 
+            fontSize: '0.9rem', 
+            color: '#cccccc'
+          }}>
+            Returning to attract in {timeRemaining}...
+          </div>
         </div>
-      )}
 
-      <div style={{ 
-        fontSize: '1.2rem', 
-        marginBottom: '2rem',
-        animation: 'blink 2s infinite'
-      }}>
-        PRESS ANY BUTTON TO PLAY AGAIN
+        <style>{`
+          @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+          }
+          @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
+        `}</style>
       </div>
-
-      <div style={{ 
-        fontSize: '1rem', 
-        color: '#cccccc'
-      }}>
-        Returning to attract in {timeRemaining}...
-      </div>
-
-      <style>{`
-        @keyframes blink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0.3; }
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-      `}</style>
-    </div>
+    </ScreenContainer>
   )
 }

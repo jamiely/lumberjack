@@ -10,7 +10,7 @@ describe('GameBoard', () => {
     { branchSide: 'right' }
   ]
 
-  it('renders the game board container with correct styles', () => {
+  it('renders the game board container with correct full-screen dimensions', () => {
     const { container } = render(
       <GameBoard 
         treeSegments={mockTreeSegments}
@@ -22,9 +22,11 @@ describe('GameBoard', () => {
     const gameBoard = container.firstChild as HTMLElement
     expect(gameBoard).toHaveStyle({
       position: 'relative',
-      width: '400px',
-      height: '500px',
-      backgroundColor: '#87CEEB'
+      width: '540px',
+      height: '960px',
+      backgroundColor: '#87CEEB',
+      opacity: '1',
+      pointerEvents: 'auto'
     })
   })
 
@@ -77,7 +79,7 @@ describe('GameBoard', () => {
       />
     )
     
-    let player = container.querySelector('[style*="left: 100px"]')
+    let player = container.querySelector('[style*="left: 135px"]')
     expect(player).toBeInTheDocument()
     
     rerender(
@@ -88,7 +90,7 @@ describe('GameBoard', () => {
       />
     )
     
-    player = container.querySelector('[style*="left: 250px"]')
+    player = container.querySelector('[style*="left: 337px"]')
     expect(player).toBeInTheDocument()
   })
 
@@ -130,10 +132,105 @@ describe('GameBoard', () => {
       />
     )
     
-    const leftBranch = container.querySelector('[style*="left: 125px"]')
-    const rightBranch = container.querySelector('[style*="left: 225px"]')
+    const leftBranch = container.querySelector('[style*="left: 169px"]')
+    const rightBranch = container.querySelector('[style*="left: 304px"]')
     
     expect(leftBranch).toBeInTheDocument()
     expect(rightBranch).toBeInTheDocument()
+  })
+
+  describe('mode functionality', () => {
+    it('defaults to interactive mode with full opacity and pointer events', () => {
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+        />
+      )
+      
+      const gameBoard = container.firstChild as HTMLElement
+      expect(gameBoard).toHaveStyle({
+        opacity: '1',
+        pointerEvents: 'auto'
+      })
+    })
+
+    it('applies interactive mode styles correctly', () => {
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          mode="interactive"
+        />
+      )
+      
+      const gameBoard = container.firstChild as HTMLElement
+      expect(gameBoard).toHaveStyle({
+        opacity: '1',
+        pointerEvents: 'auto'
+      })
+    })
+
+    it('applies static mode styles correctly', () => {
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          mode="static"
+        />
+      )
+      
+      const gameBoard = container.firstChild as HTMLElement
+      expect(gameBoard).toHaveStyle({
+        opacity: '0.8',
+        pointerEvents: 'none'
+      })
+    })
+
+    it('applies frozen mode styles correctly', () => {
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          mode="frozen"
+        />
+      )
+      
+      const gameBoard = container.firstChild as HTMLElement
+      expect(gameBoard).toHaveStyle({
+        opacity: '0.7',
+        pointerEvents: 'none'
+      })
+    })
+
+    it('disables interactions for static and frozen modes', () => {
+      const { container, rerender } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          mode="static"
+        />
+      )
+      
+      let gameBoard = container.firstChild as HTMLElement
+      expect(gameBoard).toHaveStyle({ pointerEvents: 'none' })
+
+      rerender(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          mode="frozen"
+        />
+      )
+      
+      gameBoard = container.firstChild as HTMLElement
+      expect(gameBoard).toHaveStyle({ pointerEvents: 'none' })
+    })
   })
 })

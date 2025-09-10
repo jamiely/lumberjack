@@ -4,18 +4,30 @@ interface GameBoardProps {
   treeSegments: TreeSegment[]
   playerSide: 'left' | 'right'
   gameOver: boolean
+  mode?: 'interactive' | 'static' | 'frozen'
 }
 
-export default function GameBoard({ treeSegments, playerSide, gameOver }: GameBoardProps) {
+export default function GameBoard({ treeSegments, playerSide, gameOver, mode = 'interactive' }: GameBoardProps) {
+  const getOpacity = () => {
+    if (mode === 'frozen') return 0.7
+    if (mode === 'static') return 0.8
+    return 1
+  }
+
+  const getPointerEvents = () => {
+    return mode === 'interactive' ? 'auto' : 'none'
+  }
+
   return (
     <div style={{ 
       position: 'relative', 
-      width: '400px', 
-      height: '500px', 
+      width: '540px', 
+      height: '960px', 
       backgroundColor: '#87CEEB',
       border: '2px solid #333',
       overflow: 'hidden',
-      margin: '0 auto'
+      opacity: getOpacity(),
+      pointerEvents: getPointerEvents()
     }}>
       {/* Tree segments */}
       {treeSegments.map((segment, index) => (
@@ -23,10 +35,10 @@ export default function GameBoard({ treeSegments, playerSide, gameOver }: GameBo
           {/* Tree trunk segment */}
           <div style={{
             position: 'absolute',
-            left: '175px',
-            bottom: `${index * 60 + 20}px`,
-            width: '50px',
-            height: '60px',
+            left: '236px',
+            bottom: `${index * 115 + 38}px`,
+            width: '67px',
+            height: '115px',
             backgroundColor: '#8B4513',
             border: '2px solid #000'
           }} />
@@ -35,10 +47,10 @@ export default function GameBoard({ treeSegments, playerSide, gameOver }: GameBo
           {segment.branchSide !== 'none' && (
             <div style={{
               position: 'absolute',
-              left: segment.branchSide === 'left' ? '125px' : '225px',
-              bottom: `${index * 60 + 40}px`,
-              width: '50px',
-              height: '20px',
+              left: segment.branchSide === 'left' ? '169px' : '304px',
+              bottom: `${index * 115 + 77}px`,
+              width: '67px',
+              height: '38px',
               backgroundColor: '#654321',
               border: '2px solid #000'
             }} />
@@ -49,10 +61,10 @@ export default function GameBoard({ treeSegments, playerSide, gameOver }: GameBo
       {/* Player */}
       <div style={{
         position: 'absolute',
-        left: playerSide === 'left' ? '100px' : '250px',
-        bottom: '20px',
-        width: '30px',
-        height: '40px',
+        left: playerSide === 'left' ? '135px' : '337px',
+        bottom: '38px',
+        width: '40px',
+        height: '77px',
         backgroundColor: gameOver ? 'red' : 'blue',
         border: '2px solid #000'
       }} />
