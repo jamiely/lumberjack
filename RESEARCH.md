@@ -1,276 +1,440 @@
-# RESEARCH.md
+# Audio Implementation Research for Timberman Arcade Game
 
-## Implementation Plan Research for TODO.md Items
+## Audio Requirements Analysis
 
-This document provides detailed research and context for implementing the issues identified in TODO.md, updated with user requirements.
+Based on GAME_DESIGN.md, the audio requirements for this Timberman arcade cabinet clone are:
 
-## TODO Items Analysis (Updated with User Requirements)
+### Confirmed Audio Scope (from GAME_DESIGN.md)
+- **Essential SFX**: Basic chop sound, branch hit sound, game over sound
+- **Timer Warning**: Urgent audio cue when time is low (< 3 seconds remaining)
+- **Volume**: Balanced for noisy arcade environment
+- **Future Enhancements**: Background music and environmental sounds
 
-### 1. Score Visibility Issue in Play Screen ✅ CLARIFIED
+### Audio Context
+- **Platform**: Arcade cabinet deployment in Chrome kiosk mode
+- **Environment**: Noisy arcade setting requiring clear, distinct sounds
+- **Session Length**: 1-2 minute quick games
+- **Input**: Immediate button response requiring low-latency audio feedback
 
-**Problem**: "The current score is not visible in the Play screen."
+## Web Audio Implementation
 
-**User Requirements**:
-- Score should appear above the playfield
-- Keep current text color (no background panel needed)
-- Increase size for arcade cabinet viewing (36px adequate but can be larger)
+### Web Audio API
+The implementation will use the Web Audio API for optimal performance in the arcade environment:
 
-**Current Implementation Analysis**:
-- Score is rendered in `src/components/scenes/PlayScreen.tsx:77-81`
-- Uses `ScoreDisplay` component positioned at top center with transform
-- Style: `position: 'absolute', top: '50px', left: '50%', transform: 'translateX(-50%)'`
-- Current fontSize: '36px' in `src/components/ScoreDisplay.tsx:8`
+**Key Benefits:**
+- Low latency (critical for arcade-style immediate feedback)
+- Precise timing control
+- Multiple simultaneous sounds
+- Advanced audio processing capabilities
+- Better performance for repeated sounds
 
-**Root Cause Identified** (CONFIRMED VIA BROWSER INSPECTION):
-- ScoreDisplay component has NO explicit text color defined (src/components/ScoreDisplay.tsx:8)
-- Component inherits CSS color: rgb(33, 53, 71) = #213547 (dark blue) from light mode media query
-- Score is positioned at top: 50px, left: 270px (center of screen) via PlayScreen.tsx positioning
-- This places score over SKY BLUE BACKGROUND (#87CEEB), NOT over brown trunk area
-- Dark blue text (#213547) against sky blue background (#87CEEB) creates invisible text
-- Browser inspection confirms: score element exists and is accessible but visually invisible
+**Implementation Considerations:**
+- More complex than basic audio elements but necessary for arcade requirements
+- Requires audio context management
+- Need to handle browser autoplay policies
 
-**Implementation Plan**:
-- Add explicit color property to ScoreDisplay component style object
-- Use high-contrast color against #87CEEB background (white or black)
-- Increase font size from 36px to 48px for better arcade visibility
+### 2. Audio Loading and Management
 
-### 2. Scroll Disable Issue ✅ CLARIFIED
+#### Preloading Strategy
+```typescript
+interface AudioAsset {
+  name: string
+  url: string
+  buffer?: AudioBuffer
+}
 
-**Problem**: "Disable scroll on the play field container (possibly root container)"
-
-**User Requirements**:
-- Disable scrolling just on the root container (ScreenContainer)
-- Issue is probably with `overflow: 'auto'` setting
-- Don't prevent all page scrolling
-
-**Current Implementation Analysis**:
-- Main container: `src/components/ScreenContainer.tsx:14-30`
-- Current overflow setting: `overflow: 'auto'` (line 23)
-
-**Implementation Plan**:
-- Change ScreenContainer overflow from 'auto' to 'hidden'
-- Keep other scroll behaviors intact
-
-### 3. Background Height Cutoff Issue ✅ CLARIFIED
-
-**Problem**: "Body/HTML element background is cutoff at the bottom compared to the root container"
-
-**User Requirements**:
-- Background color (#87CEEB) should fill entire viewport
-- There's a white strip at the bottom when scrolling down
-- Keep root container as-is, just ensure entire background is blue
-- Don't worry about screens smaller than 540x960px
-
-**Current Implementation Analysis**:
-- Background color inconsistency between elements
-- ScreenContainer has minHeight: 100vh but may not cover all cases
-- Need to investigate white strip issue
-
-**Implementation Plan**:
-- Ensure all background elements use consistent #87CEEB color
-- Fix white strip issue at bottom of page
-- Maintain current container sizing
-
-### 4. Attract Screen Overlay Issue ✅ CLARIFIED
-
-**Problem**: "There is some overlay on top of the Attract screen that makes the color of the playfield not match the background"
-
-**User Requirements**:
-- AttractScreen should have same background color as PlayScreen (#87CEEB)
-- Both screens should have matching colored backgrounds
-
-**Current Implementation Analysis**:
-- AttractScreen ScreenContainer: `backgroundColor="#2c5234"` (dark forest green) 
-- PlayScreen ScreenContainer: `backgroundColor="#2c5234"` (also dark green)
-- GameBoard always uses #87CEEB background
-- GameBoard in static mode has 0.8 opacity
-
-**Root Cause Identified**:
-- Both screens use dark green (#2c5234) container background
-- GameBoard uses sky blue (#87CEEB) background
-- In PlayScreen: opaque GameBoard covers container background
-- In AttractScreen: semi-transparent GameBoard (0.8 opacity) shows dark green underneath
-
-**Implementation Plan**:
-- Change both AttractScreen and PlayScreen ScreenContainer to use #87CEEB
-- This will make backgrounds consistent across all screens
-
-### 5. Branch Animation Issue ✅ CLARIFIED
-
-**Problem**: "After a chop and tree segment is animated out, the branch should remain affixed to the tree trunk. Right now it rotates independently."
-
-**User Requirements**:
-- Treat segment as one object (branch + trunk) and rotate together
-- Branch should maintain relative position to trunk throughout animation
-- Keep existing rotation speed/physics
-- Render trunk and branch as single element that rotates together
-
-**Current Implementation Analysis**:
-- Trunk and branch rendered as separate elements with same rotation
-- Both rotate around their individual centers, not as a unit
-- Branch positioned relative to trunk but with independent transform origin
-
-**Implementation Plan**:
-- Refactor animated segment rendering to treat trunk+branch as single unit
-- Use wrapper container with single rotation transform
-- Position branch relative to trunk within the wrapper
-- Keep existing rotation calculation and speed
-
-## Current Architecture Context
-
-### Component Structure
-```
-App (src/App.tsx)
-└── SceneManager (src/components/SceneManager.tsx)
-    ├── AttractScreen (src/components/scenes/AttractScreen.tsx)
-    ├── PlayScreen (src/components/scenes/PlayScreen.tsx)
-    └── GameOverScreen (src/components/scenes/GameOverScreen.tsx)
+const audioAssets: AudioAsset[] = [
+  { name: 'chop', url: '/audio/chop.wav' },
+  { name: 'hit', url: '/audio/branch-hit.wav' },
+  { name: 'gameOver', url: '/audio/game-over.wav' },
+  { name: 'timerWarning', url: '/audio/timer-warning.wav' }
+]
 ```
 
-### Key Components and Their Responsibilities
+#### Audio Context Management
+- Initialize audio context on first user interaction (required by browsers)
+- Handle audio context state changes (suspended/running)
+- Implement graceful fallbacks for audio failures
 
-**PlayScreen** (`src/components/scenes/PlayScreen.tsx`):
-- Main game screen orchestration
-- Score display overlay (lines 68-81)
-- Debug panel overlay (lines 83-99)
-- GameBoard integration (lines 46-54)
+### 3. Audio Architecture for React Application
 
-**GameBoard** (`src/components/GameBoard.tsx`):
-- Canvas-like game rendering (540x960px)
-- Tree segment rendering (lines 94-120)
-- Player character rendering (lines 122-131)
-- Animated segment system (lines 134-175)
+#### Recommended Structure
+```
+src/audio/
+├── AudioManager.ts          # Main audio system
+├── AudioContext.tsx         # React context for audio state
+├── hooks/
+│   ├── useAudioManager.ts   # Hook for audio operations
+│   └── useGameAudio.ts      # Game-specific audio hooks
+└── assets/
+    ├── chop.wav
+    ├── branch-hit.wav
+    ├── game-over.wav
+    └── timer-warning.wav
+```
 
-**ScreenContainer** (`src/components/ScreenContainer.tsx`):
-- Fixed aspect ratio container (540x960px)
-- Background color management
-- Responsive centering
+#### Integration with Existing Game State
+- Audio events triggered by game state changes
+- Volume control integrated with GameSettings
+- Audio enabled/disabled state management
 
-**ScoreDisplay** (`src/components/ScoreDisplay.tsx`):
-- Simple score text rendering (36px font)
-- No explicit styling for visibility
+## Arcade-Specific Audio Considerations
 
-### Styling Architecture
+### 1. Volume and Mixing
+- **Base Volume**: Calibrated for arcade cabinet speakers
+- **Dynamic Range**: Compressed for consistent volume levels
+- **Frequency Response**: Optimized for arcade speaker systems
+- **Competing Audio**: Must cut through ambient arcade noise
 
-**Global Styles** (`src/style.css`):
-- Root background: #87CEEB (sky blue)
-- Body/HTML: Full height, centered layout
-- App container: Full size, flex centering
+### 2. Audio File Formats and Optimization
+- **Format**: WAV for uncompressed quality, or high-quality MP3/OGG
+- **Sample Rate**: 44.1kHz standard
+- **Bit Depth**: 16-bit minimum for clarity
+- **File Size**: Balance quality vs loading time
+- **Compression**: Avoid over-compression that reduces impact
 
-**Component Styles**:
-- Inline styles throughout components
-- No CSS modules or styled-components
-- Fixed pixel-based positioning
+### 3. Latency Requirements
+- **Chop Sound**: < 20ms delay from button press
+- **Hit Sound**: Immediate response to collision detection
+- **Timer Warning**: Precise timing with visual cues
 
-### Game State Management
+## Prerequisites - Refactoring for Better Architecture
 
-**Core State** (`src/game/GameState.ts`):
-- TreeSegment interface for static segments
-- AnimatedSegment interface for flying pieces
-- GameState interface with player, score, tree data
+Before implementing audio, the following refactoring should be completed to improve separation of concerns and maintainability:
 
-**Game Logic** (`src/game/GameLogic.ts`):
-- performChop: Creates animated segments, updates score
-- Animation creation: Lines 34-43 with position and timing data
+### 1. Extract Game Event System
+**Current Issue**: Game logic functions (`performChop`, `checkCollision`) are pure functions with no way to trigger side effects like audio.
 
-### Animation System
+**Refactoring Needed**:
+- Create a game event system that can emit events (chop, collision, gameOver)
+- Modify GameLogic to emit events alongside state changes
+- This will allow audio system to subscribe to game events cleanly
 
-**Implementation** (`src/components/GameBoard.tsx:31-81`):
-- RequestAnimationFrame-based animation loop
-- 1000ms duration, 500px/second speed
-- Automatic cleanup when segments leave bounds
-- Independent rotation for trunk and branch pieces
+### 2. Add Settings/Configuration Management
+**Current Issue**: No centralized configuration system for game settings (audio volume, enabled/disabled, etc.)
 
-## Technical Debt and Considerations
+**Refactoring Needed**:
+- Create `src/game/GameSettings.ts` with settings interface
+- Add settings to GameState or create separate settings context
+- This will provide foundation for audio volume/mute controls
 
-### Styling Approach
-- Heavy reliance on inline styles makes maintenance difficult
-- No consistent color/spacing variables
-- Limited responsive design considerations
+### 3. Improve Hook Architecture
+**Current Issue**: `useGameState` hook is becoming large and handles multiple concerns
 
-### Animation System
-- Current animation creates visual artifacts (independent branch rotation)
-- No animation state management beyond simple arrays
-- Performance considerations for multiple concurrent animations
+**Refactoring Needed**:
+- Keep `useGameState` focused on core game state management
+- Create separate hooks for specific concerns (useGameEvents, useGameSettings)
+- This will make audio integration cleaner with dedicated hooks
 
-### Component Architecture
-- Good separation between game logic and presentation
-- Clear screen management pattern
-- Could benefit from more granular component breakdown
+**Files to Modify for Prerequisites**:
+1. `src/game/GameLogic.ts` - Add event emission capability
+2. `src/game/GameSettings.ts` - New settings management
+3. `src/game/GameState.ts` - Add settings to state or separate context
+4. `src/hooks/useGameState.ts` - Refactor to use event system
+5. `src/hooks/useGameEvents.ts` - New hook for event handling
+6. `src/hooks/useGameSettings.ts` - New hook for settings management
 
-## Implementation Complexity Assessment (Updated)
+## Implementation Plan
 
-1. **Score Visibility** - LOW: Investigate visibility issue, possibly increase font size
-2. **Scroll Disable** - LOW: Change overflow property in ScreenContainer
-3. **Background Height** - MEDIUM: Fix white strip issue and ensure consistent background color
-4. **Attract Screen Overlay** - LOW: Change ScreenContainer background colors to #87CEEB
-5. **Branch Animation** - MEDIUM: Refactor to use wrapper container with single rotation
+### Phase 0: Architecture Refactoring (Prerequisites)
+1. **Game Event System**: Create event emission in game logic
+2. **Settings Management**: Add configuration system for audio controls
+3. **Hook Refactoring**: Separate concerns for cleaner audio integration
+4. **Quality Gate**: Ensure `npm run check` passes (unit tests + lint + e2e tests)
 
-## Detailed Implementation Plan
+### Phase 1: Basic Audio System
+1. **AudioManager Class**: Core audio system with Web Audio API
+2. **Audio Asset Loading**: Preload all required sounds
+3. **React Integration**: Audio context and hooks
+4. **Basic Sound Playback**: Chop, hit, game over sounds
 
-### Phase 1: Quick CSS Fixes (Low Risk)
-1. **Scroll Disable**: Change `src/components/ScreenContainer.tsx:23` from `overflow: 'auto'` to `overflow: 'hidden'`
-2. **Attract Screen Background**: Change `src/components/scenes/AttractScreen.tsx:25` from `backgroundColor="#2c5234"` to `backgroundColor="#87CEEB"`
-3. **Play Screen Background**: Change `src/components/scenes/PlayScreen.tsx:39` from `backgroundColor="#2c5234"` to `backgroundColor="#87CEEB"`
+### Phase 2: Game Integration
+1. **Event-Driven Audio**: Trigger sounds based on game events
+2. **Volume Control**: Integrate with game settings
+3. **Audio State Management**: Enable/disable functionality
+4. **Error Handling**: Graceful fallbacks for audio failures
+5. **Quality Gate**: Ensure `npm run check` passes after integration
 
-### Phase 2: Background Color Investigation (Medium Risk)
-1. **White Strip Issue**: Investigate and fix white strip appearing at bottom when scrolling
-   - Check all elements using background colors
-   - Ensure consistent #87CEEB usage across all containers
-   - Test scrolling behavior after changes
+### Phase 3: Arcade Optimization
+1. **Volume Calibration**: Optimize for arcade environment
+2. **Performance Testing**: Ensure stable performance during gameplay
+3. **Browser Compatibility**: Test in Chrome kiosk mode
+4. **Audio Quality**: Final tuning for arcade speakers
+5. **Final Quality Gate**: Ensure `npm run check` passes after full implementation
 
-### Phase 3: Score Visibility Investigation (Low Risk)
-1. **Diagnose Issue**: Determine why score is not visible
-   - Check text color inheritance
-   - Verify positioning doesn't place it off-screen
-   - Test contrast against #87CEEB background
-2. **Potential Solutions**:
-   - Add explicit text color if needed
-   - Increase font size beyond 36px
-   - Adjust positioning if necessary
+## Technical Implementation Details
 
-### Phase 4: Animation Refactoring (Medium Risk)
-1. **Branch Animation Fix**: Modify `src/components/GameBoard.tsx:134-175`
-   - Create wrapper div for each animated segment
-   - Apply rotation transform to wrapper
-   - Position trunk and branch as children within wrapper
-   - Ensure branch maintains relative position to trunk
+### 1. Web Audio API Setup
+```typescript
+class AudioManager {
+  private context: AudioContext
+  private buffers: Map<string, AudioBuffer> = new Map()
+  private gainNode: GainNode
+  
+  async initialize() {
+    this.context = new AudioContext()
+    this.gainNode = this.context.createGain()
+    this.gainNode.connect(this.context.destination)
+    await this.loadAudioAssets()
+  }
+  
+  playSound(name: string, volume: number = 1) {
+    const buffer = this.buffers.get(name)
+    if (!buffer) return
+    
+    const source = this.context.createBufferSource()
+    const gain = this.context.createGain()
+    
+    source.buffer = buffer
+    source.connect(gain)
+    gain.connect(this.gainNode)
+    gain.gain.value = volume
+    
+    source.start(0)
+  }
+}
+```
+
+### 2. React Context Integration
+```typescript
+interface AudioContextType {
+  audioManager: AudioManager | null
+  isEnabled: boolean
+  volume: number
+  setVolume: (volume: number) => void
+  toggleAudio: () => void
+}
+
+const AudioContext = createContext<AudioContextType | null>(null)
+```
+
+### 3. Game Event Integration
+```typescript
+// In game logic
+const useGameAudio = () => {
+  const { audioManager, isEnabled } = useAudioContext()
+  
+  const playChopSound = useCallback(() => {
+    if (isEnabled && audioManager) {
+      audioManager.playSound('chop', 0.8)
+    }
+  }, [audioManager, isEnabled])
+  
+  const playHitSound = useCallback(() => {
+    if (isEnabled && audioManager) {
+      audioManager.playSound('hit', 1.0)
+    }
+  }, [audioManager, isEnabled])
+  
+  return { playChopSound, playHitSound }
+}
+```
+
+## Audio Asset Requirements
+
+### 1. Sound Design Guidelines
+- **Chop Sound**: Sharp, satisfying wood-chopping sound (200-500ms duration)
+- **Branch Hit**: Impactful, negative feedback sound (100-300ms duration)
+- **Game Over**: Clear, definitive ending sound (500-1000ms duration)
+- **Timer Warning**: Urgent, attention-grabbing beep or tone (100-200ms duration)
+
+### 2. Audio Production Specifications
+- **Format**: WAV (uncompressed) or high-quality MP3 (320kbps)
+- **Mono vs Stereo**: Mono sufficient for arcade cabinet
+- **Normalization**: Consistent peak levels across all sounds
+- **No Clipping**: Clean audio without digital distortion
+
+## Browser and Platform Considerations
+
+### 1. Chrome Kiosk Mode
+- Audio context initialization requirements
+- Autoplay policies and user gesture requirements
+- Performance optimization for continuous operation
+
+### 2. Mobile Compatibility (Future)
+- iOS audio limitations and workarounds
+- Android audio latency considerations
+- Touch interaction requirements for audio activation
+
+### 3. Error Handling and Fallbacks
+- Audio context creation failures
+- Network issues during asset loading
+- Graceful degradation when audio is unavailable
+
+## Performance Considerations
+
+### 1. Memory Management
+- Audio buffer cleanup and garbage collection
+- Efficient audio source node management
+- Memory usage monitoring for long arcade sessions
+
+### 2. CPU Usage
+- Minimize audio processing overhead
+- Efficient event handling for rapid button presses
+- Background audio context maintenance
+
+### 3. Network Loading
+- Optimize audio file sizes without quality loss
+- Implement progressive loading if needed
+- Handle slow network conditions gracefully
 
 ## Testing Strategy
 
-### Visual Validation Required
-1. **Color Consistency**: Verify all screens have matching #87CEEB backgrounds
-2. **Score Visibility**: Confirm score is clearly visible during gameplay
-3. **Animation Physics**: Test that branch stays attached to trunk during rotation
-4. **Scroll Behavior**: Verify no unwanted scrolling in game container
+### 1. Functional Testing
+- Audio playback on different browsers
+- Volume control functionality
+- Enable/disable audio settings
+- Error condition handling
 
-### Regression Testing
-- Ensure all existing functionality remains intact
-- Test keyboard input (arrow keys) still works
-- Verify game logic (chopping, collision detection) unchanged
-- Confirm screen transitions work properly
+### 2. Performance Testing
+- Audio latency measurements
+- Memory usage during extended gameplay
+- CPU usage impact assessment
 
-## Risk Assessment
+### 3. Integration Testing
+- Audio synchronization with game events
+- Multiple simultaneous sound playback
+- Audio state persistence across game sessions
 
-**Low Risk Items** (Phases 1 & 3):
-- Simple CSS property changes
-- No logic modifications
-- Easy to revert if issues arise
+### 4. Arcade Environment Testing
+- Volume levels in noisy environment
+- Speaker system compatibility
+- Long-term operational stability
 
-**Medium Risk Items** (Phases 2 & 4):
-- Background color investigation may reveal deeper CSS issues
-- Animation refactoring touches complex rendering logic
-- Changes affect visual presentation significantly
+## Post-Implementation Considerations
 
-## Files to Modify
+### Future Enhancement Opportunities
+- **Background Music System**: Looping music tracks for attract mode and gameplay
+- **Environmental Sound Effects**: Ambient forest sounds, wind effects
+- **Advanced Audio Effects**: Reverb, filters, dynamic processing
+- **Dynamic Audio Mixing**: Adaptive volume based on gameplay intensity
+- **Additional Sound Variations**: Multiple chop sounds, randomized effects
 
-### Confirmed Changes:
-1. `src/components/ScreenContainer.tsx` - overflow property
-2. `src/components/scenes/AttractScreen.tsx` - background color
-3. `src/components/scenes/PlayScreen.tsx` - background color
-4. `src/components/GameBoard.tsx` - animation rendering (branch fix)
+### Long-term Maintenance Requirements
+- **Audio Asset Management**: Organized file structure, versioning system
+- **Browser Compatibility**: Regular updates for new browser versions
+- **Performance Monitoring**: Continuous monitoring of memory usage and latency
+- **User Feedback Integration**: Analytics and feedback system for audio preferences
+- **Hardware Compatibility**: Testing with different arcade cabinet speaker systems
 
-### Investigation Required:
-1. `src/style.css` - background color consistency
-2. `src/components/ScoreDisplay.tsx` - text visibility
-3. Various components - white strip issue source
+## Implementation Questions - Resolved from Codebase Analysis
+
+### Question 1: Audio Asset Sources ✅ RESOLVED
+**Answer:** Audio files already exist in `public/audio/` directory:
+- **Files Available**: `chop.wav`, `branch-hit.wav`, `game-over.wav`, `timer-warning.wav`
+- **Format**: WAV files, 16-bit mono, 44.1kHz sample rate (optimal for arcade)
+- **Quality**: Professional audio files ready for implementation
+- **Additional File**: `67_knock.wav` (alternative chop sound available)
+
+### Question 2: Game Logic Integration Points ✅ PARTIALLY RESOLVED
+**Current Architecture Analysis:**
+- **Collision Detection**: `checkCollision()` function in `src/game/GameLogic.ts:5-11`
+- **Chop Function**: `performChop()` function in `src/game/GameLogic.ts:13-52`
+- **Event Emission Points**:
+  - **Chop Event**: Add after line 21 (after collision check passes)
+  - **Hit Event**: Add at line 24 (when collision is true, before gameOver)
+  - **Game Over Event**: Add at line 26 (when setting gameOver: true)
+
+**Timer System Status**: ⚠️ NOT YET IMPLEMENTED
+- **Current State**: No timer system exists in current GameState or GameLogic
+- **Design Requirement**: GAME_DESIGN.md specifies timer system with countdown/extension
+- **Implementation Needed**: Timer system must be added to GameState before audio integration
+- **Timer Warning Event**: Will require timer implementation first (< 3 seconds remaining)
+
+### Question 3: Hook Architecture Analysis ✅ RESOLVED
+**Current Hook Structure:**
+- **`useGameState`**: Focused on core game state management (lines 6-35)
+  - Currently NO event handling - only state mutations via `chop()`, `reset()`, etc.
+  - Clean separation of concerns already maintained
+- **`useKeyboardInput`**: Handles keyboard events separately (lines 16-36)
+  - Takes callback handlers as parameters
+  - No direct game state manipulation
+- **Refactoring Scope**: Minimal - current architecture is already well-separated
+- **Integration Strategy**: Add new hooks alongside existing ones rather than major refactoring
+
+### Question 8: Testing Infrastructure ✅ RESOLVED
+**Current Testing Setup:**
+- **Framework**: Vitest with React Testing Library
+- **Commands Available**: `npm test`, `npm run test:watch`, `npm run test:coverage`, `npm run check`
+- **Existing Tests**: Unit tests for GameLogic, hooks, and components
+- **CI/CD Compatibility**: jsdom environment configured for testing without audio devices
+- **Testing Strategy**: Mix of unit tests (for AudioManager) and integration tests (for game events)
+
+### Question 9: Development vs Production Configuration ✅ RESOLVED
+**Current Configuration:**
+- **Environment**: Single Vite configuration for development and production
+- **Debug Mode**: Already implemented in GameState (`showDebug` property)
+- **Volume Strategy**: Different volume levels can be set via proposed GameSettings system
+- **Build System**: `npm run build` creates production optimized bundle
+- **Development Tools**: Debug panel and console logging available in dev mode
+
+### Browser Autoplay Policy Handling ✅ RESOLVED
+**Development Solution:** Chrome can be configured to bypass autoplay restrictions for local development.
+
+**Method: Chrome Launch Flags (Recommended)**
+```bash
+# Development with autoplay disabled:
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+  --autoplay-policy=no-user-gesture-required \
+  --disable-web-security \
+  --user-data-dir=/tmp/chrome-dev-session
+```
+
+**Arcade Deployment Configuration:**
+```bash
+# Kiosk mode with autoplay enabled:
+google-chrome \
+  --kiosk \
+  --autoplay-policy=no-user-gesture-required \
+  --disable-infobars \
+  --disable-session-crashed-bubble \
+  --disable-translate \
+  --no-first-run \
+  http://localhost:5173
+```
+
+**Implementation Impact:**
+- **No User Interaction Required**: Audio can play immediately when events are triggered
+- **Simplified Audio System**: No need for complex autoplay policy detection and user prompts
+- **Consistent Experience**: Same behavior in development and arcade deployment
+- **Reduced Code Complexity**: Eliminates need for "click to enable audio" UI components
+
+### Question 5: Performance Measurement ✅ RESOLVED
+**Decision:** Skip detailed performance monitoring for MVP implementation.
+
+**Rationale:**
+- **Focus on Core Functionality**: Prioritize getting audio working over complex performance metrics
+- **Simplicity**: Avoid over-engineering the initial implementation
+- **Future Enhancement**: Performance monitoring can be added later if needed
+- **Arcade Environment**: Real-world testing on actual hardware will be more valuable than synthetic benchmarks
+
+### Question 6: Arcade Audio Calibration ✅ RESOLVED  
+**Decision:** Skip advanced audio calibration for MVP implementation.
+
+**Rationale:**
+- **Manual Tuning**: Volume and audio settings can be adjusted manually during arcade setup
+- **Standard Configuration**: Use standard Web Audio API settings initially
+- **Iterative Approach**: Test on actual arcade hardware and adjust as needed
+- **Simplicity**: Avoid complex audio processing that may introduce latency or compatibility issues
+
+### Question 7: Error Handling Strategy ✅ RESOLVED
+**Audio Error Handling Approach:**
+- **Failure Mode**: Silent failure with console logging only
+- **No Analytics**: No error reporting to external systems  
+- **Best Effort Loading**: Partial audio initialization allowed (some sounds may fail to load)
+- **Graceful Degradation**: Game continues to function without audio if audio system fails
+
+**Implementation Guidelines:**
+- Log audio errors to console for debugging
+- Continue game operation even if audio fails completely
+- No user-facing error messages for audio failures
+- Simple, robust error handling that doesn't impact gameplay
+
+### Timer System Implementation Approach ✅ RESOLVED
+**Decision:** Implement timer system as a separate prerequisite phase before audio integration.
+
+**Implementation Strategy:**
+- **Separate Phase**: Create "Phase -1: Timer System Implementation" before current Phase 0
+- **Complete Timer System**: Implement full timer functionality first
+- **Clean Integration**: Audio system can then integrate cleanly with working timer events
+- **Reduced Complexity**: Avoid trying to implement timer and audio systems simultaneously
