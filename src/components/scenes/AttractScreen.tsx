@@ -7,7 +7,7 @@ interface AttractScreenProps {
 
 export default function AttractScreen({ highScore, onStartGame }: AttractScreenProps) {
   useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
+    const handleKeyPress = () => {
       // Any key press starts the game
       onStartGame()
     }
@@ -33,7 +33,7 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
         marginBottom: '2rem',
         textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
       }}>
-        TIMBERMAN
+       LUMBERJACK 
       </h1>
       
       <div style={{ 

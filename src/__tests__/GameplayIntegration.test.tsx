@@ -9,7 +9,7 @@ describe('Complete Gameplay Integration', () => {
     render(<App />)
     
     // Should start on attract screen
-    expect(screen.getByText('TIMBERMAN')).toBeInTheDocument()
+    expect(screen.getByText('LUMBERJACK')).toBeInTheDocument()
     
     // Start game to transition to play screen
     await user.keyboard('{Enter}')
@@ -17,7 +17,7 @@ describe('Complete Gameplay Integration', () => {
     // Now verify play screen state
     const initialScoreElements = screen.getAllByText('Score: 0')
     expect(initialScoreElements.length).toBeGreaterThan(0)
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Timberman Game')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Lumberjack Game')
     expect(screen.queryByText(/GAME OVER/)).not.toBeInTheDocument()
     
     // Enable debug mode to track game state
@@ -131,7 +131,7 @@ describe('Complete Gameplay Integration', () => {
     await user.keyboard('{Enter}')
     
     // Should go back to play screen with new game
-    expect(screen.getByText('Timberman Game')).toBeInTheDocument()
+    expect(screen.getByText('Lumberjack Game')).toBeInTheDocument()
     expect(screen.getByText('Score: 0')).toBeInTheDocument()
     
     vi.restoreAllMocks()

@@ -35,7 +35,7 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Timberman Game</h1>
+      <h1>Lumberjack Game</h1>
       
       <ScoreDisplay 
         score={gameState.score}

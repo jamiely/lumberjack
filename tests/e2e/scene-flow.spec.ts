@@ -5,7 +5,7 @@ test.describe('Complete Scene Flow', () => {
     await page.goto('/?testMode=true');
 
     // 1. Verify Attract Screen
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('TIMBERMAN');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('LUMBERJACK');
     await expect(page.getByText('PRESS ANY BUTTON TO PLAY')).toBeVisible();
     await expect(page.getByText('HIGH SCORE:')).toBeVisible();
     await expect(page.getByText('CONTROLS:')).toBeVisible();
@@ -14,7 +14,7 @@ test.describe('Complete Scene Flow', () => {
     await page.keyboard.press('Enter');
     
     // Verify Play Screen
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Timberman Game');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lumberjack Game');
     await expect(page.getByText('Score: 0')).toBeVisible();
     await expect(page.getByText('Use left/right arrows to chop')).toBeVisible();
     
@@ -43,7 +43,7 @@ test.describe('Complete Scene Flow', () => {
     await page.keyboard.press('Enter');
     
     // Should go back to Play Screen with new game
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Timberman Game');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lumberjack Game');
     await expect(page.getByText('Score: 0')).toBeVisible();
   });
 
@@ -80,6 +80,7 @@ test.describe('Complete Scene Flow', () => {
 
   test('handles auto-return from game over screen', async ({ page }) => {
     await page.goto('/?testMode=true');
+    await expect(page.getByText('Lumberjack')).toBeVisible({ timeout: 5000 });
 
     // Start game and immediately trigger game over
     await page.keyboard.press('Enter');
@@ -89,7 +90,7 @@ test.describe('Complete Scene Flow', () => {
     await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5000 });
     
     // Wait for countdown and auto-return (should happen within 5 seconds)
-    await expect(page.getByText('TIMBERMAN')).toBeVisible({ timeout: 6000 });
+    await expect(page.getByText('Lumberjack')).toBeVisible({ timeout: 6000 });
     await expect(page.getByText('PRESS ANY BUTTON TO PLAY')).toBeVisible();
   });
 
@@ -97,7 +98,7 @@ test.describe('Complete Scene Flow', () => {
     await page.goto('/?testMode=true');
 
     // Set a high score first
-    await page.evaluate(() => localStorage.setItem('timberman-high-score', '10'));
+    await page.evaluate(() => localStorage.setItem('lumberjack-high-score', '10'));
     await page.reload();
 
     // Verify high score persists on attract screen
@@ -121,7 +122,7 @@ test.describe('Complete Scene Flow', () => {
     await page.keyboard.press('Escape'); // This shouldn't work, but let's test the flow
     
     // Actually let's just verify the game over -> play transition works
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Timberman Game');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lumberjack Game');
     await expect(page.getByText('Score: 0')).toBeVisible();
   });
 

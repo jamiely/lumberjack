@@ -5,13 +5,11 @@ import GameOverScreen from './scenes/GameOverScreen'
 
 export type Scene = 'attract' | 'play' | 'gameOver'
 
-interface SceneManagerProps {}
-
-export default function SceneManager({}: SceneManagerProps) {
+export default function SceneManager() {
   const [currentScene, setCurrentScene] = useState<Scene>('attract')
   const [finalScore, setFinalScore] = useState<number>(0)
   const [highScore, setHighScore] = useState<number>(() => {
-    const stored = localStorage.getItem('timberman-high-score')
+    const stored = localStorage.getItem('lumberjack-high-score')
     return stored ? parseInt(stored, 10) : 0
   })
 
@@ -25,7 +23,7 @@ export default function SceneManager({}: SceneManagerProps) {
     // Update high score if needed
     if (score > highScore) {
       setHighScore(score)
-      localStorage.setItem('timberman-high-score', score.toString())
+      localStorage.setItem('lumberjack-high-score', score.toString())
     }
     
     setCurrentScene('gameOver')

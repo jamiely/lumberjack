@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "npm run lint && tsc && vite build",
     "preview": "vite preview",
+    "check": "npm test -- --run && npm run lint && npm run test:e2e",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",

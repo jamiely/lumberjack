@@ -18,7 +18,7 @@ export default function GameOverScreen({
   const [timeRemaining, setTimeRemaining] = useState(5)
 
   useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
+    const handleKeyPress = () => {
       // Any key press restarts the game immediately
       onRestart()
     }

@@ -7,7 +7,7 @@ describe('App Integration Tests', () => {
   it('renders attract screen initially', () => {
     render(<App />)
     
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('TIMBERMAN')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('LUMBERJACK')
     expect(screen.getByText('PRESS ANY BUTTON TO PLAY')).toBeInTheDocument()
     expect(screen.getByText(/HIGH SCORE:/)).toBeInTheDocument()
     expect(screen.getByText(/CONTROLS:/)).toBeInTheDocument()
@@ -18,13 +18,13 @@ describe('App Integration Tests', () => {
     render(<App />)
     
     // Should start on attract screen
-    expect(screen.getByText('TIMBERMAN')).toBeInTheDocument()
+    expect(screen.getByText('LUMBERJACK')).toBeInTheDocument()
     
     // Press any key to start game
     await user.keyboard('{ArrowLeft}')
     
     // Should now be on play screen
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Timberman Game')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Lumberjack Game')
     expect(screen.getByText('Score: 0')).toBeInTheDocument()
     expect(screen.getByText(/Use left\/right arrows to chop and switch sides/)).toBeInTheDocument()
     
@@ -80,7 +80,7 @@ describe('App Integration Tests', () => {
     await user.keyboard('{Enter}')
     
     // Should be on play screen
-    expect(screen.getByText('Timberman Game')).toBeInTheDocument()
+    expect(screen.getByText('Lumberjack Game')).toBeInTheDocument()
     
     // We need to trigger a game over first
     // Try to find a collision scenario by examining initial state
@@ -99,7 +99,7 @@ describe('App Integration Tests', () => {
     
     // Should go back to play screen with new game
     expect(screen.getByText('Score: 0')).toBeInTheDocument()
-    expect(screen.getByText('Timberman Game')).toBeInTheDocument()
+    expect(screen.getByText('Lumberjack Game')).toBeInTheDocument()
   })
 
   it('integrates all components working together', async () => {
