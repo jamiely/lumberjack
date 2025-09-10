@@ -18,10 +18,18 @@ export function useGameState() {
     setGameState(current => toggleDebug(current))
   }
 
+  const removeAnimatedSegment = (animationId: string) => {
+    setGameState(current => ({
+      ...current,
+      animatedSegments: current.animatedSegments.filter(segment => segment.animationId !== animationId)
+    }))
+  }
+
   return {
     gameState,
     chop,
     reset,
-    toggleDebugMode
+    toggleDebugMode,
+    removeAnimatedSegment
   }
 }

@@ -39,39 +39,60 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
           mode="static"
         />
 
-        {/* Overlay text content */}
+        {/* Top Banner - High Score */}
+        <div style={{
+          position: 'fixed',
+          top: '0px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '540px',
+          zIndex: 10,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '10px 0',
+          fontSize: '1.2rem',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          color: '#FFD700',
+          fontWeight: 'bold',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+        }}>
+          All time highscore: {highScore.toLocaleString()}
+        </div>
+
+        {/* Vertical Center - Game Title */}
         <div style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           zIndex: 10,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          backgroundColor: 'rgba(44, 82, 52, 0.9)',
-          padding: '30px',
-          borderRadius: '15px',
-          border: '3px solid rgba(255,255,255,0.3)'
+          textAlign: 'center'
         }}>
           <h1 style={{ 
             fontSize: '3rem', 
-            margin: '0 0 1rem 0',
+            margin: '0',
             textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
           }}>
            LUMBERJACK 
           </h1>
-          
-          <div style={{ 
-            fontSize: '1.2rem', 
-            marginBottom: '1.5rem',
-            padding: '0.8rem',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            borderRadius: '8px'
-          }}>
-            HIGH SCORE: {highScore.toLocaleString()}
-          </div>
+        </div>
 
+        {/* Bottom Overlay - Controls and Play */}
+        <div style={{
+          position: 'absolute',
+          bottom: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          backgroundColor: 'rgba(44, 82, 52, 0.9)',
+          padding: '20px 30px',
+          borderRadius: '15px',
+          border: '3px solid rgba(255,255,255,0.3)'
+        }}>
           <div style={{ 
             fontSize: '1rem', 
             marginBottom: '1rem',
@@ -84,7 +105,8 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
           <div style={{ 
             fontSize: '0.9rem', 
             color: '#cccccc',
-            lineHeight: '1.3'
+            lineHeight: '1.3',
+            textAlign: 'center'
           }}>
             <div style={{ marginBottom: '0.3rem' }}>CONTROLS:</div>
             <div style={{ marginBottom: '0.3rem' }}>LEFT ARROW = CHOP LEFT</div>

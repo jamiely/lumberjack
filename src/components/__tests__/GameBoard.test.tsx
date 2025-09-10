@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render } from '@testing-library/react'
 import GameBoard from '../GameBoard'
-import type { TreeSegment } from '../../game/GameState'
+import type { TreeSegment, AnimatedSegment } from '../../game/GameState'
 
 describe('GameBoard', () => {
   const mockTreeSegments: TreeSegment[] = [
@@ -231,6 +231,176 @@ describe('GameBoard', () => {
       
       gameBoard = container.firstChild as HTMLElement
       expect(gameBoard).toHaveStyle({ pointerEvents: 'none' })
+    })
+  })
+
+  describe('animated segments', () => {
+    let mockRemoveAnimatedSegment: ReturnType<typeof vi.fn>
+    
+    beforeEach(() => {
+      mockRemoveAnimatedSegment = vi.fn()
+      // Mock performance.now for consistent animation testing
+      vi.spyOn(performance, 'now').mockReturnValue(1000)
+      
+      // Mock requestAnimationFrame to prevent infinite recursion in tests
+      let animationCallCount = 0
+      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        // Only call the callback once to avoid infinite recursion in tests
+        if (animationCallCount === 0) {
+          animationCallCount++
+          setTimeout(() => cb(1000), 0) // Use setTimeout to avoid immediate recursion
+        }
+        return 1
+      })
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('renders animated segments when provided', () => {
+      const mockAnimatedSegments: AnimatedSegment[] = [
+        {
+          branchSide: 'left',
+          animationId: 'test-segment-1',
+          startTime: 0,
+          direction: 'right',
+          startPosition: { x: 236, y: 38 }
+        }
+      ]
+
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          animatedSegments={mockAnimatedSegments}
+          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
+        />
+      )
+
+      // Should render animated trunk with higher z-index
+      const animatedTrunks = container.querySelectorAll('[style*="z-index: 10"]')
+      expect(animatedTrunks.length).toBeGreaterThan(0)
+    })
+
+    it('renders animated branches when segment has branches', () => {
+      const mockAnimatedSegments: AnimatedSegment[] = [
+        {
+          branchSide: 'left',
+          animationId: 'test-segment-with-branch',
+          startTime: 0,
+          direction: 'right',
+          startPosition: { x: 236, y: 38 }
+        }
+      ]
+
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          animatedSegments={mockAnimatedSegments}
+          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
+        />
+      )
+
+      // Should render both animated trunk and branch
+      const animatedElements = container.querySelectorAll('[style*="z-index: 10"]')
+      expect(animatedElements.length).toBe(2) // trunk + branch
+    })
+
+    it('does not render branches for animated segments with no branches', () => {
+      const mockAnimatedSegments: AnimatedSegment[] = [
+        {
+          branchSide: 'none',
+          animationId: 'test-segment-no-branch',
+          startTime: 0,
+          direction: 'right',
+          startPosition: { x: 236, y: 38 }
+        }
+      ]
+
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          animatedSegments={mockAnimatedSegments}
+          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
+        />
+      )
+
+      // Should render only animated trunk, no branch
+      const animatedElements = container.querySelectorAll('[style*="z-index: 10"]')
+      expect(animatedElements.length).toBe(1) // only trunk
+    })
+
+    it('renders multiple animated segments', () => {
+      const mockAnimatedSegments: AnimatedSegment[] = [
+        {
+          branchSide: 'left',
+          animationId: 'test-segment-1',
+          startTime: 0,
+          direction: 'right',
+          startPosition: { x: 236, y: 38 }
+        },
+        {
+          branchSide: 'right',
+          animationId: 'test-segment-2',
+          startTime: 100,
+          direction: 'left',
+          startPosition: { x: 236, y: 38 }
+        }
+      ]
+
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          animatedSegments={mockAnimatedSegments}
+          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
+        />
+      )
+
+      // Should render elements for both segments (2 trunks + 2 branches)
+      const animatedElements = container.querySelectorAll('[style*="z-index: 10"]')
+      expect(animatedElements.length).toBe(4) // 2 trunks + 2 branches
+    })
+
+    it('handles empty animated segments array gracefully', () => {
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+          animatedSegments={[]}
+          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
+        />
+      )
+
+      // Should not render any animated elements
+      const animatedElements = container.querySelectorAll('[style*="z-index: 10"]')
+      expect(animatedElements.length).toBe(0)
+    })
+
+    it('works without animated segments props (backwards compatibility)', () => {
+      const { container } = render(
+        <GameBoard 
+          treeSegments={mockTreeSegments}
+          playerSide="left"
+          gameOver={false}
+        />
+      )
+
+      // Should render normally without errors
+      const gameBoard = container.firstChild as HTMLElement
+      expect(gameBoard).toBeInTheDocument()
+
+      // Should not render any animated elements
+      const animatedElements = container.querySelectorAll('[style*="z-index: 10"]')
+      expect(animatedElements.length).toBe(0)
     })
   })
 })

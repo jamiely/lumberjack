@@ -2,12 +2,21 @@ export interface TreeSegment {
   branchSide: 'left' | 'right' | 'none'
 }
 
+export interface AnimatedSegment {
+  branchSide: 'left' | 'right' | 'none'
+  animationId: string
+  startTime: number
+  direction: 'left' | 'right'
+  startPosition: { x: number; y: number }
+}
+
 export interface GameState {
   playerSide: 'left' | 'right'
   score: number
   gameOver: boolean
   showDebug: boolean
   treeSegments: TreeSegment[]
+  animatedSegments: AnimatedSegment[]
 }
 
 export const createInitialGameState = (): GameState => ({
@@ -24,5 +33,6 @@ export const createInitialGameState = (): GameState => ({
     { branchSide: 'right' },
     { branchSide: 'none' },
     { branchSide: 'left' }
-  ]
+  ],
+  animatedSegments: []
 })

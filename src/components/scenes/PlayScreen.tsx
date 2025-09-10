@@ -12,7 +12,7 @@ interface PlayScreenProps {
 }
 
 export default function PlayScreen({ onGameOver }: PlayScreenProps) {
-  const { gameState, chop, reset, toggleDebugMode } = useGameState()
+  const { gameState, chop, reset, toggleDebugMode, removeAnimatedSegment } = useGameState()
 
   useKeyboardInput({
     onChopLeft: () => chop('left'),
@@ -49,6 +49,8 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
           playerSide={gameState.playerSide}
           gameOver={gameState.gameOver}
           mode="interactive"
+          animatedSegments={gameState.animatedSegments}
+          onRemoveAnimatedSegment={removeAnimatedSegment}
         />
         
         {/* Hidden title for accessibility/tests */}
@@ -65,11 +67,12 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
         {/* Overlay UI Elements */}
         <div style={{ 
           position: 'absolute',
-          top: '10px',
-          left: '10px',
-          right: '10px',
+          top: '50px',
+          left: '50%',
+          transform: 'translateX(-50%)',
           zIndex: 10,
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          textAlign: 'center'
         }}>
           <ScoreDisplay 
             score={gameState.score}

@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #87CEEB;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -29,10 +29,17 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: auto;
+  background-color: #87CEEB;
+}
+
+html {
+  height: 100%;
+  background-color: #87CEEB;
 }
 
 html, body {
   height: 100%;
+  background-color: #87CEEB;
 }
 
 h1 {

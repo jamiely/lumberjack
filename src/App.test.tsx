@@ -9,7 +9,7 @@ describe('App Integration Tests', () => {
     
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('LUMBERJACK')
     expect(screen.getByText('PRESS ANY BUTTON TO PLAY')).toBeInTheDocument()
-    expect(screen.getByText(/HIGH SCORE:/)).toBeInTheDocument()
+    expect(screen.getByText(/All time highscore:/)).toBeInTheDocument()
     expect(screen.getByText(/CONTROLS:/)).toBeInTheDocument()
   })
 
@@ -25,8 +25,8 @@ describe('App Integration Tests', () => {
     
     // Should now be on play screen
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Lumberjack Game')
-    expect(screen.getByText('Score: 0')).toBeInTheDocument()
-    expect(screen.getByText(/Use left\/right arrows to chop and switch sides/)).toBeInTheDocument()
+    expect(screen.getByText('0')).toBeInTheDocument()
+    // Score display now shows only the number without additional text
     
     // Check for game board container
     const gameBoard = document.querySelector('[style*="width: 540px"]')
@@ -41,14 +41,14 @@ describe('App Integration Tests', () => {
     await user.keyboard('{Enter}')
     
     // Should be on play screen now
-    expect(screen.getByText('Score: 0')).toBeInTheDocument()
+    expect(screen.getByText('0')).toBeInTheDocument()
     expect(screen.queryByText(/GAME OVER/)).not.toBeInTheDocument()
     
     // Simulate safe chop (left arrow when no left branch in segments[1])
     await user.keyboard('{ArrowLeft}')
     
     // Score should increase
-    expect(screen.getByText('Score: 1')).toBeInTheDocument()
+    expect(screen.getByText('1')).toBeInTheDocument()
   })
 
   it('integrates keyboard input with game actions', async () => {
@@ -98,7 +98,7 @@ describe('App Integration Tests', () => {
     await user.keyboard('{Enter}')
     
     // Should go back to play screen with new game
-    expect(screen.getByText('Score: 0')).toBeInTheDocument()
+    expect(screen.getByText('0')).toBeInTheDocument()
     expect(screen.getByText('Lumberjack Game')).toBeInTheDocument()
   })
 
@@ -116,10 +116,9 @@ describe('App Integration Tests', () => {
     expect(screen.getByText('Game State')).toBeInTheDocument()
     expect(screen.getByText('Total Segments: 8')).toBeInTheDocument()
     
-    // Game components should all be present (use getAllByText for duplicated content)
-    const scoreElements = screen.getAllByText('Score: 0')
-    expect(scoreElements.length).toBeGreaterThan(0)
-    expect(screen.getByText(/Use left\/right arrows/)).toBeInTheDocument()
+    // Game components should all be present
+    expect(screen.getByText('0')).toBeInTheDocument()
+    // Score display now shows only the number without additional text
     
     // Game board should be rendered (check for tree trunk color)
     const treeTrunks = document.querySelectorAll('[style*="background-color: rgb(139, 69, 19)"]')

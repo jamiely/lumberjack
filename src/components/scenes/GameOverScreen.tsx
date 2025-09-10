@@ -20,7 +20,7 @@ export default function GameOverScreen({
   onRestart, 
   onReturnToAttract 
 }: GameOverScreenProps) {
-  const [timeRemaining, setTimeRemaining] = useState(5)
+  const [, setTimeRemaining] = useState(5)
 
   useEffect(() => {
     const handleKeyPress = () => {
@@ -63,6 +63,7 @@ export default function GameOverScreen({
             playerSide={finalGameState.playerSide}
             gameOver={finalGameState.gameOver}
             mode="frozen"
+            animatedSegments={finalGameState.animatedSegments}
           />
         )}
 
@@ -131,12 +132,6 @@ export default function GameOverScreen({
             PRESS ANY BUTTON TO PLAY AGAIN
           </div>
 
-          <div style={{ 
-            fontSize: '0.9rem', 
-            color: '#cccccc'
-          }}>
-            Returning to attract in {timeRemaining}...
-          </div>
         </div>
 
         <style>{`
