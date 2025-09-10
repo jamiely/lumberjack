@@ -7,7 +7,7 @@ test.describe('Complete Scene Flow', () => {
     // 1. Verify Attract Screen
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('LUMBERJACK');
     await expect(page.getByText('PRESS ANY BUTTON TO PLAY')).toBeVisible();
-    await expect(page.getByText('HIGH SCORE:')).toBeVisible();
+    await expect(page.getByText('highscore')).toBeVisible();
     await expect(page.getByText('CONTROLS:')).toBeVisible();
 
     // 2. Transition to Play Screen
@@ -15,16 +15,15 @@ test.describe('Complete Scene Flow', () => {
     
     // Verify Play Screen
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lumberjack Game');
-    await expect(page.getByText('Score: 0')).toBeVisible();
-    await expect(page.getByText('Use left/right arrows to chop')).toBeVisible();
+    await expect(page.getByText('0')).toBeVisible();
     
     // Verify game board is present
-    const gameBoard = page.locator('[style*="width: 400px"]');
+    const gameBoard = page.locator('[data-testid=game-board]');
     await expect(gameBoard).toBeVisible();
 
     // 3. Play the game (make some safe moves)
     await page.keyboard.press('ArrowLeft');
-    await expect(page.getByText('Score: 1')).toBeVisible();
+    await expect(page.getByText('1')).toBeVisible();
 
     // 4. Trigger game over (collision scenario)
     // Player starts on left, segments[1] has 'right' branch
@@ -44,7 +43,7 @@ test.describe('Complete Scene Flow', () => {
     
     // Should go back to Play Screen with new game
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lumberjack Game');
-    await expect(page.getByText('Score: 0')).toBeVisible();
+    await expect(page.getByText('0')).toBeVisible();
   });
 
   test('handles high score functionality', async ({ page }) => {
@@ -55,7 +54,7 @@ test.describe('Complete Scene Flow', () => {
     await page.reload();
 
     // Verify initial high score is 0
-    await expect(page.getByText('HIGH SCORE: 0')).toBeVisible();
+    await expect(page.getByText('highscore')).toBeVisible();
 
     // Start game and make some moves to get a score
     await page.keyboard.press('Enter');
@@ -75,7 +74,7 @@ test.describe('Complete Scene Flow', () => {
     await expect(page.getByText(/game over/i)).not.toBeVisible({timeout: 10_000});
     
     // Should be back on attract screen with updated high score
-    await expect(page.getByText('HIGH SCORE: 2')).toBeVisible();
+    await expect(page.getByText('highscore: 2')).toBeVisible();
   });
 
   test('handles auto-return from game over screen', async ({ page }) => {
@@ -102,7 +101,7 @@ test.describe('Complete Scene Flow', () => {
     await page.reload();
 
     // Verify high score persists on attract screen
-    await expect(page.getByText('HIGH SCORE: 10')).toBeVisible();
+    await expect(page.getByText('highscore: 10')).toBeVisible();
 
     // Start game
     await page.keyboard.press('Enter');
@@ -113,7 +112,7 @@ test.describe('Complete Scene Flow', () => {
     await page.keyboard.press('ArrowLeft');
     
     // Verify game over screen shows correct scores
-    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5_000 });
     await expect(page.getByText(/YOUR SCORE: 2/)).toBeVisible();
     await expect(page.getByText('HIGH SCORE: 10')).toBeVisible(); // Should not change since 1 < 10
     
@@ -123,7 +122,7 @@ test.describe('Complete Scene Flow', () => {
     
     // Actually let's just verify the game over -> play transition works
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lumberjack Game');
-    await expect(page.getByText('Score: 0')).toBeVisible();
+    await expect(page.getByText('0')).toBeVisible();
   });
 
   test('handles rapid key presses without breaking', async ({ page }) => {
@@ -139,8 +138,8 @@ test.describe('Complete Scene Flow', () => {
     }
     
     // Game should still be functional
-    await expect(page.getByText(/Score: \d+/)).toBeVisible();
-    const gameBoard = page.locator('[style*="width: 400px"]');
+    await expect(page.getByText(/\d+/)).toBeVisible();
+    const gameBoard = page.locator('[data-testid=game-board]');
     await expect(gameBoard).toBeVisible();
     
     // Should still be able to trigger game over

@@ -36,7 +36,7 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
   }, [gameState.gameOver, gameState.score, onGameOver, gameState])
 
   return (
-    <ScreenContainer backgroundColor="#2c5234">
+    <ScreenContainer backgroundColor="#87CEEB">
       <div style={{ 
         position: 'relative',
         width: '100%',
@@ -67,7 +67,7 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
         {/* Overlay UI Elements */}
         <div style={{ 
           position: 'absolute',
-          top: '50px',
+          top: '462px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 10,

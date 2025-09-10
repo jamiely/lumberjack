@@ -305,9 +305,9 @@ describe('GameBoard', () => {
         />
       )
 
-      // Should render both animated trunk and branch
-      const animatedElements = container.querySelectorAll('[style*="z-index: 10"]')
-      expect(animatedElements.length).toBe(2) // trunk + branch
+      // Should render animated wrapper containing trunk and branch
+      const animatedWrappers = container.querySelectorAll('[style*="z-index: 10"]')
+      expect(animatedWrappers.length).toBe(1) // wrapper containing trunk + branch
     })
 
     it('does not render branches for animated segments with no branches', () => {
@@ -364,9 +364,9 @@ describe('GameBoard', () => {
         />
       )
 
-      // Should render elements for both segments (2 trunks + 2 branches)
-      const animatedElements = container.querySelectorAll('[style*="z-index: 10"]')
-      expect(animatedElements.length).toBe(4) // 2 trunks + 2 branches
+      // Should render wrapper elements for both segments
+      const animatedWrappers = container.querySelectorAll('[style*="z-index: 10"]')
+      expect(animatedWrappers.length).toBe(2) // 2 wrappers (each containing trunk + branch)
     })
 
     it('handles empty animated segments array gracefully', () => {

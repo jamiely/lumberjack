@@ -75,7 +75,7 @@ describe('ScreenContainer', () => {
     expect(container).toHaveStyle({
       margin: '0 auto',
       position: 'relative',
-      overflow: 'auto',
+      overflow: 'hidden',
       minHeight: '100vh',
       boxSizing: 'border-box'
     })

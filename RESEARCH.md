@@ -1,264 +1,276 @@
-# Research: TODO.md Implementation Analysis
+# RESEARCH.md
 
-## Overview
-The TODO.md file contains 5 specific UI/UX enhancements for the Timberman arcade game. These are primarily visual and cosmetic improvements rather than core gameplay mechanics. All items will be implemented together with comprehensive testing.
+## Implementation Plan Research for TODO.md Items
 
-## TODO Items Analysis (Updated with Requirements)
+This document provides detailed research and context for implementing the issues identified in TODO.md, updated with user requirements.
 
-### 1. Tree Segment Animation (Priority: High)
-**Task**: "As the player chops the tree, make the segment fly away in the direction opposite the player."
+## TODO Items Analysis (Updated with User Requirements)
 
-**Confirmed Requirements**:
-- Simple linear movement with little rotation (no complex physics)
-- Remove tree segment when it goes beyond screen bounds
-- Straight lines with rotation (not realistic arcs)
-- No performance constraints or object pooling needed
+### 1. Score Visibility Issue in Play Screen ✅ CLARIFIED
 
-**Technical Requirements**:
-- Add animation state to tree segments (position, velocity, rotation)
-- Calculate direction based on player position (left/right)
-- Create smooth transition from tree to flying segment
-- Remove segments when they exit 540x960 viewport bounds
+**Problem**: "The current score is not visible in the Play screen."
 
-**Implementation Strategy**:
-- Add `FlyingSegment` interface with position, velocity, rotation
-- Modify tree chopping logic to create flying segment instead of immediate removal
-- Add render layer for flying segments with simple animation loop
-- Use basic linear movement with rotation animation until out of bounds
+**User Requirements**:
+- Score should appear above the playfield
+- Keep current text color (no background panel needed)
+- Increase size for arcade cabinet viewing (36px adequate but can be larger)
 
-### 2. Background Styling (Priority: Medium)
-**Task**: "Remove the black border around the game. Have the blue color of the play field fill the entire background (set the body to that color)"
+**Current Implementation Analysis**:
+- Score is rendered in `src/components/scenes/PlayScreen.tsx:77-81`
+- Uses `ScoreDisplay` component positioned at top center with transform
+- Style: `position: 'absolute', top: '50px', left: '50%', transform: 'translateX(-50%)'`
+- Current fontSize: '36px' in `src/components/ScoreDisplay.tsx:8`
 
-**Confirmed Requirements**:
-- Use the same color as the existing play field (#87CEEB)
-- Must work with 540x960 development resolution
-- Maintain arcade cabinet compatibility (1080x1920)
+**Root Cause Identified** (CONFIRMED VIA BROWSER INSPECTION):
+- ScoreDisplay component has NO explicit text color defined (src/components/ScoreDisplay.tsx:8)
+- Component inherits CSS color: rgb(33, 53, 71) = #213547 (dark blue) from light mode media query
+- Score is positioned at top: 50px, left: 270px (center of screen) via PlayScreen.tsx positioning
+- This places score over SKY BLUE BACKGROUND (#87CEEB), NOT over brown trunk area
+- Dark blue text (#213547) against sky blue background (#87CEEB) creates invisible text
+- Browser inspection confirms: score element exists and is accessible but visually invisible
 
-**Technical Requirements**:
-- Set body background color to match game's existing color (#87CEEB)
-- Remove any border styling from canvas/screen elements
-- Ensure full coverage without black borders
+**Implementation Plan**:
+- Add explicit color property to ScoreDisplay component style object
+- Use high-contrast color against #87CEEB background (white or black)
+- Increase font size from 36px to 48px for better arcade visibility
 
-**Implementation Strategy**:
-- Update CSS body background-color to #87CEEB
-- Remove borders from ScreenContainer component
-- Ensure responsive design maintains full coverage
+### 2. Scroll Disable Issue ✅ CLARIFIED
 
-### 3. Attract Screen Improvements (Priority: Medium)
-**Task**: High score banner at top + game name floating in vertical middle
+**Problem**: "Disable scroll on the play field container (possibly root container)"
 
-**Updated Requirements**:
-- Remove current centered overlay (lines 42-93) containing title, high score, and controls
-- Move overlay content to bottom of screen instead of center
-- High score banner spans full width at top of screen
-- Game title centered vertically in screen
-- Banner should be just big enough to fit the text
+**User Requirements**:
+- Disable scrolling just on the root container (ScreenContainer)
+- Issue is probably with `overflow: 'auto'` setting
+- Don't prevent all page scrolling
 
-**Technical Requirements**:
-- Remove existing centered overlay with background and border styling
-- Create top banner overlay for high score spanning full width
-- Center game title vertically in screen (independent of banner and bottom content)
-- Move controls and "PRESS ANY BUTTON" to bottom overlay
-- Maintain arcade-appropriate font sizes for 540x960 → 1080x1920 scaling
+**Current Implementation Analysis**:
+- Main container: `src/components/ScreenContainer.tsx:14-30`
+- Current overflow setting: `overflow: 'auto'` (line 23)
 
-**Implementation Strategy**:
-- Replace centered overlay with separate positioned elements:
-  - Top banner for high score
-  - Vertically centered title
-  - Bottom overlay for controls and play prompt
+**Implementation Plan**:
+- Change ScreenContainer overflow from 'auto' to 'hidden'
+- Keep other scroll behaviors intact
 
-### 4. Play Screen Improvements (Priority: High)  
-**Task**: Center current score in upper middle, remove other text, hide game over text
+### 3. Background Height Cutoff Issue ✅ CLARIFIED
 
-**Confirmed Requirements**:
-- Score display should be 200% larger than current size
-- Center horizontally in upper middle area
-- Remove all extraneous text during gameplay
-- No specific font styling needed at this time
-- Ensure game over text doesn't appear on play screen
+**Problem**: "Body/HTML element background is cutoff at the bottom compared to the root container"
 
-**Technical Requirements**:
-- Increase score font size to 200% of current
-- Center score horizontally in upper middle area
-- Remove instructional text and game over messages from play screen
-- Make score display prominent for arcade visibility
+**User Requirements**:
+- Background color (#87CEEB) should fill entire viewport
+- There's a white strip at the bottom when scrolling down
+- Keep root container as-is, just ensure entire background is blue
+- Don't worry about screens smaller than 540x960px
 
-**Implementation Strategy**:
-- Update ScoreDisplay component to remove extra text
-- Increase font size significantly (200% increase)
-- Reposition score container to horizontal center, upper middle
-- Clean separation of game over display logic from play screen
+**Current Implementation Analysis**:
+- Background color inconsistency between elements
+- ScreenContainer has minHeight: 100vh but may not cover all cases
+- Need to investigate white strip issue
 
-### 5. Game Over Screen Cleanup (Priority: Low)
-**Task**: "Remove the text 'Returning to attract' from the game over screen"
+**Implementation Plan**:
+- Ensure all background elements use consistent #87CEEB color
+- Fix white strip issue at bottom of page
+- Maintain current container sizing
 
-**Confirmed Requirements**:
-- Remove countdown display text completely
-- Maintain auto-transition functionality (timer still works)
-- Keep all other game over elements intact
-- Manual testing will verify completion
+### 4. Attract Screen Overlay Issue ✅ CLARIFIED
 
-**Technical Requirements**:
-- Remove or hide the countdown text display
-- Preserve timer logic and auto-transition behavior
-- Keep score, high score, and restart prompt elements
+**Problem**: "There is some overlay on top of the Attract screen that makes the color of the playfield not match the background"
 
-**Implementation Strategy**:
-- Update GameOverScreen component to hide countdown text
-- Preserve timer functionality without visual display
+**User Requirements**:
+- AttractScreen should have same background color as PlayScreen (#87CEEB)
+- Both screens should have matching colored backgrounds
 
-## Implementation Approach (Finalized)
+**Current Implementation Analysis**:
+- AttractScreen ScreenContainer: `backgroundColor="#2c5234"` (dark forest green) 
+- PlayScreen ScreenContainer: `backgroundColor="#2c5234"` (also dark green)
+- GameBoard always uses #87CEEB background
+- GameBoard in static mode has 0.8 opacity
 
-### Confirmed Strategy
-- **Implementation Order**: All items implemented together, then presented as complete package
-- **Testing**: Manual testing by user, automated tests for UI changes required
-- **Development Environment**: Test using local npm run dev server at 540x960 resolution
-- **Game State Preservation**: All existing functionality must be preserved
+**Root Cause Identified**:
+- Both screens use dark green (#2c5234) container background
+- GameBoard uses sky blue (#87CEEB) background
+- In PlayScreen: opaque GameBoard covers container background
+- In AttractScreen: semi-transparent GameBoard (0.8 opacity) shows dark green underneath
 
-### Phase 1: Background & UI Cleanup (Quick wins)
-1. Fix body background to match play field color (#87CEEB)
-2. Remove game over countdown text display
-3. Clean up play screen ScoreDisplay component (remove extra text)
+**Implementation Plan**:
+- Change both AttractScreen and PlayScreen ScreenContainer to use #87CEEB
+- This will make backgrounds consistent across all screens
 
-### Phase 2: Layout Improvements  
-1. Center and resize play screen score (200% size, horizontal center, upper middle)
-2. Reposition attract screen elements (top banner + centered title)
+### 5. Branch Animation Issue ✅ CLARIFIED
 
-### Phase 3: Animation Enhancement
-1. Implement flying tree segments (linear movement with rotation until out of bounds)
+**Problem**: "After a chop and tree segment is animated out, the branch should remain affixed to the tree trunk. Right now it rotates independently."
 
-## Technical Specifications (Confirmed)
+**User Requirements**:
+- Treat segment as one object (branch + trunk) and rotate together
+- Branch should maintain relative position to trunk throughout animation
+- Keep existing rotation speed/physics
+- Render trunk and branch as single element that rotates together
 
-### Display Requirements
-- **Development Resolution**: 540x960 (base resolution for testing)
-- **Arcade Compatibility**: Must scale to 1080x1920 without breaking
-- **Color Scheme**: Use existing play field color (#87CEEB) for body background
+**Current Implementation Analysis**:
+- Trunk and branch rendered as separate elements with same rotation
+- Both rotate around their individual centers, not as a unit
+- Branch positioned relative to trunk but with independent transform origin
 
-### Animation Specifications
-- **Flying Segments**: Simple linear movement with rotation
-- **Duration**: Until segment exits screen bounds
-- **Physics**: No complex physics, gravity, or object pooling needed
-- **Performance**: No specific performance constraints
+**Implementation Plan**:
+- Refactor animated segment rendering to treat trunk+branch as single unit
+- Use wrapper container with single rotation transform
+- Position branch relative to trunk within the wrapper
+- Keep existing rotation calculation and speed
 
-### Testing Requirements
-- **Automated Tests**: Required for UI changes
-- **Game Loop Integration**: Must verify changes work with existing interactions  
-- **Manual Validation**: User will manually test all completed changes
-- **Screen-Specific Changes**: Apply only to relevant screens (attract/play/gameOver)
+## Current Architecture Context
 
-### Component Impact Assessment
-- **Low Risk**: Background CSS, text removal, score positioning
-- **Medium Risk**: Attract screen layout, flying segment animation  
-
-### **Complete File Analysis for Implementation**
-
-#### **Files Requiring Modification**
-
-**1. Flying Tree Segment Animation (TODO #1)**
-- `src/game/GameState.ts` - Add AnimatedSegment interface and state
-- `src/game/GameLogic.ts` - Modify performChop() to track chopped segments  
-- `src/components/GameBoard.tsx` - Add animation rendering logic
-- `src/hooks/useGameState.ts` - Add animation cleanup logic
-
-**2. Background Styling (TODO #2)**
-- `src/style.css` - Change body background-color from #242424 to #2c5234
-- `src/components/GameBoard.tsx` - Remove black border (line 27: `border: '2px solid #333'`)
-
-**3. Attract Screen Layout (TODO #3)**
-- `src/components/scenes/AttractScreen.tsx` - Restructure layout (lines 65-73 high score, lines 57-63 title)
-
-**4. Play Screen Score (TODO #4)**
-- `src/components/ScoreDisplay.tsx` - Remove extra text, 200% font increase
-- `src/components/scenes/PlayScreen.tsx` - Center score horizontally in upper middle
-
-**5. Game Over Screen (TODO #5)**
-- `src/components/scenes/GameOverScreen.tsx` - Hide countdown text (lines 134-139)
-
-#### **Current Implementation Details**
-
-**Tree Chopping Logic:**
-- Current: `src/game/GameLogic.ts` - `performChop()` function
-- Tree segments: `src/game/TreeSystem.ts` - `addNewSegmentToTree()` function
-- Rendering: `src/components/GameBoard.tsx`
-
-**Text Elements in PlayScreen to Remove:**
-
-**ScoreDisplay Component (`src/components/ScoreDisplay.tsx`):**
-- Line 10: "Score: {score}" → remove "Score: " prefix, display only the number
-- Lines 12-14: Instructions text → remove entirely ("Use left/right arrows to chop...")
-- Lines 15-19: Game over text → remove from play screen ("GAME OVER! Hit a branch...")
-
-**PlayScreen Component (`src/components/scenes/PlayScreen.tsx`):**
-- Lines 55-63: Hidden accessibility title → keep for accessibility (no change needed)
-
-**DebugPanel Component (`src/components/DebugPanel.tsx`):**
-- Entire debug panel → keep functionality, no changes needed (controlled by debug mode)
-
-**Current GameBoard Styling:**
-- Line 26: `backgroundColor: '#87CEEB'` (keep this)
-- Line 27: `border: '2px solid #333'` (remove this)
-
-**Current AttractScreen Structure to Change:**
-- Lines 42-93: Entire centered overlay → remove completely
-- Lines 57-63: Title ("LUMBERJACK") → extract and move to vertical center without overlay styling
-- Lines 65-73: High score display → extract and move to top banner format
-- Lines 75-82: "PRESS ANY BUTTON TO PLAY" → extract and move to bottom
-- Lines 84-92: Controls text → extract and move to bottom overlay
-
-#### **New Types/Interfaces Required**
-
-```typescript
-// src/game/GameState.ts additions
-interface AnimatedSegment {
-  branchSide: 'left' | 'right' | 'none'
-  animationId: string
-  startTime: number
-  direction: 'left' | 'right' 
-  startPosition: { x: number, y: number }
-}
-
-interface GameState {
-  // existing properties...
-  animatedSegments: AnimatedSegment[]
-}
+### Component Structure
+```
+App (src/App.tsx)
+└── SceneManager (src/components/SceneManager.tsx)
+    ├── AttractScreen (src/components/scenes/AttractScreen.tsx)
+    ├── PlayScreen (src/components/scenes/PlayScreen.tsx)
+    └── GameOverScreen (src/components/scenes/GameOverScreen.tsx)
 ```
 
-#### **Animation System Requirements**
-- **Current**: Only CSS keyframes (`@keyframes blink`, `@keyframes pulse`)
-- **Needed**: React animation system with useEffect + requestAnimationFrame
-- **Cleanup**: Remove segments when they exit 540x960 viewport bounds
-- **Movement**: Linear movement with rotation, no complex physics
+### Key Components and Their Responsibilities
 
-#### **Key Component Roles**
-1. **GameBoard.tsx** - Main rendering, segment animation layer
-2. **SceneManager.tsx** - Scene transitions (no changes needed)
-3. **GameState.ts** - Core state interface, animation properties
-4. **GameLogic.ts** - Game mechanics, chopped segment tracking
-5. **TreeSystem.ts** - Tree management (minimal changes)
-6. **useGameState.ts** - State hook, animation state management
+**PlayScreen** (`src/components/scenes/PlayScreen.tsx`):
+- Main game screen orchestration
+- Score display overlay (lines 68-81)
+- Debug panel overlay (lines 83-99)
+- GameBoard integration (lines 46-54)
 
-#### **Testing Files Requiring Updates**
-- `src/components/__tests__/ScoreDisplay.test.tsx` - Update for text removal
-- `src/components/scenes/__tests__/AttractScreen.test.tsx` - Update for layout changes  
-- `src/components/scenes/__tests__/PlayScreen.test.tsx` - Update for score positioning
-- `src/components/scenes/__tests__/GameOverScreen.test.tsx` - Update for countdown removal
-- `src/components/__tests__/GameBoard.test.tsx` - Add animation tests
-- `src/__tests__/GameplayIntegration.test.tsx` - Verify animations don't break gameplay
+**GameBoard** (`src/components/GameBoard.tsx`):
+- Canvas-like game rendering (540x960px)
+- Tree segment rendering (lines 94-120)
+- Player character rendering (lines 122-131)
+- Animated segment system (lines 134-175)
 
-## Risk Assessment & Mitigation
+**ScreenContainer** (`src/components/ScreenContainer.tsx`):
+- Fixed aspect ratio container (540x960px)
+- Background color management
+- Responsive centering
 
-### Confirmed Low Risk Items
-- Background styling changes (CSS only)
-- Text removal from GameOverScreen
-- ScoreDisplay component cleanup
+**ScoreDisplay** (`src/components/ScoreDisplay.tsx`):
+- Simple score text rendering (36px font)
+- No explicit styling for visibility
 
-### Confirmed Medium Risk Items  
-- Attract screen layout restructuring (banner overlay + title centering)
-- Flying segment animation system (new feature addition)
+### Styling Architecture
 
-### Mitigation Strategy
-- Implement all changes systematically
-- Maintain existing game functionality throughout
-- Test at 540x960 resolution during development
-- Add automated tests for UI changes
-- User will provide final manual validation
+**Global Styles** (`src/style.css`):
+- Root background: #87CEEB (sky blue)
+- Body/HTML: Full height, centered layout
+- App container: Full size, flex centering
+
+**Component Styles**:
+- Inline styles throughout components
+- No CSS modules or styled-components
+- Fixed pixel-based positioning
+
+### Game State Management
+
+**Core State** (`src/game/GameState.ts`):
+- TreeSegment interface for static segments
+- AnimatedSegment interface for flying pieces
+- GameState interface with player, score, tree data
+
+**Game Logic** (`src/game/GameLogic.ts`):
+- performChop: Creates animated segments, updates score
+- Animation creation: Lines 34-43 with position and timing data
+
+### Animation System
+
+**Implementation** (`src/components/GameBoard.tsx:31-81`):
+- RequestAnimationFrame-based animation loop
+- 1000ms duration, 500px/second speed
+- Automatic cleanup when segments leave bounds
+- Independent rotation for trunk and branch pieces
+
+## Technical Debt and Considerations
+
+### Styling Approach
+- Heavy reliance on inline styles makes maintenance difficult
+- No consistent color/spacing variables
+- Limited responsive design considerations
+
+### Animation System
+- Current animation creates visual artifacts (independent branch rotation)
+- No animation state management beyond simple arrays
+- Performance considerations for multiple concurrent animations
+
+### Component Architecture
+- Good separation between game logic and presentation
+- Clear screen management pattern
+- Could benefit from more granular component breakdown
+
+## Implementation Complexity Assessment (Updated)
+
+1. **Score Visibility** - LOW: Investigate visibility issue, possibly increase font size
+2. **Scroll Disable** - LOW: Change overflow property in ScreenContainer
+3. **Background Height** - MEDIUM: Fix white strip issue and ensure consistent background color
+4. **Attract Screen Overlay** - LOW: Change ScreenContainer background colors to #87CEEB
+5. **Branch Animation** - MEDIUM: Refactor to use wrapper container with single rotation
+
+## Detailed Implementation Plan
+
+### Phase 1: Quick CSS Fixes (Low Risk)
+1. **Scroll Disable**: Change `src/components/ScreenContainer.tsx:23` from `overflow: 'auto'` to `overflow: 'hidden'`
+2. **Attract Screen Background**: Change `src/components/scenes/AttractScreen.tsx:25` from `backgroundColor="#2c5234"` to `backgroundColor="#87CEEB"`
+3. **Play Screen Background**: Change `src/components/scenes/PlayScreen.tsx:39` from `backgroundColor="#2c5234"` to `backgroundColor="#87CEEB"`
+
+### Phase 2: Background Color Investigation (Medium Risk)
+1. **White Strip Issue**: Investigate and fix white strip appearing at bottom when scrolling
+   - Check all elements using background colors
+   - Ensure consistent #87CEEB usage across all containers
+   - Test scrolling behavior after changes
+
+### Phase 3: Score Visibility Investigation (Low Risk)
+1. **Diagnose Issue**: Determine why score is not visible
+   - Check text color inheritance
+   - Verify positioning doesn't place it off-screen
+   - Test contrast against #87CEEB background
+2. **Potential Solutions**:
+   - Add explicit text color if needed
+   - Increase font size beyond 36px
+   - Adjust positioning if necessary
+
+### Phase 4: Animation Refactoring (Medium Risk)
+1. **Branch Animation Fix**: Modify `src/components/GameBoard.tsx:134-175`
+   - Create wrapper div for each animated segment
+   - Apply rotation transform to wrapper
+   - Position trunk and branch as children within wrapper
+   - Ensure branch maintains relative position to trunk
+
+## Testing Strategy
+
+### Visual Validation Required
+1. **Color Consistency**: Verify all screens have matching #87CEEB backgrounds
+2. **Score Visibility**: Confirm score is clearly visible during gameplay
+3. **Animation Physics**: Test that branch stays attached to trunk during rotation
+4. **Scroll Behavior**: Verify no unwanted scrolling in game container
+
+### Regression Testing
+- Ensure all existing functionality remains intact
+- Test keyboard input (arrow keys) still works
+- Verify game logic (chopping, collision detection) unchanged
+- Confirm screen transitions work properly
+
+## Risk Assessment
+
+**Low Risk Items** (Phases 1 & 3):
+- Simple CSS property changes
+- No logic modifications
+- Easy to revert if issues arise
+
+**Medium Risk Items** (Phases 2 & 4):
+- Background color investigation may reveal deeper CSS issues
+- Animation refactoring touches complex rendering logic
+- Changes affect visual presentation significantly
+
+## Files to Modify
+
+### Confirmed Changes:
+1. `src/components/ScreenContainer.tsx` - overflow property
+2. `src/components/scenes/AttractScreen.tsx` - background color
+3. `src/components/scenes/PlayScreen.tsx` - background color
+4. `src/components/GameBoard.tsx` - animation rendering (branch fix)
+
+### Investigation Required:
+1. `src/style.css` - background color consistency
+2. `src/components/ScoreDisplay.tsx` - text visibility
+3. Various components - white strip issue source

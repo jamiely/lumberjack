@@ -20,7 +20,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         backgroundColor,
         margin: '0 auto',
         position: 'relative',
-        overflow: 'auto',
+        overflow: 'hidden',
         minHeight: '100vh',
         boxSizing: 'border-box'
       }}

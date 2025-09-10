@@ -22,7 +22,7 @@ describe('ScoreDisplay', () => {
     render(<ScoreDisplay score={8} gameOver={false} />)
     const scoreElement = screen.getByText('8')
     expect(scoreElement).toHaveStyle({
-      fontSize: '36px'
+      fontSize: '48px'
     })
   })
 

@@ -22,7 +22,7 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
   }, [onStartGame])
 
   return (
-    <ScreenContainer backgroundColor="#2c5234">
+    <ScreenContainer backgroundColor="#87CEEB">
       <div style={{ 
         position: 'relative',
         width: '100%',

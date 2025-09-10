@@ -28,7 +28,7 @@ export default function GameBoard({
     return mode === 'interactive' ? 'auto' : 'none'
   }
 
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number>(0)
   const [currentTime, setCurrentTime] = useState(0)
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function GameBoard({
       overflow: 'hidden',
       opacity: getOpacity(),
       pointerEvents: getPointerEvents()
-    }}>
+    }} data-testId="game-board">
       {/* Tree segments */}
       {treeSegments.map((segment, index) => (
         <div key={index}>
@@ -141,35 +141,39 @@ export default function GameBoard({
         
         return (
           <div key={segment.animationId}>
-            {/* Animated trunk segment */}
+            {/* Wrapper div for rotating trunk+branch as single unit */}
             <div style={{
               position: 'absolute',
               left: `${currentX}px`,
               bottom: `${segment.startPosition.y}px`,
-              width: '67px',
-              height: '115px',
-              backgroundColor: '#8B4513',
-              border: '2px solid #000',
               transform: `rotate(${rotation}deg)`,
-              transformOrigin: 'center',
+              transformOrigin: 'center center',
               zIndex: 10
-            }} />
-            
-            {/* Animated branch if exists */}
-            {segment.branchSide !== 'none' && (
+            }}>
+              {/* Animated trunk segment positioned at wrapper origin */}
               <div style={{
                 position: 'absolute',
-                left: `${currentX + (segment.branchSide === 'left' ? -67 : 67)}px`,
-                bottom: `${segment.startPosition.y + 39}px`,
+                left: '0px',
+                bottom: '0px',
                 width: '67px',
-                height: '38px',
-                backgroundColor: '#654321',
-                border: '2px solid #000',
-                transform: `rotate(${rotation}deg)`,
-                transformOrigin: 'center',
-                zIndex: 10
+                height: '115px',
+                backgroundColor: '#8B4513',
+                border: '2px solid #000'
               }} />
-            )}
+              
+              {/* Animated branch positioned relative to trunk within wrapper */}
+              {segment.branchSide !== 'none' && (
+                <div style={{
+                  position: 'absolute',
+                  left: segment.branchSide === 'left' ? '-67px' : '67px',
+                  bottom: '39px',
+                  width: '67px',
+                  height: '38px',
+                  backgroundColor: '#654321',
+                  border: '2px solid #000'
+                }} />
+              )}
+            </div>
           </div>
         )
       })}
