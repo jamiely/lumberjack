@@ -1,6 +1,7 @@
 import type { GameState, AnimatedSegment } from './GameState'
 import { createInitialGameState } from './GameState'
 import { addNewSegmentToTree } from './TreeSystem'
+import { gameEvents } from './GameEvents'
 
 export const checkCollision = (
   playerSide: 'left' | 'right', 
@@ -21,6 +22,8 @@ export const performChop = (
   const collision = checkCollision(side, gameState.treeSegments)
   
   if (collision) {
+    gameEvents.emit('hit')
+    gameEvents.emit('gameOver')
     return {
       ...gameState,
       gameOver: true
@@ -41,6 +44,8 @@ export const performChop = (
       y: 38   // Bottom segment y position
     }
   }
+
+  gameEvents.emit('chop')
 
   return {
     ...gameState,
