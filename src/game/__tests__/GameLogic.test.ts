@@ -1,9 +1,15 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { checkCollision, performChop, resetGame, toggleDebug } from '../GameLogic'
 import type { GameState, TreeSegment } from '../GameState'
 import { createInitialGameState } from '../GameState'
+import { gameEvents } from '../GameEvents'
 
 describe('GameLogic', () => {
+  beforeEach(() => {
+    gameEvents.clear()
+    vi.clearAllMocks()
+  })
+
   describe('checkCollision', () => {
     it('returns true when player side matches next segment branch', () => {
       const segments: TreeSegment[] = [
@@ -50,7 +56,7 @@ describe('GameLogic', () => {
       expect(result).toBe(gameState)
     })
 
-    it('sets game over when collision occurs', () => {
+    it('sets game over when collision occurs and emits hit and gameOver events', () => {
       const gameState: GameState = {
         ...createInitialGameState(),
         treeSegments: [
@@ -60,12 +66,30 @@ describe('GameLogic', () => {
         ]
       }
       
+      const hitHandler = vi.fn()
+      const gameOverHandler = vi.fn()
+      gameEvents.on('hit', hitHandler)
+      gameEvents.on('gameOver', gameOverHandler)
+      
       const result = performChop(gameState, 'left')
+      
       expect(result.gameOver).toBe(true)
       expect(result.score).toBe(0) // score should not increase on collision
+      expect(hitHandler).toHaveBeenCalledOnce()
+      expect(gameOverHandler).toHaveBeenCalledOnce()
+      expect(hitHandler).toHaveBeenCalledWith({
+        type: 'hit',
+        timestamp: expect.any(Number),
+        data: undefined
+      })
+      expect(gameOverHandler).toHaveBeenCalledWith({
+        type: 'gameOver',
+        timestamp: expect.any(Number),
+        data: undefined
+      })
     })
 
-    it('updates player side, increases score, and shifts tree when no collision', () => {
+    it('updates player side, increases score, and shifts tree when no collision and emits chop event', () => {
       const gameState: GameState = {
         ...createInitialGameState(),
         playerSide: 'left',
@@ -76,6 +100,9 @@ describe('GameLogic', () => {
           { branchSide: 'left' }
         ]
       }
+      
+      const chopHandler = vi.fn()
+      gameEvents.on('chop', chopHandler)
       
       vi.spyOn(Math, 'random').mockReturnValue(0.8) // generates 'none'
       
@@ -88,6 +115,12 @@ describe('GameLogic', () => {
       expect(result.treeSegments[0]).toEqual({ branchSide: 'right' })
       expect(result.treeSegments[1]).toEqual({ branchSide: 'left' })
       expect(result.treeSegments[2]).toEqual({ branchSide: 'none' })
+      expect(chopHandler).toHaveBeenCalledOnce()
+      expect(chopHandler).toHaveBeenCalledWith({
+        type: 'chop',
+        timestamp: expect.any(Number),
+        data: undefined
+      })
     })
   })
 
