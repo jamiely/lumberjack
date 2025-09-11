@@ -45,16 +45,17 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [onStartGame, initializeAudioOnFirstInteraction])
 
-  // Add click handler to initialize audio on first mouse interaction (doesn't start game)
+  // Add click handler to initialize audio and start game
   useEffect(() => {
     const handleClick = () => {
-      // Initialize audio on first click (but don't start the game)
+      // Initialize audio on first click and start the game
       initializeAudioOnFirstInteraction()
+      onStartGame()
     }
 
     window.addEventListener('click', handleClick)
     return () => window.removeEventListener('click', handleClick)
-  }, [initializeAudioOnFirstInteraction])
+  }, [initializeAudioOnFirstInteraction, onStartGame])
 
   return (
     <ScreenContainer backgroundColor="#87CEEB">

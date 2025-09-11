@@ -7,6 +7,7 @@ import GameBoard from '../GameBoard'
 import ScoreDisplay from '../ScoreDisplay'
 import DebugPanel from '../DebugPanel'
 import { TimerBar } from '../TimerBar'
+import { TREE_TRUNK_LEFT_POSITION, TREE_TRUNK_WIDTH } from '../../constants'
 import type { GameState } from '../../game/GameState'
 
 interface PlayScreenProps {
@@ -27,6 +28,34 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
     },
     onToggleDebug: toggleDebugMode
   })
+
+  // Handle clicks for left/right chopping
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (gameState.gameOver) return
+      
+      // Get the tree center position (trunk left + half trunk width)
+      const treeCenterX = TREE_TRUNK_LEFT_POSITION + TREE_TRUNK_WIDTH / 2
+      
+      // Get click position relative to the game board
+      const target = e.target as HTMLElement
+      const gameBoard = target.closest('[data-testid="game-board"]') as HTMLElement
+      if (!gameBoard) return
+      
+      const gameBoardRect = gameBoard.getBoundingClientRect()
+      const clickX = e.clientX - gameBoardRect.left
+      
+      // Determine if click was on left or right side of tree center
+      if (clickX < treeCenterX) {
+        chop('left')
+      } else {
+        chop('right')
+      }
+    }
+
+    window.addEventListener('click', handleClick)
+    return () => window.removeEventListener('click', handleClick)
+  }, [chop, gameState.gameOver])
 
   // Detect game over and trigger callback
   useEffect(() => {
