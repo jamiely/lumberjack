@@ -21,6 +21,8 @@ export interface GameState {
   maxTime: number
 }
 
+import { INITIAL_TIME_REMAINING_SEC, MAX_TIME_SEC } from '../constants'
+
 export const createInitialGameState = (): GameState => ({
   playerSide: 'left',
   score: 0,
@@ -37,6 +39,6 @@ export const createInitialGameState = (): GameState => ({
     { branchSide: 'left' }
   ],
   animatedSegments: [],
-  timeRemaining: 5.0,
-  maxTime: 5.0
+  timeRemaining: INITIAL_TIME_REMAINING_SEC,
+  maxTime: MAX_TIME_SEC
 })

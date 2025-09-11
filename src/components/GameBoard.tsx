@@ -1,5 +1,34 @@
 import { useEffect, useRef, useState } from 'react'
 import type { TreeSegment, AnimatedSegment } from '../game/GameState'
+import {
+  GAME_BOARD_WIDTH,
+  GAME_BOARD_HEIGHT,
+  GAME_BOARD_BACKGROUND_COLOR,
+  PLAYER_WIDTH,
+  PLAYER_HEIGHT,
+  PLAYER_BOTTOM_OFFSET,
+  PLAYER_LEFT_POSITION,
+  PLAYER_RIGHT_POSITION,
+  TREE_TRUNK_WIDTH,
+  TREE_TRUNK_HEIGHT,
+  TREE_TRUNK_LEFT_POSITION,
+  TREE_TRUNK_BOTTOM_OFFSET,
+  TREE_SEGMENT_VERTICAL_SPACING,
+  TREE_TRUNK_COLOR,
+  TREE_TRUNK_BORDER,
+  BRANCH_WIDTH,
+  BRANCH_HEIGHT,
+  BRANCH_LEFT_POSITION,
+  BRANCH_RIGHT_POSITION,
+  BRANCH_VERTICAL_OFFSET,
+  BRANCH_COLOR,
+  BRANCH_BORDER,
+  ANIMATION_DURATION,
+  ANIMATION_SPEED,
+  ANIMATION_OUT_OF_BOUNDS_LEFT,
+  ANIMATION_OUT_OF_BOUNDS_RIGHT,
+  ANIMATED_BRANCH_OFFSET
+} from '../constants'
 
 interface GameBoardProps {
   treeSegments: TreeSegment[]
@@ -49,17 +78,15 @@ export default function GameBoard({
       // Check for segments to remove
       animatedSegments.forEach(segment => {
         const elapsed = timestamp - segment.startTime
-        const animationDuration = 1000 // 1 second for smoother motion
-        const speed = 500 // pixels per second - balanced speed
-        const distance = speed * (elapsed / 1000)
+        const distance = ANIMATION_SPEED * (elapsed / 1000)
         
         // Remove segment if animation is complete or out of bounds
-        if (elapsed > animationDuration) {
+        if (elapsed > ANIMATION_DURATION) {
           onRemoveAnimatedSegment?.(segment.animationId)
         } else {
-          // Check if segment has moved out of bounds (540px width + buffer)
+          // Check if segment has moved out of bounds
           const currentX = segment.startPosition.x + (segment.direction === 'right' ? distance : -distance)
-          if (currentX < -150 || currentX > 690) {
+          if (currentX < ANIMATION_OUT_OF_BOUNDS_LEFT || currentX > ANIMATION_OUT_OF_BOUNDS_RIGHT) {
             onRemoveAnimatedSegment?.(segment.animationId)
           }
         }
@@ -83,9 +110,9 @@ export default function GameBoard({
   return (
     <div style={{ 
       position: 'relative', 
-      width: '540px', 
-      height: '960px', 
-      backgroundColor: '#87CEEB',
+      width: `${GAME_BOARD_WIDTH}px`, 
+      height: `${GAME_BOARD_HEIGHT}px`, 
+      backgroundColor: GAME_BOARD_BACKGROUND_COLOR,
       overflow: 'hidden',
       opacity: getOpacity(),
       pointerEvents: getPointerEvents()
@@ -96,24 +123,24 @@ export default function GameBoard({
           {/* Tree trunk segment */}
           <div style={{
             position: 'absolute',
-            left: '236px',
-            bottom: `${index * 115 + 38}px`,
-            width: '67px',
-            height: '115px',
-            backgroundColor: '#8B4513',
-            border: '2px solid #000'
+            left: `${TREE_TRUNK_LEFT_POSITION}px`,
+            bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + TREE_TRUNK_BOTTOM_OFFSET}px`,
+            width: `${TREE_TRUNK_WIDTH}px`,
+            height: `${TREE_TRUNK_HEIGHT}px`,
+            backgroundColor: TREE_TRUNK_COLOR,
+            border: TREE_TRUNK_BORDER
           }} />
           
           {/* Branch */}
           {segment.branchSide !== 'none' && (
             <div style={{
               position: 'absolute',
-              left: segment.branchSide === 'left' ? '169px' : '304px',
-              bottom: `${index * 115 + 77}px`,
-              width: '67px',
-              height: '38px',
-              backgroundColor: '#654321',
-              border: '2px solid #000'
+              left: segment.branchSide === 'left' ? `${BRANCH_LEFT_POSITION}px` : `${BRANCH_RIGHT_POSITION}px`,
+              bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + BRANCH_VERTICAL_OFFSET}px`,
+              width: `${BRANCH_WIDTH}px`,
+              height: `${BRANCH_HEIGHT}px`,
+              backgroundColor: BRANCH_COLOR,
+              border: BRANCH_BORDER
             }} />
           )}
         </div>
@@ -122,10 +149,10 @@ export default function GameBoard({
       {/* Player */}
       <div style={{
         position: 'absolute',
-        left: playerSide === 'left' ? '135px' : '337px',
-        bottom: '38px',
-        width: '40px',
-        height: '77px',
+        left: playerSide === 'left' ? `${PLAYER_LEFT_POSITION}px` : `${PLAYER_RIGHT_POSITION}px`,
+        bottom: `${PLAYER_BOTTOM_OFFSET}px`,
+        width: `${PLAYER_WIDTH}px`,
+        height: `${PLAYER_HEIGHT}px`,
         backgroundColor: gameOver ? 'red' : 'blue',
         border: '2px solid #000'
       }} />
@@ -133,8 +160,7 @@ export default function GameBoard({
       {/* Animated flying segments */}
       {animatedSegments.map(segment => {
         const elapsed = currentTime - segment.startTime
-        const speed = 500 // pixels per second - match the animation loop speed
-        const distance = speed * (elapsed / 1000)
+        const distance = ANIMATION_SPEED * (elapsed / 1000)
         
         const currentX = segment.startPosition.x + (segment.direction === 'right' ? distance : -distance)
         const rotation = (elapsed * 0.36) % 360 // Smooth rotation - about 1 full rotation per second
@@ -155,22 +181,22 @@ export default function GameBoard({
                 position: 'absolute',
                 left: '0px',
                 bottom: '0px',
-                width: '67px',
-                height: '115px',
-                backgroundColor: '#8B4513',
-                border: '2px solid #000'
+                width: `${TREE_TRUNK_WIDTH}px`,
+                height: `${TREE_TRUNK_HEIGHT}px`,
+                backgroundColor: TREE_TRUNK_COLOR,
+                border: TREE_TRUNK_BORDER
               }} />
               
               {/* Animated branch positioned relative to trunk within wrapper */}
               {segment.branchSide !== 'none' && (
                 <div style={{
                   position: 'absolute',
-                  left: segment.branchSide === 'left' ? '-67px' : '67px',
-                  bottom: '39px',
-                  width: '67px',
-                  height: '38px',
-                  backgroundColor: '#654321',
-                  border: '2px solid #000'
+                  left: segment.branchSide === 'left' ? `-${BRANCH_WIDTH}px` : `${BRANCH_WIDTH}px`,
+                  bottom: `${ANIMATED_BRANCH_OFFSET}px`,
+                  width: `${BRANCH_WIDTH}px`,
+                  height: `${BRANCH_HEIGHT}px`,
+                  backgroundColor: BRANCH_COLOR,
+                  border: BRANCH_BORDER
                 }} />
               )}
             </div>

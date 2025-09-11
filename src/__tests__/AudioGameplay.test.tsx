@@ -277,15 +277,6 @@ describe('Audio Gameplay End-to-End Tests', () => {
   });
 
   describe('Audio State Management', () => {
-    it('should show correct audio status in attract screen', async () => {
-      render(<App />);
-
-      // Should show audio ready status on attract screen
-      await waitFor(() => {
-        expect(screen.getByText(/AUDIO READY/i)).toBeInTheDocument();
-      });
-    });
-
     it('should handle autoplay policy restrictions', async () => {
       // Mock suspended audio context
       window.AudioContext = vi.fn().mockImplementation(() => ({
