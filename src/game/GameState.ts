@@ -37,6 +37,6 @@ export const createInitialGameState = (): GameState => ({
     { branchSide: 'left' }
   ],
   animatedSegments: [],
-  timeRemaining: 10.0,
-  maxTime: 10.0
+  timeRemaining: 5.0,
+  maxTime: 5.0
 })
