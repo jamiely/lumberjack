@@ -1,10 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { GameState } from '../game/GameState'
 import { createInitialGameState } from '../game/GameState'
-import { performChop, resetGame, toggleDebug } from '../game/GameLogic'
+import { performChop, resetGame, toggleDebug, updateTimer } from '../game/GameLogic'
 
 export function useGameState() {
   const [gameState, setGameState] = useState<GameState>(createInitialGameState())
+
+  // Timer update effect
+  useEffect(() => {
+    if (gameState.gameOver) return
+
+    const interval = setInterval(() => {
+      setGameState(current => updateTimer(current, 0.1)) // Update every 100ms
+    }, 100)
+
+    return () => clearInterval(interval)
+  }, [gameState.gameOver])
 
   const chop = (side: 'left' | 'right') => {
     setGameState(current => performChop(current, side))

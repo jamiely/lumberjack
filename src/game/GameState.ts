@@ -17,6 +17,8 @@ export interface GameState {
   showDebug: boolean
   treeSegments: TreeSegment[]
   animatedSegments: AnimatedSegment[]
+  timeRemaining: number
+  maxTime: number
 }
 
 export const createInitialGameState = (): GameState => ({
@@ -34,5 +36,7 @@ export const createInitialGameState = (): GameState => ({
     { branchSide: 'none' },
     { branchSide: 'left' }
   ],
-  animatedSegments: []
+  animatedSegments: [],
+  timeRemaining: 10.0,
+  maxTime: 10.0
 })

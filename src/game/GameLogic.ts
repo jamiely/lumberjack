@@ -52,7 +52,8 @@ export const performChop = (
     playerSide: side,
     score: gameState.score + 1,
     treeSegments: addNewSegmentToTree(gameState.treeSegments),
-    animatedSegments: [...gameState.animatedSegments, animatedSegment]
+    animatedSegments: [...gameState.animatedSegments, animatedSegment],
+    timeRemaining: Math.min(gameState.maxTime, gameState.timeRemaining + 1.5)
   }
 }
 
@@ -64,5 +65,31 @@ export const toggleDebug = (gameState: GameState): GameState => {
   return {
     ...gameState,
     showDebug: !gameState.showDebug
+  }
+}
+
+export const updateTimer = (
+  gameState: GameState, 
+  deltaTime: number
+): GameState => {
+  if (gameState.gameOver) {
+    return gameState
+  }
+
+  const newTimeRemaining = Math.max(0, gameState.timeRemaining - deltaTime)
+  
+  // Game over if timer expires
+  if (newTimeRemaining <= 0) {
+    gameEvents.emit('gameOver')
+    return {
+      ...gameState,
+      timeRemaining: 0,
+      gameOver: true
+    }
+  }
+
+  return {
+    ...gameState,
+    timeRemaining: newTimeRemaining
   }
 }

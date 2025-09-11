@@ -5,6 +5,7 @@ import { ScreenContainer } from '../ScreenContainer'
 import GameBoard from '../GameBoard'
 import ScoreDisplay from '../ScoreDisplay'
 import DebugPanel from '../DebugPanel'
+import { TimerBar } from '../TimerBar'
 import type { GameState } from '../../game/GameState'
 
 interface PlayScreenProps {
@@ -63,6 +64,21 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
         }}>
           Lumberjack Game
         </h1>
+
+        {/* Timer Bar */}
+        <div style={{ 
+          position: 'absolute',
+          top: '347px',
+          left: '10px',
+          right: '10px',
+          zIndex: 10,
+          pointerEvents: 'none'
+        }}>
+          <TimerBar 
+            timeRemaining={gameState.timeRemaining}
+            maxTime={gameState.maxTime}
+          />
+        </div>
 
         {/* Overlay UI Elements */}
         <div style={{ 
