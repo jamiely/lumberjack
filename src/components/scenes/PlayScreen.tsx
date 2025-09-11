@@ -1,8 +1,7 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useGameState } from '../../hooks/useGameState'
 import { useKeyboardInput } from '../../hooks/useKeyboardInput'
 import { useAudioEventHandlers } from '../../hooks/useAudioEventHandlers'
-import { useAudioContext } from '../../audio'
 import { ScreenContainer } from '../ScreenContainer'
 import GameBoard from '../GameBoard'
 import ScoreDisplay from '../ScoreDisplay'
@@ -16,36 +15,18 @@ interface PlayScreenProps {
 
 export default function PlayScreen({ onGameOver }: PlayScreenProps) {
   const { gameState, chop, reset, toggleDebugMode, removeAnimatedSegment } = useGameState()
-  const { initializeAudio, isInitialized } = useAudioContext()
-  const audioInitializedRef = useRef(false)
   
   // Initialize audio event handlers (subscribes to game events)
   useAudioEventHandlers()
 
   useKeyboardInput({
-    onChopLeft: () => {
-      initializeAudioOnFirstInteraction()
-      chop('left')
-    },
-    onChopRight: () => {
-      initializeAudioOnFirstInteraction()
-      chop('right')
-    },
+    onChopLeft: () => chop('left'),
+    onChopRight: () => chop('right'),
     onReset: () => {
       if (gameState.gameOver) reset()
     },
     onToggleDebug: toggleDebugMode
   })
-
-  // Initialize audio on first user interaction (required by browsers)
-  const initializeAudioOnFirstInteraction = () => {
-    if (!audioInitializedRef.current && !isInitialized) {
-      audioInitializedRef.current = true
-      initializeAudio().catch(error => {
-        console.warn('Failed to initialize audio:', error)
-      })
-    }
-  }
 
   // Detect game over and trigger callback
   useEffect(() => {

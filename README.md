@@ -155,3 +155,8 @@ The project uses modern ESM-only configuration and requires Node.js with ES2022 
 
 - 4/5 Playwright E2E tests currently fail due to timing/deterministic issues
 - See [PROGRESS.md](PROGRESS.md) for detailed development status and debugging information
+
+## Credit
+
+* [Summer sunday background theme](https://opengameart.org/content/summer-sunday)
+* [NES 8-bit sound effects](https://opengameart.org/content/nes-8-bit-sound-effects)

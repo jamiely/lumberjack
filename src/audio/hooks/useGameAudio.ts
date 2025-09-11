@@ -10,6 +10,9 @@ const SOUND_VOLUMES = {
   timerWarning: 0.6 // Moderate volume - warning but not overwhelming
 } as const;
 
+// Background music volume (20% as specified in requirements)
+const BACKGROUND_MUSIC_VOLUME = 0.2;
+
 export const useGameAudio = () => {
   const { audioManager } = useAudioContext();
   const { settings } = useGameSettings();
@@ -46,10 +49,26 @@ export const useGameAudio = () => {
     }
   }, [audioManager, settings.audio.enabled, settings.audio.sfxVolume, settings.audio.masterVolume]);
   
+  const playBackgroundMusic = useCallback(() => {
+    if (settings.audio.enabled && audioManager?.isReady) {
+      // Set background music volume (20% of master volume)
+      audioManager.setBackgroundMusicVolume(settings.audio.masterVolume * BACKGROUND_MUSIC_VOLUME);
+      audioManager.playBackgroundMusic('background');
+    }
+  }, [audioManager, settings.audio.enabled, settings.audio.masterVolume]);
+  
+  const stopBackgroundMusic = useCallback(() => {
+    if (audioManager?.isReady) {
+      audioManager.stopBackgroundMusic();
+    }
+  }, [audioManager]);
+  
   return { 
     playChopSound, 
     playHitSound, 
     playGameOverSound, 
-    playTimerWarning 
+    playTimerWarning,
+    playBackgroundMusic,
+    stopBackgroundMusic
   };
 };

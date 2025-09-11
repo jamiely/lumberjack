@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import { ScreenContainer } from '../ScreenContainer'
 import GameBoard from '../GameBoard'
 import { createInitialGameState } from '../../game/GameState'
-import { useAudioContext } from '../../audio'
+import { useAudioContext, useGameAudio } from '../../audio'
 
 interface AttractScreenProps {
   highScore: number
@@ -11,17 +11,50 @@ interface AttractScreenProps {
 
 export default function AttractScreen({ highScore, onStartGame }: AttractScreenProps) {
   const initialGameState = createInitialGameState()
-  const { audioState } = useAudioContext()
+  const { initializeAudio, isInitialized, audioState } = useAudioContext()
+  const { playBackgroundMusic } = useGameAudio()
+
+  // Initialize audio and play background music on user interaction
+  const initializeAudioOnFirstInteraction = useCallback(() => {
+    // If audio is not initialized, initialize it first
+    if (!isInitialized) {
+      initializeAudio()
+        .then(() => {
+          console.log('Audio initialized on first interaction in AttractScreen, starting background music')
+          playBackgroundMusic()
+        })
+        .catch(error => {
+          console.warn('Failed to initialize audio:', error)
+        })
+    } else {
+      // Audio is already initialized, just start background music
+      console.log('Audio already initialized, starting background music on user interaction')
+      playBackgroundMusic()
+    }
+  }, [isInitialized, initializeAudio, playBackgroundMusic])
 
   useEffect(() => {
     const handleKeyPress = () => {
+      // Initialize audio on first keypress
+      initializeAudioOnFirstInteraction()
       // Any key press starts the game
       onStartGame()
     }
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [onStartGame])
+  }, [onStartGame, initializeAudioOnFirstInteraction])
+
+  // Add click handler to initialize audio on first mouse interaction (doesn't start game)
+  useEffect(() => {
+    const handleClick = () => {
+      // Initialize audio on first click (but don't start the game)
+      initializeAudioOnFirstInteraction()
+    }
+
+    window.addEventListener('click', handleClick)
+    return () => window.removeEventListener('click', handleClick)
+  }, [initializeAudioOnFirstInteraction])
 
   return (
     <ScreenContainer backgroundColor="#87CEEB">

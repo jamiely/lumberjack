@@ -46,6 +46,34 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, arcadeMo
     }
   }, [audioManager, isInitialized, audioState]);
 
+  // Try to initialize audio and play background music immediately on mount
+  const tryImmediateMusic = useCallback(async () => {
+    try {
+      await initializeAudio();
+      // After successful initialization, try to play background music
+      if (audioManager.isReady) {
+        console.log('Attempting immediate background music playback');
+        audioManager.setBackgroundMusicVolume(0.2); // 20% volume as specified
+        // Only try to play if the background asset is available
+        if (audioManager.hasAudioBuffer('background')) {
+          audioManager.playBackgroundMusic('background');
+        }
+      }
+    } catch (error) {
+      console.log('Immediate background music failed (expected without CLI flags):', error);
+      // This is expected behavior in browsers without autoplay policy bypass
+    }
+  }, [audioManager, initializeAudio]);
+
+  // Attempt immediate playback on mount (skip in test environment)
+  useEffect(() => {
+    // Skip immediate music attempt in test environment
+    if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') {
+      return;
+    }
+    tryImmediateMusic();
+  }, [tryImmediateMusic]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {

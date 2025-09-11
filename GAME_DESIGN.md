@@ -443,8 +443,10 @@ const getCanvasSize = (windowWidth: number, windowHeight: number) => {
 ### Audio Assets (Confirmed Scope)
 - **Essential SFX**: Basic chop sound, branch hit sound, game over sound
 - **Timer Warning**: Urgent audio cue when time is low
+- **Background Music**: Implemented with 20% volume for ambient gameplay
 - **Volume**: Balanced for noisy arcade environment
-- **Future Enhancements**: Background music and environmental sounds
+- **Browser CLI Flags**: Use `--autoplay-policy=no-user-gesture-required` for immediate audio playback without user interaction
+- **Future Enhancements**: Additional environmental sounds and music tracks
 
 ## Implementation Strategy
 

@@ -12,6 +12,9 @@ export class AudioManager {
   private compressor: DynamicsCompressorNode | null = null;
   private limiter: DynamicsCompressorNode | null = null;
   private monitor: ArcadeAudioMonitor;
+  private backgroundMusicGain: GainNode | null = null;
+  private backgroundMusicSource: AudioBufferSourceNode | null = null;
+  private backgroundMusicVolume: number = 0.2;
 
   constructor(options: { arcadeMode?: boolean } = {}) {
     this.arcadeMode = options.arcadeMode ?? false;
@@ -28,6 +31,11 @@ export class AudioManager {
       
       // Create master gain node for volume control
       this.masterGain = this.context.createGain();
+      
+      // Create background music gain node for independent volume control
+      this.backgroundMusicGain = this.context.createGain();
+      this.backgroundMusicGain.gain.setValueAtTime(this.backgroundMusicVolume, this.context.currentTime);
+      this.backgroundMusicGain.connect(this.masterGain);
       
       // Apply arcade optimizations if enabled
       if (this.arcadeMode) {
@@ -102,62 +110,169 @@ export class AudioManager {
       return;
     }
 
-    // Resume context if suspended (handles autoplay policy)
-    if (this.context.state === 'suspended') {
-      this.context.resume().then(() => {
-        this.autoplayBlocked = false;
-        console.log('AudioContext resumed successfully');
-      }).catch(error => {
-        console.error('Failed to resume audio context:', error);
-        this.autoplayBlocked = true;
-      });
-    }
-
     const buffer = this.buffers.get(name);
     if (!buffer) {
       console.warn(`Audio buffer not found: ${name}`);
       return;
     }
 
-    try {
-      // Create source node
-      const source = this.context.createBufferSource();
-      source.buffer = buffer;
-      
-      // Create gain node for this sound
-      const gainNode = this.context.createGain();
-      const volume = options.volume ?? 1.0;
-      gainNode.gain.setValueAtTime(volume, this.context.currentTime);
-      
-      // Handle fade in
-      if (options.fadeIn && options.fadeIn > 0) {
-        gainNode.gain.setValueAtTime(0, this.context.currentTime);
-        gainNode.gain.linearRampToValueAtTime(volume, this.context.currentTime + options.fadeIn);
+    // Helper function to actually play the sound
+    const playSoundNow = () => {
+      try {
+        // Create source node
+        const source = this.context!.createBufferSource();
+        source.buffer = buffer;
+        
+        // Create gain node for this sound
+        const gainNode = this.context!.createGain();
+        const volume = options.volume ?? 1.0;
+        gainNode.gain.setValueAtTime(volume, this.context!.currentTime);
+        
+        // Handle fade in
+        if (options.fadeIn && options.fadeIn > 0) {
+          gainNode.gain.setValueAtTime(0, this.context!.currentTime);
+          gainNode.gain.linearRampToValueAtTime(volume, this.context!.currentTime + options.fadeIn);
+        }
+        
+        // Set loop
+        source.loop = options.loop ?? false;
+        
+        // Connect nodes
+        source.connect(gainNode);
+        gainNode.connect(this.masterGain!);
+        
+        // Track active source
+        this.activeSources.add(source);
+        this.monitor.trackSourceActivated();
+        
+        // Clean up when sound ends
+        source.onended = () => {
+          this.activeSources.delete(source);
+          this.monitor.trackSourceDeactivated();
+        };
+        
+        // Start playback
+        source.start();
+        
+      } catch (error) {
+        console.error(`Failed to play sound ${name}:`, error);
       }
+    };
+
+    // Resume context if suspended (handles autoplay policy) and then play
+    if (this.context.state === 'suspended') {
+      // Start the resume process immediately (must be synchronous with user gesture)
+      const resumePromise = this.context.resume();
       
-      // Set loop
-      source.loop = options.loop ?? false;
-      
-      // Connect nodes
-      source.connect(gainNode);
-      gainNode.connect(this.masterGain);
-      
-      // Track active source
-      this.activeSources.add(source);
-      this.monitor.trackSourceActivated();
-      
-      // Clean up when sound ends
-      source.onended = () => {
-        this.activeSources.delete(source);
-        this.monitor.trackSourceDeactivated();
-      };
-      
-      // Start playback
-      source.start();
-      
-    } catch (error) {
-      console.error(`Failed to play sound ${name}:`, error);
+      resumePromise.then(() => {
+        this.autoplayBlocked = false;
+        console.log('AudioContext resumed successfully');
+        playSoundNow(); // Play the sound after context is resumed
+      }).catch(error => {
+        console.error('Failed to resume audio context:', error);
+        this.autoplayBlocked = true;
+      });
+    } else {
+      // Context is already running, play immediately
+      playSoundNow();
     }
+  }
+
+  playBackgroundMusic(assetKey: string): void {
+    if (!this.context || !this.backgroundMusicGain || this.state !== 'ready') {
+      console.warn('AudioManager not ready for background music playback');
+      return;
+    }
+
+    // Stop any existing background music
+    this.stopBackgroundMusic();
+
+    const buffer = this.buffers.get(assetKey);
+    if (!buffer) {
+      console.warn(`Background music buffer not found: ${assetKey}`);
+      return;
+    }
+
+    // Helper function to actually play the background music
+    const playBackgroundMusicNow = () => {
+      try {
+        // Create source node for background music
+        const source = this.context!.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true; // Background music should loop
+        
+        // Connect to background music gain node
+        source.connect(this.backgroundMusicGain!);
+        
+        // Track the background music source
+        this.backgroundMusicSource = source;
+        
+        // Clean up when background music ends (shouldn't happen with looping)
+        source.onended = () => {
+          if (this.backgroundMusicSource === source) {
+            this.backgroundMusicSource = null;
+          }
+        };
+        
+        // Start playback
+        source.start();
+        console.log(`Started background music: ${assetKey}`);
+        
+      } catch (error) {
+        console.error(`Failed to play background music ${assetKey}:`, error);
+      }
+    };
+
+    // Resume context if suspended (handles autoplay policy) and then play
+    if (this.context.state === 'suspended') {
+      // Start the resume process immediately (must be synchronous with user gesture)
+      const resumePromise = this.context.resume();
+      
+      resumePromise.then(() => {
+        this.autoplayBlocked = false;
+        console.log('AudioContext resumed successfully for background music');
+        playBackgroundMusicNow(); // Play the background music after context is resumed
+      }).catch(error => {
+        console.error('Failed to resume audio context for background music:', error);
+        this.autoplayBlocked = true;
+      });
+    } else {
+      // Context is already running, play immediately
+      playBackgroundMusicNow();
+    }
+  }
+
+  stopBackgroundMusic(): void {
+    if (this.backgroundMusicSource) {
+      try {
+        this.backgroundMusicSource.stop();
+      } catch (error) {
+        // Source may already be stopped
+        console.warn('Background music source already stopped:', error);
+      }
+      this.backgroundMusicSource = null;
+      console.log('Stopped background music');
+    }
+  }
+
+  setBackgroundMusicVolume(volume: number): void {
+    if (!this.backgroundMusicGain || !this.context) {
+      console.warn('AudioManager not initialized for background music volume control');
+      return;
+    }
+    
+    // Clamp volume between 0 and 1
+    const clampedVolume = Math.max(0, Math.min(1, volume));
+    this.backgroundMusicVolume = clampedVolume;
+    this.backgroundMusicGain.gain.setValueAtTime(clampedVolume, this.context.currentTime);
+  }
+
+  isBackgroundMusicPlaying(): boolean {
+    return this.backgroundMusicSource !== null;
+  }
+
+  hasAudioBuffer(name: string): boolean {
+    return this.buffers.has(name);
   }
 
   setMasterVolume(volume: number): void {
@@ -188,6 +303,9 @@ export class AudioManager {
   }
 
   destroy(): void {
+    // Stop background music
+    this.stopBackgroundMusic();
+    
     // Stop all active sources
     this.activeSources.forEach(source => {
       try {
@@ -208,6 +326,8 @@ export class AudioManager {
     // Clear references
     this.context = null;
     this.masterGain = null;
+    this.backgroundMusicGain = null;
+    this.backgroundMusicSource = null;
     this.buffers.clear();
     this.state = 'uninitialized';
   }

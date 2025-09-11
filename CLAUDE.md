@@ -1,96 +1,76 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with this Vite + TypeScript + React game application.
 
-## Project Type
-This is a Vite + TypeScript + React application with Vitest and React Testing Library.
+## 🎯 CRITICAL WORKFLOW INSTRUCTIONS
 
-## Essential Commands
+### Essential Commands (ALWAYS use these)
+- `npm run dev` - Start development server
+- `npm run build` - Build for production (includes lint + TypeScript check)
+- `npm run lint` - Check code quality 
+- `npm run lint:fix` - Auto-fix linting issues
+- `npm test` - Run all tests
+- `npm run test:watch` - Run tests in watch mode (recommended during development)
 
-### Development
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Lint, TypeScript compilation + production build
-- `npm run preview` - Preview production build locally
-- `npm run lint` - Run ESLint to check code quality
-- `npm run lint:fix` - Run ESLint and auto-fix issues
+### Quality Gates (ALWAYS run before completing tasks)
+1. **Run tests**: `npm test` - ALL tests must pass
+2. **Run linting**: `npm run lint` - NO linting errors allowed
+3. **Run build**: `npm run build` - Build must succeed
 
-### Testing
-- `npm test` - Run all tests once
-- `npm run test:watch` - Run tests in watch mode (recommended for development)
-- `npm run test:coverage` - Run tests with coverage report
-- `vitest src/specific-file.test.tsx` - Run a single test file
+## 📁 KEY PROJECT FILES AND THEIR PURPOSE
 
-## Architecture Overview
+### Documentation Files (Do not include code line number references)
+- `GAME_DESIGN.md` - Game specifications and design decisions (CONSULT when planning)
+- `RESEARCH.md` - Research and context for current tasks (NO CODE ALLOWED). Shouldn't have any ambiguity when it is done. Used to create `PLAN.md`.
+- `PLAN.md` - Implementation steps based on RESEARCH.md and file references for LLMs
+- `QUESTIONS.md` - Questions needing user clarification
 
-### Build System
-- **Vite**: Modern build tool with ESM support and fast HMR
-- **React Plugin**: `@vitejs/plugin-react` for JSX transformation and Fast Refresh
-- **TypeScript**: Strict configuration with bundler module resolution and React JSX support
-- **ESLint**: Modern v9 flat config with React/TypeScript presets and accessibility rules
-- **ESM-only**: Project uses `"type": "module"` in package.json
+### Code Structure
+- `src/main.tsx` - Application entry point
+- `src/App.tsx` - Main app component
+- `src/game/` - Pure game logic (no React dependencies)
+- `src/components/` - Reusable UI components
+- `src/hooks/` - Custom React hooks
+- `src/__tests__/` - Integration tests
 
-### React Setup
-- **React 19**: Latest React with concurrent features
-- **TypeScript JSX**: Configured with `"jsx": "react-jsx"` for modern JSX transform
-- **Modular Architecture**: Game logic, UI components, and custom hooks separated
-- **Entry Point**: `src/main.tsx` renders App component into DOM
+## 🛠️ DEVELOPMENT GUIDELINES
 
-### Testing Setup
-- **Vitest**: Jest-compatible testing framework optimized for Vite
-- **React Testing Library**: Component testing with user-centric queries
-- **jsdom environment**: Configured for DOM and React component testing
-- **Global test utilities**: `describe`, `it`, `expect` available without imports
-- **Testing Library matchers**: `@testing-library/jest-dom` matchers extended globally
-- **Test setup**: `src/__tests__/setup.ts` configures React Testing Library cleanup and matchers
+### Core Development Principles
+1. **MVP First**: Implement minimum viable features first, expand later if needed
+2. **Clean Architecture**: Maintain separation of concerns across modules
+3. **Test-Driven**: Write tests for new functionality and ensure all tests pass
+4. **Consult Documentation**: Always check `GAME_DESIGN.md` when planning features
+5. **Update Documentation**: Keep `GAME_DESIGN.md` current after implementing features
 
-### Project Structure
-- `src/main.tsx` - React application entry point with StrictMode
-- `src/App.tsx` - Main App component with high-level orchestration
-- `src/game/` - Game logic modules (GameState, GameLogic, TreeSystem)
-- `src/components/` - Reusable UI components (GameBoard, ScoreDisplay, DebugPanel)
-- `src/hooks/` - Custom React hooks (useGameState, useKeyboardInput)
-- `src/__tests__/` - Integration tests and test setup
-- `src/**/*.test.tsx` - Unit tests co-located with source files
-- `vite.config.ts` - Contains both Vite and Vitest configuration with React plugin
-- `eslint.config.js` - ESLint v9 flat configuration
+### Code Organization Patterns
+- **Pure Game Logic**: Keep `src/game/` modules React-free for testability
+- **Component Design**: Use functional components with TypeScript interfaces
+- **State Management**: Encapsulate state logic in custom hooks (`useGameState`)
+- **Event Handling**: Use dedicated hooks for side effects (`useKeyboardInput`)
+- **Test Co-location**: Place `.test.tsx` files alongside source files
 
-## Development Notes
+### Testing Requirements
+- **Strategy**: Unit tests for game logic, component tests for UI, integration tests for workflows
+- **Tools**: Vitest + React Testing Library with user-centric queries
+- **Best Practices**: Test behavior not implementation, use semantic queries, mock external dependencies
+- **Coverage**: Ensure comprehensive test coverage for all new functionality
 
-### TypeScript Configuration
-- Strict mode enabled with additional linting rules
-- React JSX transformation enabled
-- Bundler module resolution for Vite compatibility
-- No emit (compilation handled by Vite)
-- Targets ES2022 with DOM types included
-- Testing types included for Vitest and Testing Library
+## 🏗️ TECHNICAL STACK
 
-### React Patterns
-- **Modular Architecture**: Separation of concerns with dedicated modules
-  - Pure game logic functions in `src/game/` (no React dependencies)
-  - Reusable UI components in `src/components/` with typed props
-  - Custom hooks in `src/hooks/` for state management and side effects
-- **Component Design**: Functional components with TypeScript interfaces for props
-- **State Management**: Custom hooks encapsulate state logic (useGameState)
-- **Event Handling**: Dedicated hooks for side effects (useKeyboardInput)
-- **Component co-location**: Tests placed alongside source files using `.test.tsx` suffix
+### Build & Development
+- **Vite**: Modern build tool with fast HMR and ESM support
+- **TypeScript**: Strict mode with React JSX and ES2022 target
+- **ESLint**: v9 flat config with React/TypeScript presets
+- **ESM-only**: Project uses `"type": "module"`
 
-### Testing Patterns
-- **Comprehensive Test Coverage**: Unit, integration, and component tests
-- **React Testing Library**: Component testing with user-centric queries
-- **User Event Testing**: Test interactions with `@testing-library/user-event` 
-- **Testing Strategy**:
-  - Unit tests for pure functions in `src/game/`
-  - Component tests for UI components in `src/components/`
-  - Hook tests for custom hooks in `src/hooks/`
-  - Integration tests for complete user workflows in `src/__tests__/`
-- **Best Practices**:
-  - Focus on testing behavior, not implementation details
-  - Use semantic queries (`getByRole`, `getByLabelText`, etc.)
-  - Test user interactions and state changes
-  - Mock external dependencies appropriately
-- **Test Organization**: Tests co-located with source files using `.test.tsx` suffix
-- **Quality Gates**: Before committing, ensure all tests and lint pass
-- When working on RESEARCH.md do not include code
-- Try to implement the MVP of what is requested unless otherwise instructed. At the same time, write clean code with good separation of concerns.
-- Make sure to consult GAME_DESIGN.md when planning or researching
-- When trying to implement a feature, focus on an MVP first, and we'll expand from there if necessary
+### Frontend Stack
+- **React 19**: Latest with concurrent features
+- **Functional Components**: TypeScript interfaces for props
+- **Custom Hooks**: For state management and side effects
+- **Modular Architecture**: Separated game logic, UI, and hooks
+
+### Testing Stack
+- **Vitest**: Jest-compatible, optimized for Vite
+- **React Testing Library**: User-centric component testing
+- **jsdom**: DOM environment for component tests
+- **Global utilities**: `describe`, `it`, `expect` available without imports
