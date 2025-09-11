@@ -78,6 +78,11 @@ export const updateTimer = (
 
   const newTimeRemaining = Math.max(0, gameState.timeRemaining - deltaTime)
   
+  // Emit timer warning when time is running low (less than 3 seconds)
+  if (newTimeRemaining <= 3 && gameState.timeRemaining > 3) {
+    gameEvents.emit('timerWarning')
+  }
+  
   // Game over if timer expires
   if (newTimeRemaining <= 0) {
     gameEvents.emit('gameOver')

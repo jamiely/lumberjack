@@ -1,4 +1,5 @@
 import type { AudioAsset, PlaySoundOptions, AudioState } from './types.js';
+import { ARCADE_PERFORMANCE_CONFIG, applyArcadeOptimizations, ArcadeAudioMonitor } from './ArcadeAudioCalibration.js';
 
 export class AudioManager {
   private context: AudioContext | null = null;
@@ -6,6 +7,16 @@ export class AudioManager {
   private buffers: Map<string, AudioBuffer> = new Map();
   private state: AudioState = 'uninitialized';
   private activeSources: Set<AudioBufferSourceNode> = new Set();
+  private autoplayBlocked: boolean = false;
+  private arcadeMode: boolean = false;
+  private compressor: DynamicsCompressorNode | null = null;
+  private limiter: DynamicsCompressorNode | null = null;
+  private monitor: ArcadeAudioMonitor;
+
+  constructor(options: { arcadeMode?: boolean } = {}) {
+    this.arcadeMode = options.arcadeMode ?? false;
+    this.monitor = ArcadeAudioMonitor.getInstance();
+  }
 
   async initialize(): Promise<void> {
     try {
@@ -17,12 +28,31 @@ export class AudioManager {
       
       // Create master gain node for volume control
       this.masterGain = this.context.createGain();
-      this.masterGain.connect(this.context.destination);
+      
+      // Apply arcade optimizations if enabled
+      if (this.arcadeMode) {
+        const { compressor, limiter } = applyArcadeOptimizations(this.context);
+        this.compressor = compressor || null;
+        this.limiter = limiter || null;
+        
+        if (compressor && limiter) {
+          // Audio chain: masterGain -> compressor -> limiter -> destination
+          this.masterGain.connect(compressor);
+          compressor.connect(limiter);
+          limiter.connect(this.context.destination);
+        } else {
+          this.masterGain.connect(this.context.destination);
+        }
+      } else {
+        this.masterGain.connect(this.context.destination);
+      }
       
       // Handle autoplay policy - context may start suspended
       if (this.context.state === 'suspended') {
-        // We'll resume when user interacts
-        console.log('AudioContext suspended - will resume on user interaction');
+        this.autoplayBlocked = true;
+        console.log('AudioContext suspended due to autoplay policy - will resume on user interaction');
+      } else {
+        console.log('AudioContext created successfully in running state');
       }
       
       this.state = 'ready';
@@ -65,10 +95,21 @@ export class AudioManager {
       return;
     }
 
+    // Performance optimization: limit concurrent sounds in arcade mode
+    if (this.arcadeMode && this.activeSources.size >= ARCADE_PERFORMANCE_CONFIG.maxSourceNodes) {
+      console.warn(`Maximum concurrent sounds reached (${ARCADE_PERFORMANCE_CONFIG.maxSourceNodes}), dropping sound: ${name}`);
+      this.monitor.trackDroppedSound();
+      return;
+    }
+
     // Resume context if suspended (handles autoplay policy)
     if (this.context.state === 'suspended') {
-      this.context.resume().catch(error => {
+      this.context.resume().then(() => {
+        this.autoplayBlocked = false;
+        console.log('AudioContext resumed successfully');
+      }).catch(error => {
         console.error('Failed to resume audio context:', error);
+        this.autoplayBlocked = true;
       });
     }
 
@@ -103,10 +144,12 @@ export class AudioManager {
       
       // Track active source
       this.activeSources.add(source);
+      this.monitor.trackSourceActivated();
       
       // Clean up when sound ends
       source.onended = () => {
         this.activeSources.delete(source);
+        this.monitor.trackSourceDeactivated();
       };
       
       // Start playback
@@ -179,5 +222,51 @@ export class AudioManager {
 
   get contextState(): string | null {
     return this.context?.state ?? null;
+  }
+
+  get isAutoplayBlocked(): boolean {
+    return this.autoplayBlocked || this.context?.state === 'suspended';
+  }
+
+  getPerformanceMetrics() {
+    return this.monitor.getMetrics();
+  }
+
+  get isArcadeMode(): boolean {
+    return this.arcadeMode;
+  }
+
+  get hasCompressor(): boolean {
+    return this.compressor !== null;
+  }
+
+  get hasLimiter(): boolean {
+    return this.limiter !== null;
+  }
+
+  // Try to detect autoplay policy without user interaction
+  static async detectAutoplayPolicy(): Promise<{ allowed: boolean; reason?: string }> {
+    try {
+      // Create temporary context to test autoplay policy
+      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const testContext = new AudioContextClass();
+      
+      if (testContext.state === 'suspended') {
+        testContext.close();
+        return { allowed: false, reason: 'AudioContext starts suspended' };
+      }
+      
+      // Try to play a silent buffer to test
+      const buffer = testContext.createBuffer(1, 1, 22050);
+      const source = testContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(testContext.destination);
+      source.start();
+      
+      testContext.close();
+      return { allowed: true };
+    } catch (error) {
+      return { allowed: false, reason: `AudioContext creation failed: ${error}` };
+    }
   }
 }

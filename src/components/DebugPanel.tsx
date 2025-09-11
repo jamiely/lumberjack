@@ -1,4 +1,5 @@
 import type { TreeSegment } from '../game/GameState'
+import { AudioControls } from './AudioControls'
 
 interface DebugPanelProps {
   showDebug: boolean
@@ -26,7 +27,7 @@ export default function DebugPanel({
       fontFamily: 'monospace',
       fontSize: '12px'
     }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '20px' }}>
         <div>
           <h4 style={{ margin: '0 0 5px 0', color: '#333' }}>Game State</h4>
           <div>Player Side: {playerSide}</div>
@@ -49,6 +50,15 @@ export default function DebugPanel({
           <div>Y: 20px</div>
           <div>Tree Center X: 175px</div>
           <div>Distance from Tree: {playerSide === 'left' ? '75px left' : '75px right'}</div>
+        </div>
+        
+        <div>
+          <AudioControls style={{ 
+            padding: '10px',
+            fontSize: '10px',
+            minWidth: 'auto',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)'
+          }} />
         </div>
       </div>
       

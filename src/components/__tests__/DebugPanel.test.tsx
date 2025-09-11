@@ -2,6 +2,15 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import DebugPanel from '../DebugPanel'
 import type { TreeSegment } from '../../game/GameState'
+import { AudioProvider } from '../../audio/AudioContext'
+
+const renderWithAudioProvider = (ui: React.ReactElement) => {
+  return render(
+    <AudioProvider>
+      {ui}
+    </AudioProvider>
+  )
+}
 
 describe('DebugPanel', () => {
   const mockTreeSegments: TreeSegment[] = [
@@ -26,14 +35,14 @@ describe('DebugPanel', () => {
   })
 
   it('renders debug panel when showDebug is true', () => {
-    render(<DebugPanel {...defaultProps} />)
+    renderWithAudioProvider(<DebugPanel {...defaultProps} />)
     expect(screen.getByText('Game State')).toBeInTheDocument()
     expect(screen.getByText('Current Tree Segment')).toBeInTheDocument()
     expect(screen.getByText('Player Coordinates')).toBeInTheDocument()
   })
 
   it('displays correct game state information', () => {
-    render(<DebugPanel {...defaultProps} />)
+    renderWithAudioProvider(<DebugPanel {...defaultProps} />)
     expect(screen.getByText('Player Side: left')).toBeInTheDocument()
     expect(screen.getByText('Score: 10')).toBeInTheDocument()
     expect(screen.getByText('Game Over: No')).toBeInTheDocument()
@@ -41,12 +50,12 @@ describe('DebugPanel', () => {
   })
 
   it('displays correct game state when game is over', () => {
-    render(<DebugPanel {...defaultProps} gameOver={true} />)
+    renderWithAudioProvider(<DebugPanel {...defaultProps} gameOver={true} />)
     expect(screen.getByText('Game Over: Yes')).toBeInTheDocument()
   })
 
   it('displays current tree segment information', () => {
-    render(<DebugPanel {...defaultProps} />)
+    renderWithAudioProvider(<DebugPanel {...defaultProps} />)
     expect(screen.getByText('Index: 0 (bottom segment)')).toBeInTheDocument()
     expect(screen.getByText('Branch Side: none')).toBeInTheDocument()
     expect(screen.getByText('Will Hit Branch: No')).toBeInTheDocument()
@@ -59,7 +68,7 @@ describe('DebugPanel', () => {
       { branchSide: 'right' }
     ]
     
-    render(
+    renderWithAudioProvider(
       <DebugPanel 
         {...defaultProps} 
         treeSegments={segmentsWithCollision}
@@ -71,20 +80,20 @@ describe('DebugPanel', () => {
   })
 
   it('displays player coordinates for left side', () => {
-    render(<DebugPanel {...defaultProps} playerSide="left" />)
+    renderWithAudioProvider(<DebugPanel {...defaultProps} playerSide="left" />)
     expect(screen.getByText('X: 100px')).toBeInTheDocument()
     expect(screen.getByText('Y: 20px')).toBeInTheDocument()
     expect(screen.getByText('Distance from Tree: 75px left')).toBeInTheDocument()
   })
 
   it('displays player coordinates for right side', () => {
-    render(<DebugPanel {...defaultProps} playerSide="right" />)
+    renderWithAudioProvider(<DebugPanel {...defaultProps} playerSide="right" />)
     expect(screen.getByText('X: 250px')).toBeInTheDocument()
     expect(screen.getByText('Distance from Tree: 75px right')).toBeInTheDocument()
   })
 
   it('displays all tree segments with correct formatting', () => {
-    render(<DebugPanel {...defaultProps} />)
+    renderWithAudioProvider(<DebugPanel {...defaultProps} />)
     expect(screen.getByText('All Tree Segments (bottom to top)')).toBeInTheDocument()
     expect(screen.getByText('0: none')).toBeInTheDocument()
     expect(screen.getByText('1: left')).toBeInTheDocument()
@@ -92,7 +101,7 @@ describe('DebugPanel', () => {
   })
 
   it('highlights current segment in segment list', () => {
-    const { container } = render(<DebugPanel {...defaultProps} />)
+    const { container } = renderWithAudioProvider(<DebugPanel {...defaultProps} />)
     
     // Find the segment spans and check styling
     const segments = container.querySelectorAll('span')
@@ -108,7 +117,7 @@ describe('DebugPanel', () => {
   })
 
   it('handles empty tree segments array', () => {
-    render(
+    renderWithAudioProvider(
       <DebugPanel 
         {...defaultProps} 
         treeSegments={[]}

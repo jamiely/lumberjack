@@ -89,7 +89,7 @@ export default function GameBoard({
       overflow: 'hidden',
       opacity: getOpacity(),
       pointerEvents: getPointerEvents()
-    }} data-testId="game-board">
+    }} data-testid="game-board">
       {/* Tree segments */}
       {treeSegments.map((segment, index) => (
         <div key={index}>

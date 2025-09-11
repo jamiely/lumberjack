@@ -12,8 +12,13 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | null>(null);
 
-export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [audioManager] = useState(() => new AudioManager());
+interface AudioProviderProps {
+  children: React.ReactNode;
+  arcadeMode?: boolean;
+}
+
+export const AudioProvider: React.FC<AudioProviderProps> = ({ children, arcadeMode = false }) => {
+  const [audioManager] = useState(() => new AudioManager({ arcadeMode }));
   const [audioState, setAudioState] = useState<AudioState>('uninitialized');
   const [isInitialized, setIsInitialized] = useState(false);
 

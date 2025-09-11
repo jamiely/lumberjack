@@ -49,7 +49,7 @@ describe('useGameAudio', () => {
       result.current.playChopSound();
 
       expect(mockAudioManager.playSound).toHaveBeenCalledWith('chop', {
-        volume: 0.8 * 1.0 * 0.8 // masterVolume * sfxVolume * chopVolumeMultiplier
+        volume: 0.8 * 1.0 * 0.35 // masterVolume * sfxVolume * chopVolumeMultiplier
       });
     });
 
@@ -111,7 +111,7 @@ describe('useGameAudio', () => {
       result.current.playGameOverSound();
 
       expect(mockAudioManager.playSound).toHaveBeenCalledWith('gameOver', {
-        volume: 0.8 * 1.0 // masterVolume * sfxVolume
+        volume: 0.8 * 1.0 * 0.5 // masterVolume * sfxVolume * gameOverVolumeMultiplier
       });
     });
   });
@@ -150,13 +150,13 @@ describe('useGameAudio', () => {
       result.current.playTimerWarning();
 
       expect(mockAudioManager.playSound).toHaveBeenCalledWith('chop', {
-        volume: 0.5 * 0.7 * 0.8 // 0.28
+        volume: 0.5 * 0.7 * 0.35 // masterVolume * sfxVolume * chopMultiplier = 0.1225
       });
       expect(mockAudioManager.playSound).toHaveBeenCalledWith('hit', {
-        volume: 0.5 * 0.7 // 0.35
+        volume: 0.5 * 0.7 * 1.0 // masterVolume * sfxVolume * hitMultiplier = 0.35
       });
       expect(mockAudioManager.playSound).toHaveBeenCalledWith('timerWarning', {
-        volume: 0.5 * 0.7 * 0.6 // 0.21
+        volume: 0.5 * 0.7 * 0.6 // masterVolume * sfxVolume * timerWarningMultiplier = 0.21
       });
     });
   });

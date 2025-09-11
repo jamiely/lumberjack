@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { ScreenContainer } from '../ScreenContainer'
 import GameBoard from '../GameBoard'
 import { createInitialGameState } from '../../game/GameState'
+import { useAudioContext } from '../../audio'
 
 interface AttractScreenProps {
   highScore: number
@@ -10,6 +11,7 @@ interface AttractScreenProps {
 
 export default function AttractScreen({ highScore, onStartGame }: AttractScreenProps) {
   const initialGameState = createInitialGameState()
+  const { audioState, isInitialized } = useAudioContext()
 
   useEffect(() => {
     const handleKeyPress = () => {
@@ -112,6 +114,53 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
             <div style={{ marginBottom: '0.3rem' }}>LEFT ARROW = CHOP LEFT</div>
             <div>RIGHT ARROW = CHOP RIGHT</div>
           </div>
+
+          {/* Audio Enable Prompt */}
+          {!isInitialized && (
+            <div style={{ 
+              marginTop: '1rem',
+              padding: '10px 15px',
+              backgroundColor: 'rgba(255, 165, 0, 0.2)',
+              border: '2px solid rgba(255, 165, 0, 0.6)',
+              borderRadius: '8px',
+              fontSize: '0.8rem',
+              color: '#ffcc80',
+              lineHeight: '1.3',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>
+                🔊 AUDIO READY
+              </div>
+              <div>
+                Audio will be enabled when you start playing.
+                <br />
+                Make sure your volume is at a comfortable level!
+              </div>
+            </div>
+          )}
+
+          {audioState === 'error' && (
+            <div style={{ 
+              marginTop: '1rem',
+              padding: '10px 15px',
+              backgroundColor: 'rgba(255, 0, 0, 0.2)',
+              border: '2px solid rgba(255, 0, 0, 0.6)',
+              borderRadius: '8px',
+              fontSize: '0.8rem',
+              color: '#ffaaaa',
+              lineHeight: '1.3',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>
+                🔇 AUDIO UNAVAILABLE
+              </div>
+              <div>
+                Audio could not be initialized.
+                <br />
+                The game will work without sound.
+              </div>
+            </div>
+          )}
         </div>
 
         <style>{`
