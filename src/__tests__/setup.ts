@@ -79,7 +79,7 @@ if (!window.AudioContext) {
   })
 }
 
-if (!window.webkitAudioContext) {
+if (!('webkitAudioContext' in window)) {
   Object.defineProperty(window, 'webkitAudioContext', {
     writable: true,
     value: MockAudioContext

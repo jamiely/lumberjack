@@ -79,7 +79,7 @@ describe('GameBoard', () => {
       />
     )
     
-    let player = container.querySelector('[style*="left: 135px"]')
+    let player = container.querySelector('[style*="left: 90px"]')
     expect(player).toBeInTheDocument()
     
     rerender(
@@ -90,7 +90,7 @@ describe('GameBoard', () => {
       />
     )
     
-    player = container.querySelector('[style*="left: 337px"]')
+    player = container.querySelector('[style*="left: 390px"]')
     expect(player).toBeInTheDocument()
   })
 
@@ -132,8 +132,8 @@ describe('GameBoard', () => {
       />
     )
     
-    const leftBranch = container.querySelector('[style*="left: 169px"]')
-    const rightBranch = container.querySelector('[style*="left: 304px"]')
+    const leftBranch = container.querySelector('[style*="left: 45px"]')
+    const rightBranch = container.querySelector('[style*="left: 345px"]')
     
     expect(leftBranch).toBeInTheDocument()
     expect(rightBranch).toBeInTheDocument()

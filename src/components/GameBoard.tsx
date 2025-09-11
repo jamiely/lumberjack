@@ -154,7 +154,7 @@ export default function GameBoard({
         width: `${PLAYER_WIDTH}px`,
         height: `${PLAYER_HEIGHT}px`,
         backgroundColor: gameOver ? 'red' : 'blue',
-        border: '2px solid #000'
+        border: '4px solid #000'
       }} />
 
       {/* Animated flying segments */}

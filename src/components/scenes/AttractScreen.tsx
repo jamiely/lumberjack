@@ -11,7 +11,7 @@ interface AttractScreenProps {
 
 export default function AttractScreen({ highScore, onStartGame }: AttractScreenProps) {
   const initialGameState = createInitialGameState()
-  const { audioState, isInitialized } = useAudioContext()
+  const { audioState } = useAudioContext()
 
   useEffect(() => {
     const handleKeyPress = () => {
