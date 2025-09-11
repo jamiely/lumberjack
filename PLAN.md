@@ -4,11 +4,12 @@ This document provides a concrete, step-by-step implementation plan for adding a
 
 ## Overview
 
-The plan is divided into four phases:
+The plan is divided into three phases:
 1. **Phase -1**: Timer system implementation (prerequisite)
-2. **Phase 0**: Architecture refactoring (prerequisites)
-3. **Phase 1**: Core audio system implementation
-4. **Phase 2**: Game integration and arcade optimization
+2. **Phase 1**: Core audio system implementation
+3. **Phase 2**: Game integration and arcade optimization
+
+**✅ Phase 0 Complete:** Architecture refactoring (event system and settings management) has been successfully implemented and tested.
 
 ## Phase -1: Timer System Implementation (Prerequisite)
 
@@ -183,122 +184,6 @@ export const TimerBar: React.FC<TimerBarProps> = ({ timeRemaining, maxTime }) =>
 
 **Quality Gate:** Timer system fully functional, all tests pass (`npm run check`)
 
-## Phase 0: Architecture Refactoring (Prerequisites)
-
-### 0.1: Create Game Event System
-
-**Files to Create:**
-- `src/game/GameEvents.ts` - Event types and emitter
-- `src/hooks/useGameEvents.ts` - React hook for event handling
-
-**Files to Modify:**
-- `src/game/GameLogic.ts` - Add event emission to game functions
-- `src/hooks/useGameState.ts` - Integrate event system
-
-**Implementation Details:**
-
-#### `src/game/GameEvents.ts`
-```typescript
-export type GameEventType = 'chop' | 'hit' | 'gameOver' | 'timerWarning';
-
-export interface GameEvent {
-  type: GameEventType;
-  timestamp: number;
-  data?: any;
-}
-
-export type GameEventHandler = (event: GameEvent) => void;
-
-export class GameEventEmitter {
-  private listeners: Map<GameEventType, GameEventHandler[]> = new Map();
-  
-  on(eventType: GameEventType, handler: GameEventHandler): void;
-  off(eventType: GameEventType, handler: GameEventHandler): void;
-  emit(eventType: GameEventType, data?: any): void;
-}
-
-export const gameEvents = new GameEventEmitter();
-```
-
-#### `src/hooks/useGameEvents.ts`
-```typescript
-export const useGameEvents = () => {
-  const subscribe = useCallback((eventType: GameEventType, handler: GameEventHandler) => {
-    gameEvents.on(eventType, handler);
-    return () => gameEvents.off(eventType, handler);
-  }, []);
-  
-  return { subscribe };
-};
-```
-
-#### Modify `src/game/GameLogic.ts`
-- Add `gameEvents.emit('chop')` in `performChop` function after successful chop
-- Add `gameEvents.emit('hit')` in collision detection when collision occurs
-- Add `gameEvents.emit('gameOver')` when game ends (collision or timer expiry)
-- Add `gameEvents.emit('timerWarning')` in `updateTimer` when timeRemaining < 3 seconds
-
-### 0.2: Create Settings Management System
-
-**Files to Create:**
-- `src/game/GameSettings.ts` - Settings interface and defaults
-- `src/hooks/useGameSettings.ts` - React hook for settings
-
-**Implementation Details:**
-
-#### `src/game/GameSettings.ts`
-```typescript
-export interface AudioSettings {
-  enabled: boolean;
-  masterVolume: number; // 0.0 to 1.0
-  sfxVolume: number;    // 0.0 to 1.0
-}
-
-export interface GameSettings {
-  audio: AudioSettings;
-  freePlay: boolean;
-}
-
-export const defaultSettings: GameSettings = {
-  audio: {
-    enabled: true,
-    masterVolume: 0.8,
-    sfxVolume: 1.0
-  },
-  freePlay: true
-};
-```
-
-#### `src/hooks/useGameSettings.ts`
-```typescript
-export const useGameSettings = () => {
-  const [settings, setSettings] = useState<GameSettings>(defaultSettings);
-  
-  const updateAudioSettings = useCallback((audioSettings: Partial<AudioSettings>) => {
-    setSettings(prev => ({
-      ...prev,
-      audio: { ...prev.audio, ...audioSettings }
-    }));
-  }, []);
-  
-  return { settings, updateAudioSettings };
-};
-```
-
-### 0.3: Refactor Hook Architecture
-
-**Files to Modify:**
-- `src/hooks/useGameState.ts` - Remove event handling, focus on state
-- `src/App.tsx` - Update to use new hook structure
-
-**Changes:**
-- Move event handling from `useGameState` to separate hooks
-- Keep `useGameState` focused on core game state management
-- Create composition pattern for combining hooks
-
-**Quality Gate:** All tests pass (`npm run check`)
-
-**Milestone:** Commit refactored architecture and pause for manual intervention before proceeding to Phase 1
 
 ## Phase 1: Core Audio System Implementation
 
@@ -621,24 +506,22 @@ export const ARCADE_AUDIO_CONFIG = {
 - **Day 4**: Add timer UI components and testing
 - **Day 5**: Timer system quality gate and commit
 
-### Sprint 1 (Phase 0): Architecture Refactoring
-- **Days 6-7**: Create game event system
-- **Day 8**: Create settings management
-- **Day 9**: Refactor hook architecture
-- **Day 10**: Testing and quality gate
-- **Milestone**: Commit refactored architecture and pause for manual intervention
+### ✅ Sprint 1 Complete (Phase 0): Architecture Refactoring
+- **✅ Event system and settings management implemented**
+- **✅ Comprehensive test coverage added (47 new tests)**
+- **✅ All quality gates passed**
 
-### Sprint 2 (Phase 1): Core Audio System
-- **Days 11-12**: Implement AudioManager class
-- **Day 13**: Create audio asset structure
-- **Day 14**: Build React audio context
-- **Day 15**: Audio system testing
+### Sprint 1 (Phase 1): Core Audio System
+- **Days 6-7**: Implement AudioManager class
+- **Day 8**: Create audio asset structure
+- **Day 9**: Build React audio context
+- **Day 10**: Audio system testing
 
-### Sprint 3 (Phase 2): Integration and Optimization
-- **Days 16-17**: Game event integration
-- **Day 18**: Audio controls UI
-- **Day 19**: Browser compatibility
-- **Day 20**: Performance optimization and arcade calibration
+### Sprint 2 (Phase 2): Integration and Optimization
+- **Days 11-12**: Game event integration  
+- **Day 13**: Audio controls UI
+- **Day 14**: Browser compatibility
+- **Day 15**: Performance optimization and arcade calibration
 
 ## Risk Mitigation
 
