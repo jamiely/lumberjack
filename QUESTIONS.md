@@ -1,84 +1,57 @@
-# QUESTIONS.md
+# Implementation Questions
 
-## Lumberjack Sprite Implementation Questions
+## Branch Sprite Implementation Questions
 
-### Context from GAME_DESIGN.md Analysis:
-- MVP phase uses "basic geometric shapes" for development
-- Player animation states specified: 'idle' | 'chopping' | 'hit' 
-- Arcade display requires high visibility at 2-3 feet viewing distance
-- Base resolution 540×960, scales to 1080×1920 for arcade
+### 1. Branch Sizing and Scaling
+- What should be the target display dimensions for branches in the game?
+a width of 170 and scale the branch using aspect ratio.
 
-### Refined Questions:
+- Do flying branches need the same dimensions as static tree branches, or different scaling?
+same
 
-### 1. Sizing Approach (CLARIFIED)
-Given GAME_DESIGN.md emphasis on MVP and arcade visibility:
-- **Recommended**: Scale sprite down to current constraints (90×173px) for consistency
+### 2. Branch Positioning and Alignment
+- The branch.png sprite has a different shape than the current rectangles - do we need to adjust the positioning offsets?
+no
+- Should the branch sprite be centered on the current branch positions, or aligned differently (e.g., branch base aligned with trunk edge)?
+center them for now
 
-Yes, but keep in mind we will want to scale everything up for arcade display.
+- How should the CSS `transform-origin` be set for the left-side mirrored branches to ensure proper alignment?
 
-### 2. Animation Timing (SIMPLIFIED)
-GAME_DESIGN.md specifies simple state-based animation:
-- **Basic**: Single static sprite per state (idle, chopping, hit)
-- **Enhanced**: Brief chop sequence for better visual feedback
+bottom-left side if possible
 
-start with static sprites
+### 3. Animation Compatibility
+- Are there any specific requirements for how flying branches should animate with the new sprite?
 
-### 3. State Transitions (MAPPED TO GAME DESIGN)
-Based on game mechanics analysis:
-- **Hit State**: When branch hits player (game over trigger)
-- **Chopping State**: During active chopping action
-- **Idle State**: Default/waiting state
+no it should be the same way
 
+- Should flying branches rotate during their animation, or maintain the same orientation as static branches?
+yes
+
+- Do we need to update collision detection boundaries due to the sprite's irregular shape vs. rectangles?
 no
 
-### 4. Sprite Positioning (ARCADE CONSIDERATION)
-Current bottom-aligned positioning works for arcade visibility:
-- **Maintain**: Keep current ground-level alignment
-- **Adjust**: Fine-tune for sprite proportions
+### 4. Visual Style Preferences
+- Is the current branch.png sprite style acceptable, or would you prefer any visual adjustments?
+yes
 
-minor adjustments are ok
+- Should branches have any visual effects (shadows, outlines) to match other game elements?
+no
 
-### 5. MVP vs Enhancement Priority
-basic replacement is fine
+- Any preference for how the mirrored left branches should look - any concerns about the flipped appearance?
+no
 
-## Additional Implementation Ambiguities
+### 5. Performance and Implementation
+- Any preference between Phase 1 (direct BranchSprite) vs. immediately implementing the common Sprite system?
+No preference
 
-### 6. Sprite Scaling Specifics
-Current player is 90×173px (rectangular), sprite is 341×341px (square):
-- **Width-based scaling**: Scale to 90px width (factor ~0.26) → sprite becomes 90×90px
-- **Height-based scaling**: Scale to 173px height (factor ~0.51) → sprite becomes 173×173px
-- **Question**: Which scaling approach should we use?
-height
+- Should we prioritize getting branches working quickly, or take more time for the unified architecture?
+yes
 
-### 7. CSS Implementation Technique
-Multiple options available:
-- **Background-image**: Use CSS background-image with background-position
-- **CSS clip/mask**: Use CSS clipping to show sprite sections
-- **Canvas rendering**: HTML5 canvas for sprite handling
-- **Question**: Which CSS technique should we implement?
+- Are there any other sprite assets planned that would benefit from the common Sprite component design?
+yes there will be text sprites later
 
-
-### 8. State Transition Timing
-- **Question**: When exactly does player state change?
-  - Idle → Chopping: On button press? Or when chop animation starts?
-  button press
-
-  - Chopping → Idle: Immediately after chop? Or after brief duration?
-  after brief duration
-
-  - Idle → Hit: On branch collision detection?
-  yes
-
-### 9. Sprite Alignment Within Player Bounds
-Square sprite in rectangular player area:
-- **Center**: Center sprite within current 90×173px bounds
-- **Bottom-align**: Align sprite bottom with current player bottom
-- **Custom**: Adjust player bounds to match sprite proportions
-- **Question**: How should sprite align within player area?
-bottom align
-
-### 10. Arcade Scaling Impact
-User mentioned "keep in mind we will want to scale everything up for arcade display":
-- **Question**: Should sprite implementation consider arcade scaling factor now, or handle later?
-- **Question**: Does this affect sprite coordinate calculations or constants?
-We can ignore for now.
+## Current Assumptions
+- Using CSS `transform: scaleX(-1)` for left-side branch mirroring
+- Maintaining existing branch positioning system with sprite replacements  
+- Two-phase implementation: BranchSprite first, then common Sprite refactoring
+- Branch sprites will replace both static tree branches and flying branch animations

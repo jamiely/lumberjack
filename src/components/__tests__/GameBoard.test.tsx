@@ -41,8 +41,8 @@ describe('GameBoard', () => {
       />
     )
     
-    // Each segment creates a trunk div with specific brown color
-    const trunks = container.querySelectorAll('[style*="background-color: rgb(139, 69, 19)"]')
+    // Each segment creates a trunk div with background image
+    const trunks = container.querySelectorAll('[style*="background-image: url(\\"/images/trunk.png\\")"]')
     expect(trunks).toHaveLength(3)
   })
 
@@ -56,7 +56,7 @@ describe('GameBoard', () => {
       />
     )
     
-    const trunks = container.querySelectorAll('[style*="background-color: rgb(139, 69, 19)"]')
+    const trunks = container.querySelectorAll('[style*="background-image: url(\\"/images/trunk.png\\")"]')
     expect(trunks).toHaveLength(3) // One trunk per segment
   })
 
@@ -70,7 +70,7 @@ describe('GameBoard', () => {
       />
     )
     
-    const branches = container.querySelectorAll('[style*="background-color: rgb(101, 67, 33)"]')
+    const branches = container.querySelectorAll('[style*="background-image: url(\\"/images/branch.png\\")"]')
     expect(branches).toHaveLength(2) // Only segments with left/right branches
   })
 

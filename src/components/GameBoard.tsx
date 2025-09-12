@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { TreeSegment, AnimatedSegment } from '../game/GameState'
 import Player from './Player'
+import { BranchSprite } from './BranchSprite'
 import {
   GAME_BOARD_WIDTH,
   GAME_BOARD_HEIGHT,
@@ -13,15 +14,11 @@ import {
   TREE_TRUNK_LEFT_POSITION,
   TREE_TRUNK_BOTTOM_OFFSET,
   TREE_SEGMENT_VERTICAL_SPACING,
-  TREE_TRUNK_COLOR,
-  TREE_TRUNK_BORDER,
-  BRANCH_WIDTH,
-  BRANCH_HEIGHT,
+  TREE_TRUNK_SPRITE_PATH,
   BRANCH_LEFT_POSITION,
   BRANCH_RIGHT_POSITION,
   BRANCH_VERTICAL_OFFSET,
-  BRANCH_COLOR,
-  BRANCH_BORDER,
+  BRANCH_SPRITE_WIDTH,
   ANIMATION_DURATION,
   ANIMATION_SPEED,
   ANIMATION_OUT_OF_BOUNDS_LEFT,
@@ -128,21 +125,21 @@ export default function GameBoard({
             bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + TREE_TRUNK_BOTTOM_OFFSET}px`,
             width: `${TREE_TRUNK_WIDTH}px`,
             height: `${TREE_TRUNK_HEIGHT}px`,
-            backgroundColor: TREE_TRUNK_COLOR,
-            border: TREE_TRUNK_BORDER
+            backgroundImage: `url(${TREE_TRUNK_SPRITE_PATH})`,
+            backgroundSize: '100% 140%',
+            // border: TREE_TRUNK_BORDER // Removed - using realistic trunk sprite instead
           }} />
           
           {/* Branch */}
           {segment.branchSide !== 'none' && (
-            <div style={{
-              position: 'absolute',
-              left: segment.branchSide === 'left' ? `${BRANCH_LEFT_POSITION}px` : `${BRANCH_RIGHT_POSITION}px`,
-              bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + BRANCH_VERTICAL_OFFSET}px`,
-              width: `${BRANCH_WIDTH}px`,
-              height: `${BRANCH_HEIGHT}px`,
-              backgroundColor: BRANCH_COLOR,
-              border: BRANCH_BORDER
-            }} />
+            <BranchSprite
+              side={segment.branchSide}
+              style={{
+                position: 'absolute',
+                left: segment.branchSide === 'left' ? `${BRANCH_LEFT_POSITION}px` : `${BRANCH_RIGHT_POSITION}px`,
+                bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + BRANCH_VERTICAL_OFFSET}px`
+              }}
+            />
           )}
         </div>
       ))}
@@ -183,21 +180,21 @@ export default function GameBoard({
                 bottom: '0px',
                 width: `${TREE_TRUNK_WIDTH}px`,
                 height: `${TREE_TRUNK_HEIGHT}px`,
-                backgroundColor: TREE_TRUNK_COLOR,
-                border: TREE_TRUNK_BORDER
+                backgroundImage: `url(${TREE_TRUNK_SPRITE_PATH})`,
+            backgroundSize: '100% 100%',
+                // border: TREE_TRUNK_BORDER // Removed - using realistic trunk sprite instead
               }} />
               
               {/* Animated branch positioned relative to trunk within wrapper */}
               {segment.branchSide !== 'none' && (
-                <div style={{
-                  position: 'absolute',
-                  left: segment.branchSide === 'left' ? `-${BRANCH_WIDTH}px` : `${BRANCH_WIDTH}px`,
-                  bottom: `${ANIMATED_BRANCH_OFFSET}px`,
-                  width: `${BRANCH_WIDTH}px`,
-                  height: `${BRANCH_HEIGHT}px`,
-                  backgroundColor: BRANCH_COLOR,
-                  border: BRANCH_BORDER
-                }} />
+                <BranchSprite
+                  side={segment.branchSide}
+                  style={{
+                    position: 'absolute',
+                    left: segment.branchSide === 'left' ? `-${BRANCH_SPRITE_WIDTH}px` : `${BRANCH_SPRITE_WIDTH}px`,
+                    bottom: `${ANIMATED_BRANCH_OFFSET}px`
+                  }}
+                />
               )}
             </div>
           </div>

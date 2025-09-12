@@ -1,187 +1,269 @@
-# RESEARCH.md
+# Tree Trunk Sprite Implementation Research
 
-## Lumberjack Sprite Sheet Analysis
+## Current Implementation Analysis
 
-The sprite sheet located at `public/images/lumberjack.png` contains 9 different poses of the lumberjack character arranged in a 3x3 grid. Each sprite is 341x341 pixels.
+### Tree Trunk Rendering (GameBoard.tsx:125-133)
+Currently, tree trunks are rendered as simple brown rectangular divs using CSS styling:
+- **Color**: `#8B4513` (dark brown)
+- **Dimensions**: 150px width × 155px height (90% of player height) - **INCORRECT PROPORTIONS**
+- **Border**: 4px solid black border
+- **Positioning**: Absolute positioning with calculated bottom offsets
 
-### Sprite Breakdown
+**Issue Identified**: The current 150x155px (0.97:1 ratio) actually matches reasonable proportions, but we need to use the actual trunk.png sprite instead of CSS colors.
 
-| Pose # | Pose Name               | Description                                                                 | Suggested Use                          | Crop Coordinates (x1, y1, x2, y2) |
-|--------|-------------------------|-----------------------------------------------------------------------------|----------------------------------------|-----------------------------------|
-| 1      | Idle Frame 1            | Standing neutral, calm expression, axe resting on his back.                 | Base idle loop                         | (0, 0, 341, 341)                  |
-| 2      | Idle Frame 2            | Axe over shoulder, chest slightly expanded, ready stance.                   | Alternate idle frame (breathing motion)| (341, 0, 682, 341)                |
-| 3      | Chop (Anticipation)     | Axe raised high, knees bent, brows furrowed in focus.                       | First frame of chopping sequence       | (682, 0, 1023, 341)               |
-| 4      | Chop (Impact)           | Axe striking down with force, body leaning into the swing.                  | Main impact frame for chopping         | (0, 341, 341, 682)                |
-| 5      | Chop (Follow-through)   | Axe fully down, body leaning forward in completion of chop.                 | End of chop motion                     | (341, 341, 682, 682)              |
-| 6      | Chop (Recovery/Return)  | Axe being pulled back up toward neutral stance.                             | Transition back to idle                | (682, 341, 1023, 682)             |
-| 7      | Hit/Stunned             | Eyes squeezed shut, sweat drop/stars overhead, staggered expression.        | When hit by branch or stunned event    | (0, 682, 341, 1023)               |
-| 8      | Knocked Down (Prone 1)  | Flat on back, axe beside him, dazed expression.                             | Defeat animation, mid-fall recovery    | (341, 682, 682, 1023)             |
-| 9      | Knocked Down (Prone 2)  | Fully collapsed on the ground, eyes closed, lying motionless.               | Final defeated state                   | (682, 682, 1023, 1023)            |
+### Existing Sprite System
+The codebase already has a sophisticated sprite system for the lumberjack character:
 
-### Implementation Strategy
+#### LumberjackSprite Component (LumberjackSprite.tsx)
+- Uses CSS `backgroundImage` with sprite sheet positioning
+- Handles multiple sprite states (idle, chopping, hit)
+- Implements scaling via `SPRITE_SCALE_FACTOR`
+- Uses `backgroundPosition` to show different sprite regions
+- Includes advanced features like `clipPath` for precise cropping
 
-For initial implementation, we can use single sprites for each game state:
-- **Idle State**: Use Pose #1 (Idle Frame 1)
-- **Chopping State**: Use Pose #4 (Chop Impact) 
-- **Hit/Stunned State**: Use Pose #7 (Hit/Stunned)
-- **Game Over State**: Use Pose #9 (Knocked Down Prone 2)
+#### Sprite Constants (constants.ts:51-78)
+- **Sprite sheet path**: `/images/lumberjack.png`
+- **Scaling system**: Configurable display size with scale factor
+- **Coordinate system**: Precise sprite coordinates for each state
+- **Flexible sizing**: Multiple size options (150-300px)
 
-Future enhancement could implement full animation sequences using multiple frames for smoother transitions.
+### Available Assets
+- **Lumberjack sprite**: `/public/images/lumberjack.png` (existing, complex sprite sheet)
+- **Trunk sprite**: `/public/images/trunk.png` (confirmed exists, simple single image)
 
-### Technical Notes
+## Refactoring Opportunities
 
-- Sprite sheet dimensions: 1023x1023 pixels
-- Individual sprite size: 341x341 pixels
-- Format: PNG with transparent background
-- Grid layout: 3 columns × 3 rows
+### 1. Refactoring Assessment: Simple vs Complex Sprites
+**Lumberjack**: Complex sprite sheet with multiple states, coordinates, scaling, clipping
+**Trunk**: Simple single image pattern - just a texture
 
-## Current Game Architecture Analysis
+**Refactoring Analysis**:
+- **Different complexity levels** - trunk doesn't need sprite sheet infrastructure
+- **Over-engineering risk** - creating TreeTrunkSprite component adds unnecessary complexity
+- **Simple solution better** - direct backgroundImage replacement is cleaner
+- **No shared abstractions needed** - the use cases are too different
 
-### Player Rendering (GameBoard.tsx:149-158)
-Currently the lumberjack is rendered as a simple colored rectangle:
-- Position: `PLAYER_LEFT_POSITION` (90px) or `PLAYER_RIGHT_POSITION` (390px)
-- Size: `PLAYER_WIDTH` × `PLAYER_HEIGHT` (90px × 173px)
-- Bottom offset: `PLAYER_BOTTOM_OFFSET` (86px)
-- Color: Blue (normal) or Red (game over)
-- Simple div with border styling
+### 2. Tree Trunk Sprite Implementation Options
 
-### Game State Structure
-- No player animation state currently tracked in GameState interface
-- Player position controlled by `playerSide: 'left' | 'right'`
-- Game over state affects visual appearance
-- No existing sprite or image handling in codebase
+#### Simple Repeating Pattern (Confirmed)
+The `trunk.png` is a simple repeating bark texture pattern:
+- **No sprite sheet complexity** - just a single repeating image
+- **Simple `backgroundImage`** with the trunk.png file
+- **No coordinate system needed** - no multiple states or frames
+- **Much simpler than LumberjackSprite** - just image replacement for CSS background
+- **Dimensions**: 300x310px (actual trunk.png size) needs scaling to fit 150x155px game size
 
-## Game Design Context Analysis
+### 3. Constants Organization
+Add tree sprite constants alongside existing lumberjack sprites:
+- `TREE_TRUNK_SPRITE_PATH`
+- `TREE_TRUNK_SPRITE_SIZE` 
+- Tree-specific scaling factors if needed
 
-### Key Design Requirements from GAME_DESIGN.md:
-- **Visual Style**: "Basic geometric shapes for development phase" (lines 408-410)
-- **Character**: "Simple geometric shape (rectangle/circle) representing lumberjack" (line 423)
-- **Future Enhancement**: "AI-generated assets when visual style is finalized" (line 409)
-- **Player Animation**: "animationState: 'idle' | 'chopping' | 'hit'" (line 121)
-- **MVP Focus**: Prioritize gameplay over visual polish
-
-### Screen Specifications:
-- **Base Resolution**: 540×960 (scales to 1080×1920 for arcade)
-- **Arcade Display**: 27" vertical screen, high visibility requirements
-- **Viewing Distance**: 2-3 feet, need bold graphics and high contrast
-
-## Refactoring Prerequisites 
-
-### Current Code Structure Issues
-**GameBoard.tsx Analysis (207 lines):**
-- **Mixed Concerns**: Player rendering (lines 149-158), tree segments, and animation logic all in one component
-- **Inline Styles**: Extensive use of inline styles makes maintenance difficult
-- **Complex Rendering**: Animation calculations mixed with rendering logic
-
-### Recommended Refactoring Before Sprite Implementation
-1. **Extract Player Component**: Separate player rendering logic from GameBoard.tsx
-   - Current player code (lines 149-158) should become standalone Player component
-   - Enables cleaner sprite integration
-   - Improves testability and maintainability
-
-2. **Benefits of Player Extraction**:
-   - Clean separation for sprite implementation
-   - Easier to test player-specific logic  
-   - Preparation for enhanced visual states
-   - Maintains single responsibility principle
-
-### Refactoring Impact
-- **Low Risk**: Simple component extraction with clear boundaries
-- **High Value**: Sets up clean architecture for sprite system
-- **MVP Compatible**: Maintains current functionality while improving structure
+### 4. Component Architecture Improvements
+- Move from inline div styling to dedicated sprite components
+- Consistent scaling system across all game elements
+- Better separation of concerns (positioning vs rendering)
 
 ## Implementation Strategy
 
-### Phase 0: Refactoring (Prerequisite)
-1. **Extract Player Component**: Create `src/components/Player.tsx` with current player logic
-2. **Update GameBoard**: Replace inline player rendering with Player component
-3. **Test**: Ensure no functional regressions
+### Immediate Changes Needed
+1. **Use trunk.png sprite** (300x310px) scaled to current game size (150x155px)
+2. **Simple implementation**: Replace CSS background color with `backgroundImage: url('/images/trunk.png')`
+3. **Update constants.ts** with `TREE_TRUNK_SPRITE_PATH` and remove `TREE_TRUNK_COLOR`
+4. **Update GameBoard.tsx** to use backgroundImage instead of backgroundColor
+5. **Update animated segments** to use same trunk.png background
 
-### Phase 1: Replace Rectangle with Static Sprite
-1. **Add Player State Enum**: Extend GameState to track player states (idle, chopping, hit, knocked_down)
-2. **Create Sprite Component**: Build reusable component to render sprite sections  
-3. **Integrate into GameBoard**: Replace rectangle div with sprite component
-4. **Update Constants**: Scale sprite appropriately for current game layout
-5. **Maintain MVP Approach**: Simple implementation focusing on functionality
+### Dimension Corrections Required
+Based on the trunk.png sprite analysis:
+- Current: 150x155px (0.97:1 ratio) - reasonable proportions
+- Actual trunk.png: 300x310px (0.97:1 ratio) - same proportions, needs scaling
+- Needed: Replace CSS `backgroundColor` with `backgroundImage` using trunk.png
+- Current dimensions are fine, just need sprite implementation
 
-### Phase 2: Add State-Based Sprite Selection
-1. **Game Logic Integration**: Update game logic to set appropriate player states
-2. **State Transitions**: Map game events to visual states with defined timing:
-   - **Idle → Chopping**: On button press
-   - **Chopping → Idle**: After brief duration (~200ms)
-   - **Idle → Hit**: On branch collision detection
-3. **Timing Coordination**: Implement brief chopping state duration for visual feedback
+### Benefits Analysis: Simple Implementation
+**Pros of keeping it simple**:
+- **No over-engineering** - trunk is just a texture, not a complex sprite
+- **Cleaner code** - direct CSS change rather than new component
+- **Faster implementation** - minimal changes required
+- **Appropriate complexity** - matches the actual need (simple texture vs complex sprite sheet)
 
-### Implementation Details
+**Cons of creating TreeTrunkSprite component**:
+- **Unnecessary abstraction** - trunk doesn't need sprite sheet features
+- **Code bloat** - adds component for essentially `backgroundImage: url()`
+- **Maintenance overhead** - more files and complexity for simple use case
 
-#### Sprite Component Structure
+### Recommended Approach: Direct CSS Implementation
+**File Changes Required (Minimal)**:
+- `src/constants.ts` - Add `TREE_TRUNK_SPRITE_PATH`, keep existing dimensions
+- `src/components/GameBoard.tsx` - Replace `backgroundColor` with `backgroundImage`
+
+**Avoid These Over-Engineered Approaches**:
+- ❌ `src/components/TreeTrunkSprite.tsx` - Not needed for simple texture
+- ❌ `src/components/Sprite.tsx` - LumberjackSprite and trunk are too different
+- ❌ Complex sprite coordinate systems - trunk is just one image
+
+## Branch Sprite Implementation Analysis
+
+### Branch Asset Analysis
+- **Location**: `/public/images/branch.png`
+- **Format**: Single PNG image (not a sprite sheet)
+- **Dimensions**: 340×248 pixels (1.37:1 aspect ratio)
+- **Content**: Side-view tree branch with green leaves
+- **Orientation**: Designed as a right-side branch extending rightward
+- **Style**: Cartoon/stylized art matching game aesthetic
+
+### Current Branch Rendering System
+Branches are currently rendered as simple colored rectangles in the GameBoard component:
+- **Implementation**: Simple div elements with CSS background colors
+- **Left branches**: Green rectangles (`#228B22`)
+- **Right branches**: Green rectangles (`#228B22`) 
+- **Positioning**: Absolute positioning on left/right sides of trunk segments
+
+### Branch Sprite Implementation Requirements
+
+#### 1. Directional Sprite Handling
+**Critical Issue**: The branch.png sprite faces right and must be mirrored for left-side branches:
+- **Right branches**: Use branch.png as-is
+- **Left branches**: Apply CSS `transform: scaleX(-1)` to flip horizontally
+- **Alternative**: Create separate left/right sprite assets (less efficient)
+
+#### 2. Sprite Integration Options
+
+##### Option A: Direct CSS Implementation (Recommended for Consistency)
+- Replace rectangle `backgroundColor` with `backgroundImage: url('/images/branch.png')`
+- Add conditional CSS transform for left-side mirroring
+- Maintain existing positioning system
+- Simple implementation matching trunk sprite approach
+
+##### Option B: Branch Sprite Component (Better for Complex Needs)
+Create `BranchSprite.tsx` component with:
+- Props for side determination (`side: 'left' | 'right'`)
+- Automatic mirroring logic for left branches
+- Consistent sizing and scaling
+- Reusable for both static and animated branches
+
+#### 3. Scaling and Positioning Considerations (REQUIREMENTS CLARIFIED)
+- **Target dimensions**: 170px width, height scaled by aspect ratio (170 × 248/340 = ~124px height)
+- **Sprite scaling**: Scale 340×248px sprite to 170×124px display size
+- **Position alignment**: Center branches on current positions (no offset adjustments needed)
+- **Transform origin**: Use `bottom-left` for left-side mirrored branches
+- **Animation compatibility**: Same animation behavior, flying branches should rotate
+- **Collision detection**: No updates needed (keep existing rectangular boundaries)
+
+### Refactoring Opportunities
+
+#### Unified Sprite System Architecture
+With both trunk and branch sprites, a common sprite abstraction becomes valuable:
+
+**Common Sprite Patterns Identified**:
+- **Background image rendering** - both use `backgroundImage` CSS property
+- **Scaling and sizing** - both need consistent dimension management
+- **Positioning** - both use absolute positioning in game coordinates
+- **Asset path management** - both reference sprite files in `/public/images/`
+
+**Proposed Common Sprite Interface**:
 ```typescript
 interface SpriteProps {
-  spriteSheet: string
-  cropCoords: [number, number, number, number] // x1, y1, x2, y2
-  width: number
-  height: number
-  className?: string
+  src: string;           // sprite image path
+  width: number;         // display width in pixels
+  height: number;        // display height in pixels
+  className?: string;    // additional CSS classes
+  style?: CSSProperties; // additional inline styles
+  transform?: string;    // CSS transform (for mirroring, rotation)
 }
 ```
 
-#### Sizing Analysis & Final Specifications
-- **Current Player**: 90×173px rectangle (aspect ~0.52, portrait orientation)
-- **Sprite Source**: 341×341px square (aspect 1.0, needs cropping/scaling)
-- **Arcade Requirements**: High visibility at 2-3 feet viewing distance
-- **Scaling Approach**: Height-based scaling to 173px height (factor ~0.51)
-- **Final Sprite Size**: 173×173px (maintains sprite detail, fits player height)
-- **Position Alignment**: Bottom-align sprite with current player bottom position
-- **Player Bounds**: Keep current 90×173px bounds, sprite extends beyond width
+#### Branch vs Trunk Sprite Complexity Comparison
+**Branch sprites** (complex needs):
+- **Directional logic** - left/right mirroring with transforms
+- **Side-specific behavior** - different rendering based on position
+- **Multiple instances** - used throughout tree segments and animations
 
-#### CSS Implementation Technique
-**Selected Approach**: CSS background-image with background-position
-- **Rationale**: Simple implementation, excellent browser support, optimal performance for arcade
-- **Method**: Set sprite sheet as background-image, use background-position for sprite selection
-- **Scaling**: Use background-size to scale sprite sheet to desired dimensions
-- **Positioning**: Calculate background-position from sprite coordinates
+**Trunk sprites** (simple needs):
+- **Single texture** - just background image replacement
+- **No directional logic** - same rendering regardless of position
+- **Repeating pattern** - simple background texture
 
-#### Background-Position Calculations
-```css
-/* Example for idle sprite (coords: 0, 0, 341, 341) */
-.sprite-idle {
-  background-image: url('/images/lumberjack.png');
-  background-size: 507px 507px; /* Scale 1023x1023 to 173x3 ratio */
-  background-position: 0px 0px;
-  width: 173px;
-  height: 173px;
-}
-```
+#### Two-Phase Refactoring Strategy
+**Phase 1: Implement BranchSprite with temporary direct approach**
+- Create BranchSprite component with built-in sprite logic
+- Replace branch rectangles with sprite-based rendering
+- Get branch sprites working with mirroring
 
-### Design Decision Impact
-Given GAME_DESIGN.md emphasis on "basic geometric shapes for development phase" and MVP focus:
-- **Conservative Approach**: Implement sprite system but maintain current sizing
-- **Future-Proof**: Structure allows easy transition to detailed art assets later
-- **Arcade Compatibility**: Ensure sprites remain visible at arcade viewing distances
+**Phase 2: Extract common Sprite component and refactor**
+- Create reusable `Sprite` component with common functionality
+- Refactor BranchSprite to use common Sprite component
+- Convert trunk rendering from direct CSS to Sprite component
+- Establish consistent sprite system across game elements
 
-### Refactoring Scope for Sprite Implementation
-**Focus**: Extract only Player component - minimal refactoring to enable clean sprite integration
+#### Benefits of Common Sprite System
+**Advantages**:
+- **Consistent API** - same props pattern for all game sprites
+- **Reusable logic** - shared positioning, scaling, and styling
+- **Maintainable** - single place for sprite-related utilities
+- **Extensible** - easy to add new sprites (text sprites, obstacles, power-ups, etc.)
+- **Type safety** - unified TypeScript interfaces for all sprites
+- **Future assets confirmed** - text sprites will be added later, validating common system approach
 
-**Rationale**: 
-- GameBoard.tsx has mixed concerns that complicate sprite implementation
-- Player rendering (lines 149-158) should be isolated for sprite replacement
-- Keep refactoring minimal and focused on sprite implementation needs only
+**Implementation locations requiring updates**:
+- Static tree segments in GameBoard.tsx
+- Flying branch animations in game logic  
+- Trunk rendering (post-refactor phase)
+- Branch collision detection (may need sprite boundary adjustments)
 
-### Final Implementation Specifications
+### Implementation Strategy
 
-#### All Requirements Resolved:
-- **Scaling**: Height-based (173px), bottom-aligned
-- **CSS Technique**: background-image with background-position  
-- **State Timing**: Button press → chopping → idle (200ms), collision → hit
-- **Sprite Alignment**: Bottom-align within current player bounds
-- **Arcade Scaling**: Ignore for now (handle later)
+#### Phase 1: Branch Sprite Implementation (Immediate)
+1. **Create BranchSprite component** with side-aware rendering
+2. **Add branch constants** to constants.ts (path, dimensions, scaling)
+3. **Update GameBoard.tsx** to use BranchSprite instead of div rectangles
+4. **Update animation system** to use BranchSprite for flying branches
+5. **Test collision detection** with new sprite boundaries
 
-### File Changes Required
-1. **New file**: `components/Player.tsx` - Extract current player rendering logic
-2. **GameBoard.tsx**: Replace inline player rendering with Player component  
-3. **GameState.ts**: Add `playerState: 'idle' | 'chopping' | 'hit'` (per GAME_DESIGN.md line 121)
-4. **constants.ts**: Add sprite coordinates, scaling factor (0.51), and timing constants
-5. **New file**: `components/LumberjackSprite.tsx` - background-image sprite component
-6. **Player.tsx**: Update to use LumberjackSprite instead of rectangle
-7. **GameLogic.ts**: Update game actions to set appropriate player states and timing
-8. **Add chopping state timer**: Brief duration (~200ms) before returning to idle
+#### Phase 2: Common Sprite System Refactoring (Post-Branch)
+1. **Create common Sprite component** with shared functionality
+2. **Refactor BranchSprite** to use common Sprite component internally
+3. **Convert trunk CSS** to use Sprite component instead of direct backgroundImage
+4. **Update LumberjackSprite** to consider common patterns (optional)
+5. **Establish sprite system conventions** for future game elements
+
+#### File Changes Required
+
+**Phase 1 Files**:
+- `src/components/BranchSprite.tsx` - New component with mirroring logic
+- `src/constants.ts` - Add `BRANCH_SPRITE_PATH` and related constants
+- `src/components/GameBoard.tsx` - Replace rectangle divs with BranchSprite
+- Flying branch animation code - Update to use BranchSprite component
+
+**Phase 2 Files**:
+- `src/components/Sprite.tsx` - New common sprite component
+- `src/components/BranchSprite.tsx` - Refactor to use common Sprite
+- `src/components/GameBoard.tsx` - Update trunk rendering to use Sprite
+- `src/constants.ts` - Organize sprite constants with common patterns
+
+### Technical Implementation Notes (REQUIREMENTS CONFIRMED)
+- **CSS Transform**: `transform: scaleX(-1)` for left-side branches
+- **Transform Origin**: `transform-origin: bottom-left` for left-side branches
+- **Sprite dimensions**: 340×248px source → 170×124px display (exactly 50% scale)
+- **Positioning**: Center on existing branch positions (no offset changes needed)
+- **Animation**: Flying branches maintain rotation behavior, same as current system
+- **Collision**: Keep existing rectangular collision boundaries (no sprite shape detection)
+- **Performance**: CSS transforms are GPU-accelerated, minimal performance impact
+- **Future compatibility**: Common sprite system will support upcoming text sprites
+
+## Next Steps
+
+### Phase 1: Branch Sprite Implementation
+1. ~~Examine branch.png sprite format and orientation~~
+2. Create BranchSprite component with directional mirroring
+3. Add branch sprite constants to constants.ts
+4. Update GameBoard to use BranchSprite instead of rectangles
+5. Update flying branch animations to use BranchSprite
+6. Test branch rendering, scaling, and collision detection
+
+### Phase 2: Common Sprite System Refactoring  
+7. Create common Sprite component with shared functionality
+8. Refactor BranchSprite to use common Sprite component
+9. ~~Implement trunk sprite replacement~~ → Convert to use common Sprite component
+10. Establish unified sprite system patterns and conventions
+11. Test all sprites work consistently across game elements

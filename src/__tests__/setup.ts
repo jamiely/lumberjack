@@ -86,18 +86,33 @@ if (!('webkitAudioContext' in window)) {
   })
 }
 
-// Mock fetch for audio assets - provide a default implementation
-// but allow tests to override it with vi.mocked(global.fetch)
-if (!global.fetch) {
-  global.fetch = ((url: string) => {
-    // Mock audio file requests by default
-    if (typeof url === 'string' && url.includes('.wav')) {
-      return Promise.resolve({
-        ok: true,
-        arrayBuffer: () => Promise.resolve(new ArrayBuffer(1024))
-      } as Response)
+// Mock fetch for audio assets - override any existing implementation
+global.fetch = ((input: string | URL | Request) => {
+  let urlString: string
+  if (typeof input === 'string') {
+    urlString = input
+    // Handle relative URLs by converting them to absolute
+    if (urlString.startsWith('/')) {
+      urlString = 'http://localhost' + urlString
     }
-    // Reject other requests by default
-    return Promise.reject(new Error('Fetch not available in test environment'))
-  }) as typeof fetch
-}
+  } else if (input instanceof URL) {
+    urlString = input.href
+  } else if (input instanceof Request) {
+    urlString = input.url
+  } else {
+    urlString = String(input)
+  }
+  
+  // Mock audio file requests by default - handle both absolute and relative URLs
+  if (urlString.includes('.wav') || urlString.includes('/audio/')) {
+    return Promise.resolve({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers(),
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(1024))
+    } as Response)
+  }
+  // Reject other requests by default
+  return Promise.reject(new Error(`Fetch not mocked for URL: ${urlString}`))
+}) as typeof fetch

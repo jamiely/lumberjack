@@ -120,8 +120,8 @@ describe('App Integration Tests', () => {
     expect(screen.getByText('0')).toBeInTheDocument()
     // Score display now shows only the number without additional text
     
-    // Game board should be rendered (check for tree trunk color)
-    const treeTrunks = document.querySelectorAll('[style*="background-color: rgb(139, 69, 19)"]')
+    // Game board should be rendered (check for tree trunk sprites)
+    const treeTrunks = document.querySelectorAll('[style*="background-image: url(\\"/images/trunk.png\\")"]')
     expect(treeTrunks.length).toBeGreaterThan(0)
   })
 })
