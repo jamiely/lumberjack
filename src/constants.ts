@@ -54,6 +54,11 @@ export const DEBUG_PANEL_MARGIN_TOP = 20;
 export const DEBUG_PANEL_PADDING = 15;
 export const DEBUG_PANEL_FONT_SIZE = 12;
 
+// Grass Sprite Constants
+export const GRASS_SPRITE_PATH = '/images/grass.png';
+export const GRASS_SPRITE_WIDTH = 540; // Full game board width
+export const GRASS_SPRITE_HEIGHT = 120; // Estimated height for grass area
+
 // Sprite Constants
 export const SPRITE_SHEET_PATH = '/images/lumberjack.png';
 export const SPRITE_SOURCE_SIZE = 1023; // Original sprite sheet dimension

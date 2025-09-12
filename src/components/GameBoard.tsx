@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { TreeSegment, AnimatedSegment } from '../game/GameState'
 import Player from './Player'
 import { BranchSprite } from './BranchSprite'
+import { GrassSprite } from './GrassSprite'
 import {
   GAME_BOARD_WIDTH,
   GAME_BOARD_HEIGHT,
@@ -115,6 +116,16 @@ export default function GameBoard({
       opacity: getOpacity(),
       pointerEvents: getPointerEvents()
     }} data-testid="game-board">
+      {/* Grass sprite at ground level */}
+      <GrassSprite
+        style={{
+          position: 'absolute',
+          left: '0px',
+          bottom: '40px',
+          zIndex: 0 // Behind tree trunk and other elements
+        }}
+      />
+
       {/* Tree segments */}
       {treeSegments.map((segment, index) => (
         <div key={index}>
