@@ -61,6 +61,7 @@ export default function GameOverScreen({
           <GameBoard 
             treeSegments={finalGameState.treeSegments}
             playerSide={finalGameState.playerSide}
+            playerState={finalGameState.playerState}
             gameOver={finalGameState.gameOver}
             mode="frozen"
             animatedSegments={finalGameState.animatedSegments}

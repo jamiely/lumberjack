@@ -71,6 +71,7 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
         <GameBoard 
           treeSegments={initialGameState.treeSegments}
           playerSide={initialGameState.playerSide}
+          playerState={initialGameState.playerState}
           gameOver={initialGameState.gameOver}
           mode="static"
         />

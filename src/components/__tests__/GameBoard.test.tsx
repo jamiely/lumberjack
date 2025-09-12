@@ -15,6 +15,7 @@ describe('GameBoard', () => {
       <GameBoard 
         treeSegments={mockTreeSegments}
         playerSide="left"
+        playerState="idle"
         gameOver={false}
       />
     )
@@ -35,6 +36,7 @@ describe('GameBoard', () => {
       <GameBoard 
         treeSegments={mockTreeSegments}
         playerSide="left"
+        playerState="idle"
         gameOver={false}
       />
     )
@@ -49,6 +51,7 @@ describe('GameBoard', () => {
       <GameBoard 
         treeSegments={mockTreeSegments}
         playerSide="left"
+        playerState="idle"
         gameOver={false}
       />
     )
@@ -62,6 +65,7 @@ describe('GameBoard', () => {
       <GameBoard 
         treeSegments={mockTreeSegments}
         playerSide="left"
+        playerState="idle"
         gameOver={false}
       />
     )
@@ -75,46 +79,54 @@ describe('GameBoard', () => {
       <GameBoard 
         treeSegments={mockTreeSegments}
         playerSide="left"
+        playerState="idle"
         gameOver={false}
       />
     )
     
-    let player = container.querySelector('[style*="left: 90px"]')
+    // Player component should be positioned on left side (accounting for sprite centering offset)
+    let player = container.querySelector('[style*="left: 25px"]') // 90px - SPRITE_CENTERING_OFFSET (65px)
     expect(player).toBeInTheDocument()
     
     rerender(
       <GameBoard 
         treeSegments={mockTreeSegments}
         playerSide="right"
+        playerState="idle"
         gameOver={false}
       />
     )
     
-    player = container.querySelector('[style*="left: 390px"]')
+    // Player component should be positioned on right side (accounting for sprite centering offset)
+    player = container.querySelector('[style*="left: 325px"]') // 390px - SPRITE_CENTERING_OFFSET (65px)
     expect(player).toBeInTheDocument()
   })
 
-  it('changes player color when game over', () => {
+  it('changes player sprite when game over', () => {
     const { container, rerender } = render(
       <GameBoard 
         treeSegments={mockTreeSegments}
         playerSide="left"
+        playerState="idle"
         gameOver={false}
       />
     )
     
-    let player = container.querySelector('[style*="background-color: blue"]')
+    // Should have idle sprite with background-position for idle state
+    let player = container.querySelector('[style*="background-position: 0px 0px"]')
     expect(player).toBeInTheDocument()
     
     rerender(
       <GameBoard 
         treeSegments={mockTreeSegments}
         playerSide="left"
+        playerState="hit"
         gameOver={true}
       />
     )
     
-    player = container.querySelector('[style*="background-color: red"]')
+    // Should have hit sprite with different background-position and clip-path
+    player = container.querySelector('[style*="clip-path: polygon(0% 0%, 70% 0%, 70% 100%, 0% 100%)"]')
     expect(player).toBeInTheDocument()
   })
 
@@ -128,6 +140,7 @@ describe('GameBoard', () => {
       <GameBoard 
         treeSegments={segmentsWithBranches}
         playerSide="left"
+        playerState="idle"
         gameOver={false}
       />
     )
@@ -145,6 +158,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
         />
       )
@@ -161,6 +175,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           mode="interactive"
         />
@@ -178,6 +193,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           mode="static"
         />
@@ -195,6 +211,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           mode="frozen"
         />
@@ -212,6 +229,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           mode="static"
         />
@@ -224,6 +242,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           mode="frozen"
         />
@@ -273,6 +292,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           animatedSegments={mockAnimatedSegments}
           onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
@@ -299,6 +319,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           animatedSegments={mockAnimatedSegments}
           onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
@@ -325,6 +346,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           animatedSegments={mockAnimatedSegments}
           onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
@@ -358,6 +380,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           animatedSegments={mockAnimatedSegments}
           onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
@@ -374,6 +397,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
           animatedSegments={[]}
           onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
@@ -390,6 +414,7 @@ describe('GameBoard', () => {
         <GameBoard 
           treeSegments={mockTreeSegments}
           playerSide="left"
+          playerState="idle"
           gameOver={false}
         />
       )

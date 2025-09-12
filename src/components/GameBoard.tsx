@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import type { TreeSegment, AnimatedSegment } from '../game/GameState'
+import Player from './Player'
 import {
   GAME_BOARD_WIDTH,
   GAME_BOARD_HEIGHT,
   GAME_BOARD_BACKGROUND_COLOR,
-  PLAYER_WIDTH,
-  PLAYER_HEIGHT,
   PLAYER_BOTTOM_OFFSET,
   PLAYER_LEFT_POSITION,
   PLAYER_RIGHT_POSITION,
@@ -33,6 +32,7 @@ import {
 interface GameBoardProps {
   treeSegments: TreeSegment[]
   playerSide: 'left' | 'right'
+  playerState: 'idle' | 'chopping' | 'hit'
   gameOver: boolean
   mode?: 'interactive' | 'static' | 'frozen'
   animatedSegments?: AnimatedSegment[]
@@ -41,7 +41,8 @@ interface GameBoardProps {
 
 export default function GameBoard({ 
   treeSegments, 
-  playerSide, 
+  playerSide,
+  playerState,
   gameOver, 
   mode = 'interactive',
   animatedSegments = [],
@@ -147,15 +148,14 @@ export default function GameBoard({
       ))}
 
       {/* Player */}
-      <div style={{
-        position: 'absolute',
-        left: playerSide === 'left' ? `${PLAYER_LEFT_POSITION}px` : `${PLAYER_RIGHT_POSITION}px`,
-        bottom: `${PLAYER_BOTTOM_OFFSET}px`,
-        width: `${PLAYER_WIDTH}px`,
-        height: `${PLAYER_HEIGHT}px`,
-        backgroundColor: gameOver ? 'red' : 'blue',
-        border: '4px solid #000'
-      }} />
+      <Player 
+        playerSide={playerSide}
+        playerState={playerState}
+        gameOver={gameOver}
+        leftPosition={PLAYER_LEFT_POSITION}
+        rightPosition={PLAYER_RIGHT_POSITION}
+        bottomOffset={PLAYER_BOTTOM_OFFSET}
+      />
 
       {/* Animated flying segments */}
       {animatedSegments.map(segment => {

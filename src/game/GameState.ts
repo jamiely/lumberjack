@@ -12,6 +12,7 @@ export interface AnimatedSegment {
 
 export interface GameState {
   playerSide: 'left' | 'right'
+  playerState: 'idle' | 'chopping' | 'hit'
   score: number
   gameOver: boolean
   showDebug: boolean
@@ -25,6 +26,7 @@ import { INITIAL_TIME_REMAINING_SEC, MAX_TIME_SEC } from '../constants'
 
 export const createInitialGameState = (): GameState => ({
   playerSide: 'left',
+  playerState: 'idle',
   score: 0,
   gameOver: false,
   showDebug: false,

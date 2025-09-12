@@ -81,6 +81,7 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
         <GameBoard 
           treeSegments={gameState.treeSegments}
           playerSide={gameState.playerSide}
+          playerState={gameState.playerState}
           gameOver={gameState.gameOver}
           mode="interactive"
           animatedSegments={gameState.animatedSegments}

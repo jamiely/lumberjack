@@ -32,7 +32,8 @@ export const performChop = (
     gameEvents.emit('gameOver')
     return {
       ...gameState,
-      gameOver: true
+      gameOver: true,
+      playerState: 'hit'
     }
   }
 
@@ -56,6 +57,7 @@ export const performChop = (
   return {
     ...gameState,
     playerSide: side,
+    playerState: 'chopping',
     score: gameState.score + 1,
     treeSegments: addNewSegmentToTree(gameState.treeSegments),
     animatedSegments: [...gameState.animatedSegments, animatedSegment],
@@ -95,7 +97,8 @@ export const updateTimer = (
     return {
       ...gameState,
       timeRemaining: 0,
-      gameOver: true
+      gameOver: true,
+      playerState: 'hit'
     }
   }
 
