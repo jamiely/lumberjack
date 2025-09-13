@@ -1,4 +1,4 @@
-import type { CharacterConfig } from '../characters/types'
+import type { CharacterConfig, PoseBounds } from '../characters/types'
 
 interface UniversalSpriteProps {
   characterConfig: CharacterConfig
@@ -16,60 +16,71 @@ export default function UniversalSprite({
   className = '' 
 }: UniversalSpriteProps) {
   const { spriteConfig } = characterConfig
-  const coords = spriteConfig.coordinates[spriteState]
+  const pose = spriteConfig.poses[spriteState]
   
-  if (!coords) {
+  if (!pose) {
     console.warn(`Invalid sprite state "${spriteState}" for character "${characterConfig.id}"`)
     // Fallback to first available state
-    const fallbackState = Object.keys(spriteConfig.coordinates)[0]
-    const fallbackCoords = spriteConfig.coordinates[fallbackState]
-    return renderSprite(spriteConfig, fallbackCoords, width, height, className, characterConfig.id, spriteState)
+    const fallbackState = Object.keys(spriteConfig.poses)[0]
+    const fallbackPose = spriteConfig.poses[fallbackState]
+    return renderSprite(spriteConfig, fallbackPose, width, height, className)
   }
   
-  return renderSprite(spriteConfig, coords, width, height, className, characterConfig.id, spriteState)
+  return renderSprite(spriteConfig, pose, width, height, className)
 }
 
 function renderSprite(
   spriteConfig: CharacterConfig['spriteConfig'], 
-  coords: [number, number, number, number], 
-  width: number, 
-  height: number, 
-  className: string,
-  characterId: string,
-  spriteState: string
+  pose: PoseBounds, 
+  targetWidth: number, 
+  targetHeight: number, 
+  className: string
 ) {
-  // Calculate background-position from sprite coordinates
-  const bgPosX = -Math.round(coords[0] * spriteConfig.scaleFactor)
-  const bgPosY = -Math.round(coords[1] * spriteConfig.scaleFactor)
+  // Calculate aspect-ratio-preserving scale
+  const scaleX = targetWidth / pose.width
+  const scaleY = targetHeight / pose.height
+  const scale = Math.min(scaleX, scaleY) // Preserve aspect ratio
   
-  // Character-specific rendering logic
-  let clipPath = 'none'
-  let backgroundSize = `${Math.floor(1023 * spriteConfig.scaleFactor)}px ${Math.floor(1023 * spriteConfig.scaleFactor)}px` // Default for lumberjack1
+  // Calculate scaled dimensions
+  const scaledSheetWidth = spriteConfig.sheetWidth * scale
+  const scaledSheetHeight = spriteConfig.sheetHeight * scale
+  const scaledPoseWidth = pose.width * scale
+  const scaledPoseHeight = pose.height * scale
   
-  // Handle lumberjack1-specific features
-  if (characterId === 'lumberjack1' && spriteState === 'hit') {
-    // Special clipping for hit sprite to remove overlapping content
-    clipPath = 'polygon(0% 0%, 70% 0%, 70% 100%, 0% 100%)'
-  }
+  // Calculate clip coordinates as percentages
+  const clipLeft = (pose.x / spriteConfig.sheetWidth) * 100
+  const clipTop = (pose.y / spriteConfig.sheetHeight) * 100  
+  const clipRight = ((pose.x + pose.width) / spriteConfig.sheetWidth) * 100
+  const clipBottom = ((pose.y + pose.height) / spriteConfig.sheetHeight) * 100
   
-  // Handle lumberjack2-specific features  
-  if (characterId === 'lumberjack2') {
-    backgroundSize = `${Math.floor(768 * spriteConfig.scaleFactor)}px ${Math.floor(768 * spriteConfig.scaleFactor)}px`
-  }
+  // Center the scaled pose within the target container
+  const offsetX = (targetWidth - scaledPoseWidth) / 2
+  const offsetY = (targetHeight - scaledPoseHeight) / 2
   
   return (
     <div 
       className={className}
       style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        backgroundImage: `url(${spriteConfig.sheetPath})`,
-        backgroundSize: backgroundSize,
-        backgroundPosition: `${bgPosX}px ${bgPosY}px`,
-        backgroundRepeat: 'no-repeat',
-        overflow: 'hidden',
-        clipPath: clipPath
+        width: `${targetWidth}px`,
+        height: `${targetHeight}px`,
+        position: 'relative',
+        overflow: 'hidden'
       }}
-    />
+    >
+      <div
+        style={{
+          width: `${scaledSheetWidth}px`,
+          height: `${scaledSheetHeight}px`,
+          backgroundImage: `url(${spriteConfig.sheetPath})`,
+          backgroundSize: `${scaledSheetWidth}px ${scaledSheetHeight}px`,
+          backgroundPosition: '0 0',
+          backgroundRepeat: 'no-repeat',
+          position: 'absolute',
+          left: `${offsetX - pose.x * scale}px`,
+          top: `${offsetY - pose.y * scale}px`,
+          clipPath: `polygon(${clipLeft}% ${clipTop}%, ${clipRight}% ${clipTop}%, ${clipRight}% ${clipBottom}%, ${clipLeft}% ${clipBottom}%)`
+        }}
+      />
+    </div>
   )
 }

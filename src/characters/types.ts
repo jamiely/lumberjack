@@ -15,12 +15,20 @@ export interface CharacterPositioning {
   rightPosition: number
 }
 
+export interface PoseBounds {
+  x: number      // Left edge on sprite sheet
+  y: number      // Top edge on sprite sheet  
+  width: number  // Pose width on sprite sheet
+  height: number // Pose height on sprite sheet
+}
+
 export interface CharacterSpriteConfig {
   sheetPath: string
+  sheetWidth: number    // Original sprite sheet width
+  sheetHeight: number   // Original sprite sheet height
   dimensions: CharacterDimensions
   positioning: CharacterPositioning
-  scaleFactor: number
-  coordinates: Record<string, [number, number, number, number]>
+  poses: Record<string, PoseBounds>
 }
 
 export interface CharacterConfig {

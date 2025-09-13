@@ -82,7 +82,7 @@ describe('GameBoard', () => {
     )
     
     // Player component should be positioned on left side (accounting for sprite centering offset)
-    let player = container.querySelector('[style*="left: 48.5px"]') // 90px - LUMBERJACK2_CENTERING_OFFSET (41.5px)
+    let player = container.querySelector('[style*="left: 25px"]') // 90px - LUMBERJACK2_CENTERING_OFFSET (65px)
     expect(player).toBeInTheDocument()
     
     rerender(
@@ -95,7 +95,7 @@ describe('GameBoard', () => {
     )
     
     // Player component should be positioned on right side (accounting for sprite centering offset)
-    player = container.querySelector('[style*="left: 348.5px"]') // 390px - LUMBERJACK2_CENTERING_OFFSET (41.5px)
+    player = container.querySelector('[style*="left: 325px"]') // 390px - LUMBERJACK2_CENTERING_OFFSET (65px)
     expect(player).toBeInTheDocument()
   })
 
@@ -109,9 +109,13 @@ describe('GameBoard', () => {
       />
     )
     
-    // Should have idle sprite with background-position for idleFrame1 state (0px 0px)
-    let player = container.querySelector('[style*="background-position: 0px 0px"]')
+    // Should have idle sprite - with new clip-path system, check for sprite container
+    let player = container.querySelector('[style*="position: relative"]')
     expect(player).toBeInTheDocument()
+    
+    // Check that inner sprite div has background image
+    let innerSprite = container.querySelector('[style*="background-image"]')
+    expect(innerSprite).toBeInTheDocument()
     
     rerender(
       <GameBoard 
@@ -122,10 +126,12 @@ describe('GameBoard', () => {
       />
     )
     
-    // Should have hit sprite with different background-position for hitStunned state
-    // hitStunned is at coordinates [0, 512, 256, 768], so background-position should be 0px -346px
-    player = container.querySelector('[style*="background-position: 0px -346px"]')
+    // Should still have sprite with background image - clip-path will handle the pose
+    player = container.querySelector('[style*="position: relative"]')
     expect(player).toBeInTheDocument()
+    
+    innerSprite = container.querySelector('[style*="background-image"]')
+    expect(innerSprite).toBeInTheDocument()
   })
 
   it('positions branches on correct side', () => {

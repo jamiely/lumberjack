@@ -1,35 +1,29 @@
-import type { CharacterConfig, GameState } from '../types'
+import type { CharacterConfig, GameState, PoseBounds } from '../types'
 
-// Lumberjack3 Sprite Constants
+// Lumberjack3 Sprite Constants  
 export const LUMBERJACK3_SPRITE_PATH = '/images/lumberjack3.png'
-export const LUMBERJACK3_SHEET_WIDTH = 768 // 3 columns × 256px
-export const LUMBERJACK3_SHEET_HEIGHT = 768 // 3 rows × 256px  
-export const LUMBERJACK3_INDIVIDUAL_SIZE = 256
+export const LUMBERJACK3_SHEET_WIDTH = 877 // Based on actual sprite coordinates
+export const LUMBERJACK3_SHEET_HEIGHT = 1494 // Based on actual sprite coordinates
 export const LUMBERJACK3_PLAYER_HEIGHT = 173
-// Scale factor based on Y-direction only to maintain aspect ratio
-export const LUMBERJACK3_Y_SCALE_FACTOR = LUMBERJACK3_PLAYER_HEIGHT / LUMBERJACK3_INDIVIDUAL_SIZE
-// Width calculated to maintain aspect ratio
-export const LUMBERJACK3_PLAYER_WIDTH = Math.round(LUMBERJACK3_INDIVIDUAL_SIZE * LUMBERJACK3_Y_SCALE_FACTOR)
-export const LUMBERJACK3_DISPLAY_SIZE = LUMBERJACK3_PLAYER_WIDTH
-// Use uniform scale factor for background positioning (sprite sheet scaling)
-export const LUMBERJACK3_SCALE_FACTOR = LUMBERJACK3_Y_SCALE_FACTOR
+export const LUMBERJACK3_DISPLAY_SIZE = 220
 
 // Lumberjack3 Dimensions & Positioning
+export const LUMBERJACK3_PLAYER_WIDTH = LUMBERJACK3_DISPLAY_SIZE
 export const LUMBERJACK3_CENTERING_OFFSET = (LUMBERJACK3_PLAYER_WIDTH - 90) / 2 // 90 is original PLAYER_WIDTH
 
-// Lumberjack3 sprite coordinates based on your provided table
-export const LUMBERJACK3_COORDS = {
-  idleFrame1: [30, 0, 280, 480],           // Pose 1: Idle Frame 1
-  idleFrame2: [370, 0, 750, 480],         // Pose 2: Idle Frame 2  
-  chopAnticipation: [0, 520, 350, 911],   // Pose 3: Chop (Anticip.)
-  chopImpact: [350, 520, 840, 1000],         // Pose 4: Chop (Impact)
-  hitStunned: [0, 1015, 320, 1470],       // Pose 5: Hit/Stunned
-  recovery: [0, 1, 0, 1],         // Pose 6: Recovery
-  knockedDown: [400, 760, 877, 1494]         // Pose 7: Knocked Down
+// Lumberjack3 sprite pose bounds (exact pixel coordinates on sprite sheet)
+export const LUMBERJACK3_POSES: Record<string, PoseBounds> = {
+  idleFrame1: { x: 30, y: 0, width: 250, height: 480 },           // Pose 1: Idle Frame 1
+  idleFrame2: { x: 370, y: 0, width: 380, height: 480 },         // Pose 2: Idle Frame 2  
+  chopAnticipation: { x: 0, y: 520, width: 350, height: 391 },   // Pose 3: Chop (Anticip.) - calculated width/height
+  chopImpact: { x: 350, y: 520, width: 490, height: 480 },       // Pose 4: Chop (Impact)
+  hitStunned: { x: 0, y: 1015, width: 320, height: 455 },        // Pose 5: Hit/Stunned
+  recovery: { x: 0, y: 1015, width: 320, height: 455 },          // Pose 6: Recovery (reusing hitStunned for now)
+  knockedDown: { x: 400, y: 1040, width: 477, height: 454 }      // Pose 7: Knocked Down
 } as const
 
 // State mapping function
-function mapGameStateToLumberjack3Sprite(gameState: GameState): keyof typeof LUMBERJACK3_COORDS {
+function mapGameStateToLumberjack3Sprite(gameState: GameState): keyof typeof LUMBERJACK3_POSES {
   switch (gameState) {
     case 'idle':
       return 'idleFrame1'
@@ -48,6 +42,8 @@ export const lumberjack3Config: CharacterConfig = {
   name: 'Advanced Lumberjack',
   spriteConfig: {
     sheetPath: LUMBERJACK3_SPRITE_PATH,
+    sheetWidth: LUMBERJACK3_SHEET_WIDTH,
+    sheetHeight: LUMBERJACK3_SHEET_HEIGHT,
     dimensions: {
       width: LUMBERJACK3_PLAYER_WIDTH,
       height: LUMBERJACK3_PLAYER_HEIGHT,
@@ -59,16 +55,7 @@ export const lumberjack3Config: CharacterConfig = {
       leftPosition: 90,  // From original PLAYER_LEFT_POSITION
       rightPosition: 390 // From original PLAYER_RIGHT_POSITION
     },
-    scaleFactor: LUMBERJACK3_SCALE_FACTOR,
-    coordinates: {
-      idleFrame1: [...LUMBERJACK3_COORDS.idleFrame1],
-      idleFrame2: [...LUMBERJACK3_COORDS.idleFrame2],
-      chopAnticipation: [...LUMBERJACK3_COORDS.chopAnticipation],
-      chopImpact: [...LUMBERJACK3_COORDS.chopImpact],
-      hitStunned: [...LUMBERJACK3_COORDS.hitStunned],
-      recovery: [...LUMBERJACK3_COORDS.recovery],
-      knockedDown: [...LUMBERJACK3_COORDS.knockedDown]
-    }
+    poses: LUMBERJACK3_POSES
   },
   mapGameStateToSprite: mapGameStateToLumberjack3Sprite,
   availableStates: ['idleFrame1', 'idleFrame2', 'chopAnticipation', 'chopImpact', 'hitStunned', 'recovery', 'knockedDown']
