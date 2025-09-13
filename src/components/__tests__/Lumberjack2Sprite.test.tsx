@@ -28,7 +28,7 @@ describe('UniversalSprite with Lumberjack2', () => {
     expect(innerSprite).not.toBeNull()
     
     // Check that the HTML contains the background image (jsdom escapes quotes as &quot;)
-    expect(container.innerHTML).toContain('background-image: url(&quot;/images/lumberjack2.png&quot;)')
+    expect(container.innerHTML).toContain('background-image: url(&quot;./images/lumberjack2.png&quot;)')
   })
 
   it('should apply clip-path for pose bounds', () => {
@@ -41,7 +41,7 @@ describe('UniversalSprite with Lumberjack2', () => {
   it('should handle different sprite states', () => {
     const { container, rerender } = render(<UniversalSprite {...defaultProps} spriteState="chopImpact" />)
     
-    expect(container.innerHTML).toContain('background-image: url(&quot;/images/lumberjack2.png&quot;)')
+    expect(container.innerHTML).toContain('background-image: url(&quot;./images/lumberjack2.png&quot;)')
     expect(container.innerHTML).toContain('clip-path: polygon(')
     
     // Try another state
@@ -64,7 +64,7 @@ describe('UniversalSprite with Lumberjack2', () => {
       const sprite = container.firstChild as HTMLElement
       
       expect(sprite).toBeDefined()
-      expect(container.innerHTML).toContain('background-image: url(&quot;/images/lumberjack2.png&quot;)')
+      expect(container.innerHTML).toContain('background-image: url(&quot;./images/lumberjack2.png&quot;)')
       expect(container.innerHTML).toContain('clip-path: polygon(')
     })
   })

@@ -35,7 +35,7 @@ describe('lumberjack4Config', () => {
   })
 
   it('has correct sprite sheet configuration', () => {
-    expect(lumberjack4Config.spriteConfig.sheetPath).toBe('/images/lumberjack4.png')
+    expect(lumberjack4Config.spriteConfig.sheetPath).toBe('./images/lumberjack4.png')
     expect(lumberjack4Config.spriteConfig.sheetWidth).toBeGreaterThan(0)
     expect(lumberjack4Config.spriteConfig.sheetHeight).toBeGreaterThan(0)
   })

@@ -121,7 +121,7 @@ describe('App Integration Tests', () => {
     // Score display now shows only the number without additional text
     
     // Game board should be rendered (check for tree trunk sprites)
-    const treeTrunks = document.querySelectorAll('[style*="background-image: url(\\"/images/trunk.png\\")"]')
+    const treeTrunks = document.querySelectorAll('[style*="background-image: url(\\"./images/trunk.png\\")"]')
     expect(treeTrunks.length).toBeGreaterThan(0)
   })
 })

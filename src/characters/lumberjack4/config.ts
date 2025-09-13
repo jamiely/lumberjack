@@ -1,7 +1,7 @@
 import type { CharacterConfig, GameState, PoseBounds } from '../types'
 
 // Lumberjack4 Sprite Constants  
-export const LUMBERJACK4_SPRITE_PATH = '/images/lumberjack4.png'
+export const LUMBERJACK4_SPRITE_PATH = './images/lumberjack4.png'
 export const LUMBERJACK4_SHEET_WIDTH = 966 // Based on 3x256 grid
 export const LUMBERJACK4_SHEET_HEIGHT = 1415 // Based on 3x256 grid
 export const LUMBERJACK4_PLAYER_HEIGHT = 173

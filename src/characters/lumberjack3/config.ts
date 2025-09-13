@@ -1,7 +1,7 @@
 import type { CharacterConfig, GameState, PoseBounds } from '../types'
 
 // Lumberjack3 Sprite Constants  
-export const LUMBERJACK3_SPRITE_PATH = '/images/lumberjack3.png'
+export const LUMBERJACK3_SPRITE_PATH = './images/lumberjack3.png'
 export const LUMBERJACK3_SHEET_WIDTH = 877 // Based on actual sprite coordinates
 export const LUMBERJACK3_SHEET_HEIGHT = 1494 // Based on actual sprite coordinates
 export const LUMBERJACK3_PLAYER_HEIGHT = 173
