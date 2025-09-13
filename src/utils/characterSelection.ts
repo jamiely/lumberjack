@@ -35,6 +35,29 @@ export function selectCharacterType(urlSearchParams: URLSearchParams): Character
 }
 
 /**
+ * Checks if a character is explicitly forced by URL parameter
+ * @param urlSearchParams - URLSearchParams object (e.g., from window.location.search)
+ * @returns true if URL contains a valid character parameter, false otherwise
+ */
+export function isCharacterForcedByUrl(urlSearchParams: URLSearchParams): boolean {
+  return getCharacterFromUrl(urlSearchParams) !== null
+}
+
+/**
+ * Convenience function to check if character is forced by current window location
+ * @returns true if current URL contains a valid character parameter, false otherwise
+ */
+export function isCharacterForcedByCurrentUrl(): boolean {
+  if (typeof window === 'undefined') {
+    // Fallback for SSR or testing environments
+    return false
+  }
+  
+  const urlParams = new URLSearchParams(window.location.search)
+  return isCharacterForcedByUrl(urlParams)
+}
+
+/**
  * Convenience function to select character type from current window location
  * @returns Character type from URL if valid, otherwise random character
  */

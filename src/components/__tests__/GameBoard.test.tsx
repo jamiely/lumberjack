@@ -150,7 +150,7 @@ describe('GameBoard', () => {
     )
     
     const leftBranch = container.querySelector('[style*="left: 45px"]')
-    const rightBranch = container.querySelector('[style*="left: 345px"]')
+    const rightBranch = container.querySelector('[style*="left: 325px"]')
     
     expect(leftBranch).toBeInTheDocument()
     expect(rightBranch).toBeInTheDocument()

@@ -4,7 +4,7 @@ import PlayScreen from './scenes/PlayScreen'
 import GameOverScreen from './scenes/GameOverScreen'
 import type { GameState } from '../game/GameState'
 import type { CharacterType } from '../characters'
-import { selectCharacterTypeFromCurrentUrl } from '../utils/characterSelection'
+import { selectCharacterTypeFromCurrentUrl, isCharacterForcedByCurrentUrl, getRandomCharacterType } from '../utils/characterSelection'
 
 export type Scene = 'attract' | 'play' | 'gameOver'
 
@@ -12,18 +12,16 @@ export default function SceneManager() {
   const [currentScene, setCurrentScene] = useState<Scene>('attract')
   const [finalScore, setFinalScore] = useState<number>(0)
   const [finalGameState, setFinalGameState] = useState<GameState | null>(null)
-  const [selectedCharacter, setSelectedCharacter] = useState<CharacterType | null>(null)
+  // Track whether character is forced by URL parameter
+  const [isCharacterForced] = useState<boolean>(() => isCharacterForcedByCurrentUrl())
+  // Select character immediately on mount so it's available for attract screen
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterType>(() => selectCharacterTypeFromCurrentUrl())
   const [highScore, setHighScore] = useState<number>(() => {
     const stored = localStorage.getItem('lumberjack-high-score')
     return stored ? parseInt(stored, 10) : 0
   })
 
   const handleStartGame = () => {
-    // Only select character if none selected (first time from attract)
-    if (!selectedCharacter) {
-      const characterType = selectCharacterTypeFromCurrentUrl()
-      setSelectedCharacter(characterType)
-    }
     setCurrentScene('play')
   }
 
@@ -41,13 +39,19 @@ export default function SceneManager() {
   }
 
   const handleRestart = () => {
-    // Keep same character for restart
+    // Select new random character if not forced by URL parameter
+    if (!isCharacterForced) {
+      setSelectedCharacter(getRandomCharacterType())
+    }
     setCurrentScene('play')
   }
 
   const handleReturnToAttract = () => {
-    // Clear character when returning to attract (allows new selection)
-    setSelectedCharacter(null)
+    // Select new character for next game: URL-forced character if present, otherwise new random
+    if (!isCharacterForced) {
+      setSelectedCharacter(getRandomCharacterType())
+    }
+    // If character is forced by URL, keep the current character (no change needed)
     setCurrentScene('attract')
   }
 
@@ -56,6 +60,7 @@ export default function SceneManager() {
       return (
         <AttractScreen 
           highScore={highScore}
+          characterType={selectedCharacter}
           onStartGame={handleStartGame}
         />
       )

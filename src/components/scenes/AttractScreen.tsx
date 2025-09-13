@@ -3,13 +3,15 @@ import { ScreenContainer } from '../ScreenContainer'
 import GameBoard from '../GameBoard'
 import { createInitialGameState } from '../../game/GameState'
 import { useAudioContext, useGameAudio } from '../../audio'
+import type { CharacterType } from '../../characters'
 
 interface AttractScreenProps {
   highScore: number
+  characterType: CharacterType
   onStartGame: () => void
 }
 
-export default function AttractScreen({ highScore, onStartGame }: AttractScreenProps) {
+export default function AttractScreen({ highScore, characterType, onStartGame }: AttractScreenProps) {
   const initialGameState = createInitialGameState()
   const { initializeAudio, isInitialized, audioState } = useAudioContext()
   const { playBackgroundMusic } = useGameAudio()
@@ -74,6 +76,7 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
           playerState={initialGameState.playerState}
           gameOver={initialGameState.gameOver}
           mode="static"
+          characterType={characterType}
         />
 
         {/* Top Banner - High Score */}
