@@ -15,7 +15,7 @@ export const LUMBERJACK1_CENTERING_OFFSET = (LUMBERJACK1_PLAYER_WIDTH - 90) / 2 
 export const LUMBERJACK1_POSES: Record<string, PoseBounds> = {
   idle: { x: 30, y: 20, width: 260, height: 380 },
   chopping: { x: 25, y: 405, width: 300, height: 370 },
-  hit: { x: 270, y: 790, width: 354, height: 230 }
+  hit: { x: 270, y: 790, width: 354, height: 230, facing: 'right' }
 } as const
 
 // State mapping function

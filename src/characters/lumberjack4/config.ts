@@ -16,7 +16,7 @@ export const LUMBERJACK4_POSES: Record<string, PoseBounds> = {
   idleFrame1: { x: 280, y: 0, width: 310, height: 440 },           // Pose 1: Idle Frame 1
   // idleFrame2: { x: 256, y: 0, width: 256, height: 256 },        // Pose 2: Idle Frame 2  
   // chopAnticipation: { x: 512, y: 0, width: 256, height: 256 },  // Pose 3: Chop (Anticip.)
-  chopImpact: { x: 75, y: 450, width: 400, height: 500 },        // Pose 4: Chop (Impact)
+  chopImpact: { x: 75, y: 450, width: 400, height: 500, facing: 'left' },        // Pose 4: Chop (Impact)
   hitStunned: { x: 70, y: 1000, width: 370, height: 430 },      // Pose 5: Hit/Stunned
   // recovery: { x: 512, y: 256, width: 256, height: 256 },        // Pose 6: Recovery
   // knockedDown: { x: 0, y: 512, width: 256, height: 256 }        // Pose 7: Knocked Down
