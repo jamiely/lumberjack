@@ -113,8 +113,8 @@ describe('AudioManager', () => {
 
   describe('audio asset loading', () => {
     const mockAssets: AudioAsset[] = [
-      { name: 'test1', url: '/audio/test1.wav' },
-      { name: 'test2', url: '/audio/test2.wav' }
+      { name: 'test1', url: './audio/test1.wav' },
+      { name: 'test2', url: './audio/test2.wav' }
     ];
 
     beforeEach(async () => {
@@ -131,8 +131,8 @@ describe('AudioManager', () => {
       await audioManager.loadAudioAssets(mockAssets);
 
       expect(global.fetch).toHaveBeenCalledTimes(2);
-      expect(global.fetch).toHaveBeenCalledWith('/audio/test1.wav');
-      expect(global.fetch).toHaveBeenCalledWith('/audio/test2.wav');
+      expect(global.fetch).toHaveBeenCalledWith('./audio/test1.wav');
+      expect(global.fetch).toHaveBeenCalledWith('./audio/test2.wav');
       expect(mockAudioContext.decodeAudioData).toHaveBeenCalledTimes(2);
     });
 
@@ -159,7 +159,7 @@ describe('AudioManager', () => {
       await audioManager.initialize();
       
       // Mock loaded buffer
-      const mockAssets: AudioAsset[] = [{ name: 'test', url: '/audio/test.wav' }];
+      const mockAssets: AudioAsset[] = [{ name: 'test', url: './audio/test.wav' }];
       const mockArrayBuffer = new ArrayBuffer(1024);
       (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
         ok: true,
