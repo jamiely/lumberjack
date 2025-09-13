@@ -151,6 +151,21 @@ The project uses modern ESM-only configuration and requires Node.js with ES2022 
 - **Auto-Return**: Game over screen automatically returns to attract after 5 seconds
 - **Responsive Design**: Works on desktop and mobile devices
 
+### Character Selection
+
+Choose your lumberjack sprite using the `character` query parameter:
+
+- **Lumberjack 1** (default): `?character=lumberjack1`
+- **Lumberjack 2**: `?character=lumberjack2`
+
+Examples:
+```
+http://localhost:5173/?character=lumberjack1
+http://localhost:5173/?character=lumberjack2
+```
+
+If no character is specified or an invalid character is provided, a random character will be selected.
+
 ## Known Issues
 
 - 4/5 Playwright E2E tests currently fail due to timing/deterministic issues
