@@ -2,12 +2,14 @@ import type { CharacterType, CharacterConfig } from './types'
 import { lumberjack1Config } from './lumberjack1/config'
 import { lumberjack2Config } from './lumberjack2/config'
 import { lumberjack3Config } from './lumberjack3/config'
+import { lumberjack4Config } from './lumberjack4/config'
 
 // Character Registry
 const characterRegistry: Record<CharacterType, CharacterConfig> = {
   lumberjack1: lumberjack1Config,
   lumberjack2: lumberjack2Config,
-  lumberjack3: lumberjack3Config
+  lumberjack3: lumberjack3Config,
+  lumberjack4: lumberjack4Config
 }
 
 // Character Selection Functions
@@ -33,4 +35,4 @@ export function isValidCharacterType(type: string): type is CharacterType {
 
 // Re-export types and configs for convenience
 export type { CharacterType, CharacterConfig, GameState } from './types'
-export { lumberjack1Config, lumberjack2Config, lumberjack3Config }
+export { lumberjack1Config, lumberjack2Config, lumberjack3Config, lumberjack4Config }

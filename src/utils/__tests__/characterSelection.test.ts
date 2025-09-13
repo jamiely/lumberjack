@@ -10,7 +10,7 @@ describe('characterSelection', () => {
   describe('getRandomCharacterType', () => {
     it('returns a valid character type', () => {
       const result = getRandomCharacterType()
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
     })
 
     it('returns different characters on multiple calls (statistically)', () => {
@@ -20,9 +20,9 @@ describe('characterSelection', () => {
         results.add(getRandomCharacterType())
       }
       
-      // Should get at least one result, possibly all three
+      // Should get at least one result, possibly all four
       expect(results.size).toBeGreaterThan(0)
-      expect(results.size).toBeLessThanOrEqual(3)
+      expect(results.size).toBeLessThanOrEqual(4)
     })
   })
 
@@ -36,6 +36,9 @@ describe('characterSelection', () => {
 
       const params3 = new URLSearchParams('?character=lumberjack3')
       expect(getCharacterFromUrl(params3)).toBe('lumberjack3')
+
+      const params4 = new URLSearchParams('?character=lumberjack4')
+      expect(getCharacterFromUrl(params4)).toBe('lumberjack4')
     })
 
     it('returns null for invalid character type', () => {
@@ -63,13 +66,13 @@ describe('characterSelection', () => {
     it('returns random character when URL parameter is invalid', () => {
       const params = new URLSearchParams('?character=invalid')
       const result = selectCharacterType(params)
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
     })
 
     it('returns random character when no URL parameter exists', () => {
       const params = new URLSearchParams('')
       const result = selectCharacterType(params)
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
     })
   })
 
@@ -87,7 +90,7 @@ describe('characterSelection', () => {
       })
 
       const result = selectCharacterTypeFromCurrentUrl()
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
     })
 
     it('uses window location when available', () => {
@@ -120,7 +123,7 @@ describe('characterSelection', () => {
       })
 
       const result = selectCharacterTypeFromCurrentUrl()
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
     })
   })
 })
