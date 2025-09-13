@@ -58,7 +58,7 @@ export default function AttractScreen({ highScore, onStartGame }: AttractScreenP
   }, [initializeAudioOnFirstInteraction, onStartGame])
 
   return (
-    <ScreenContainer backgroundColor="#87CEEB">
+    <ScreenContainer backgroundColor="transparent">
       <div style={{ 
         position: 'relative',
         width: '100%',

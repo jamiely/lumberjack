@@ -70,7 +70,7 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
   }, [gameState.gameOver, gameState.score, onGameOver, gameState])
 
   return (
-    <ScreenContainer backgroundColor="#87CEEB">
+    <ScreenContainer backgroundColor="transparent">
       <div style={{ 
         position: 'relative',
         width: '100%',

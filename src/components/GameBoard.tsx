@@ -3,10 +3,10 @@ import type { TreeSegment, AnimatedSegment } from '../game/GameState'
 import Player from './Player'
 import { BranchSprite } from './BranchSprite'
 import { GrassSprite } from './GrassSprite'
+import { BackgroundSprite } from './BackgroundSprite'
 import {
   GAME_BOARD_WIDTH,
   GAME_BOARD_HEIGHT,
-  GAME_BOARD_BACKGROUND_COLOR,
   PLAYER_BOTTOM_OFFSET,
   PLAYER_LEFT_POSITION,
   PLAYER_RIGHT_POSITION,
@@ -111,11 +111,21 @@ export default function GameBoard({
       position: 'relative', 
       width: `${GAME_BOARD_WIDTH}px`, 
       height: `${GAME_BOARD_HEIGHT}px`, 
-      backgroundColor: GAME_BOARD_BACKGROUND_COLOR,
+      backgroundColor: 'transparent', // Let background sprite show through
       overflow: 'hidden',
       opacity: getOpacity(),
       pointerEvents: getPointerEvents()
     }} data-testid="game-board">
+      {/* Background sprite - furthest back */}
+      <BackgroundSprite
+        style={{
+          position: 'absolute',
+          left: '0px',
+          top: '0px',
+          zIndex: 0 // Behind game elements but above container background
+        }}
+      />
+
       {/* Grass sprite at ground level */}
       <GrassSprite
         style={{

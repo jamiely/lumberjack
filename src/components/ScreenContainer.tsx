@@ -8,7 +8,7 @@ interface ScreenContainerProps {
 
 export const ScreenContainer: React.FC<ScreenContainerProps> = ({
   children,
-  backgroundColor = '#000000',
+  backgroundColor = 'transparent',
   className = ''
 }) => {
   return (

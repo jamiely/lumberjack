@@ -54,6 +54,11 @@ export const DEBUG_PANEL_MARGIN_TOP = 20;
 export const DEBUG_PANEL_PADDING = 15;
 export const DEBUG_PANEL_FONT_SIZE = 12;
 
+// Background Sprite Constants
+export const BACKGROUND_SPRITE_PATH = '/images/background.png';
+export const BACKGROUND_SPRITE_WIDTH = 540; // Full game board width
+export const BACKGROUND_SPRITE_HEIGHT = 960; // Full game board height
+
 // Grass Sprite Constants
 export const GRASS_SPRITE_PATH = '/images/grass.png';
 export const GRASS_SPRITE_WIDTH = 540; // Full game board width
