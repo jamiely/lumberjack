@@ -58,5 +58,5 @@ export const lumberjack4Config: CharacterConfig = {
     poses: LUMBERJACK4_POSES
   },
   mapGameStateToSprite: mapGameStateToLumberjack4Sprite,
-  availableStates: ['idleFrame1', 'idleFrame2', 'chopAnticipation', 'chopImpact', 'hitStunned', 'recovery', 'knockedDown']
+  availableStates: ['idleFrame1', 'chopImpact', 'hitStunned']
 }

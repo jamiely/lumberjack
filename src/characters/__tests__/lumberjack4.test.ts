@@ -10,12 +10,8 @@ describe('lumberjack4Config', () => {
   it('has all required poses', () => {
     const expectedPoses = [
       'idleFrame1',
-      'idleFrame2', 
-      'chopAnticipation',
       'chopImpact',
-      'hitStunned',
-      'recovery',
-      'knockedDown'
+      'hitStunned'
     ]
     
     expectedPoses.forEach(pose => {
@@ -53,12 +49,8 @@ describe('lumberjack4Config', () => {
   it('has all available states', () => {
     expect(lumberjack4Config.availableStates).toEqual([
       'idleFrame1',
-      'idleFrame2',
-      'chopAnticipation', 
       'chopImpact',
-      'hitStunned',
-      'recovery',
-      'knockedDown'
+      'hitStunned'
     ])
   })
 })
