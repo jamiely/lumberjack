@@ -1,57 +1,74 @@
-# Implementation Questions
+# Implementation Questions for TODO Items
 
-## Branch Sprite Implementation Questions
+## TODO #2: Branch/Trunk Gap
 
-### 1. Branch Sizing and Scaling
-- What should be the target display dimensions for branches in the game?
-a width of 170 and scale the branch using aspect ratio.
+### 1. Gap Tolerance
+- What's the acceptable visual tolerance for branch-trunk alignment? Should they touch exactly or is a small gap (1-2px) acceptable?
+a small overlap is fine
 
-- Do flying branches need the same dimensions as static tree branches, or different scaling?
-same
+### 2. Branch Width vs Trunk Width
+- Should branches be the same width as the trunk (80px) or maintain their current width? Current branch width may be different.
+current width
 
-### 2. Branch Positioning and Alignment
-- The branch.png sprite has a different shape than the current rectangles - do we need to adjust the positioning offsets?
-no
-- Should the branch sprite be centered on the current branch positions, or aligned differently (e.g., branch base aligned with trunk edge)?
-center them for now
+## TODO #3: Lumberjack Facing Direction
 
-- How should the CSS `transform-origin` be set for the left-side mirrored branches to ensure proper alignment?
+### 1. Character Sprite Availability
+- Do all character types (lumberjack1, lumberjack2, lumberjack3, lumberjack4) have both left and right facing sprites in their configs?
+let me know if they don't and I can specify which way they face in their sprite
 
-bottom-left side if possible
+### 2. Animation Consistency
+- Should the chopping and hit animations also respect the facing direction, or only the idle state?
+all of the animations
 
-### 3. Animation Compatibility
-- Are there any specific requirements for how flying branches should animate with the new sprite?
+### 3. Transition Behavior
+- When the player moves from left to right side, should the direction change be instant or should there be a transition animation?
+instant
 
-no it should be the same way
+## TODO #5: Game Over Player Position
 
-- Should flying branches rotate during their animation, or maintain the same orientation as static branches?
-yes
+### 1. Final Position Requirements
+- Should the player appear exactly under the branch that hit them, or in their last valid position before the collision?
+exactly under (as if gameplay had continued)
 
-- Do we need to update collision detection boundaries due to the sprite's irregular shape vs. rectangles?
-no
+### 2. Visual State
+- Should the player be shown in 'hit' animation state in the game over screen, or in 'idle' state?
+hit
 
-### 4. Visual Style Preferences
-- Is the current branch.png sprite style acceptable, or would you prefer any visual adjustments?
-yes
-
-- Should branches have any visual effects (shadows, outlines) to match other game elements?
-no
-
-- Any preference for how the mirrored left branches should look - any concerns about the flipped appearance?
+### 3. Branch Rendering
+- Should the branch that caused the game over be visually highlighted or different in any way on the game over screen?
 no
 
-### 5. Performance and Implementation
-- Any preference between Phase 1 (direct BranchSprite) vs. immediately implementing the common Sprite system?
-No preference
+## TODO #6: Character Consistency
 
-- Should we prioritize getting branches working quickly, or take more time for the unified architecture?
-yes
+### 1. URL Parameter Behavior
+- When a specific character is selected via URL parameter (?character=lumberjack2), should this character be maintained across all screens or only used as the initial selection?
+maintained across all screens
 
-- Are there any other sprite assets planned that would benefit from the common Sprite component design?
-yes there will be text sprites later
+### 2. Character Selection Flow (CLARIFIED)
+**Character selection happens in attract screen** (since character is displayed there):
+
+**New character selection occurs when entering attract screen:**
+- Fresh load → Attract
+- Reload → Attract  
+- Game over → Attract
+
+**Character flows through entire session:**
+- Attract → Play → GameOver (same character throughout)
+
+**Direct restart (Game over → Play):**
+- Skips attract screen, needs new character selection at this point
+
+### 3. Demo Mode Character
+- Should the attract screen demo use the same character that will be used in gameplay, or can it use any character?
+The attract screen shows the character that will be used in gameplay (they are the same)
 
 ## Current Assumptions
-- Using CSS `transform: scaleX(-1)` for left-side branch mirroring
-- Maintaining existing branch positioning system with sprite replacements  
-- Two-phase implementation: BranchSprite first, then common Sprite refactoring
-- Branch sprites will replace both static tree branches and flying branch animations
+
+Based on the RESEARCH.md analysis, proceeding with these assumptions unless clarified otherwise:
+
+- **Gap tolerance**: Exact alignment preferred (0px gap)
+- **Character sprites**: All characters have both facing directions available
+- **Animation consistency**: All states (idle, chopping, hit) respect facing direction
+- **Game over position**: Player shown in exact final position with hit state
+- **Character consistency**: Maintain same character for Attract → Play → GameOver flow
+- **Session boundary**: Character reselection only when returning to Attract screen

@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { ScreenContainer } from '../ScreenContainer'
 import GameBoard from '../GameBoard'
 import type { GameState } from '../../game/GameState'
+import type { CharacterType } from '../../characters'
 
 interface GameOverScreenProps {
   finalScore: number
   highScore: number
   isNewHighScore: boolean
   finalGameState: GameState | null
+  characterType: CharacterType | null
   onRestart: () => void
   onReturnToAttract: () => void
 }
@@ -17,6 +19,7 @@ export default function GameOverScreen({
   highScore, 
   isNewHighScore, 
   finalGameState,
+  characterType,
   onRestart, 
   onReturnToAttract 
 }: GameOverScreenProps) {
@@ -65,6 +68,7 @@ export default function GameOverScreen({
             gameOver={finalGameState.gameOver}
             mode="frozen"
             animatedSegments={finalGameState.animatedSegments}
+            characterType={characterType}
           />
         )}
 

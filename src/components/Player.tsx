@@ -24,7 +24,19 @@ export default function Player({
   const characterConfig = getCharacterConfig(characterType)
   const spriteState = characterConfig.mapGameStateToSprite(finalState)
   
-  const { dimensions, positioning } = characterConfig.spriteConfig
+  const { dimensions, positioning, defaultFacing, poses } = characterConfig.spriteConfig
+  
+  // Get the facing direction for the current pose (with fallback to default)
+  const currentPose = poses[spriteState]
+  const currentPoseFacing = currentPose?.facing || defaultFacing
+  
+  // Determine if we need to mirror the sprite
+  // Player should face toward the tree trunk
+  const shouldFaceRight = playerSide === 'left'
+  const needsMirroring = (shouldFaceRight && currentPoseFacing === 'left') || 
+                        (!shouldFaceRight && currentPoseFacing === 'right')
+  
+  const transform = needsMirroring ? 'scaleX(-1)' : undefined
   
   return (
     <div style={{
@@ -36,7 +48,9 @@ export default function Player({
       // Allow full sprite display without clipping
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'flex-end' // Bottom-align sprite with player area
+      alignItems: 'flex-end', // Bottom-align sprite with player area
+      transform,
+      transformOrigin: 'center center'
     }}>
       <UniversalSprite 
         characterConfig={characterConfig}

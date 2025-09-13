@@ -20,6 +20,7 @@ export interface PoseBounds {
   y: number      // Top edge on sprite sheet  
   width: number  // Pose width on sprite sheet
   height: number // Pose height on sprite sheet
+  facing?: 'left' | 'right'  // Override default facing direction for this pose
 }
 
 export interface CharacterSpriteConfig {
@@ -29,6 +30,7 @@ export interface CharacterSpriteConfig {
   dimensions: CharacterDimensions
   positioning: CharacterPositioning
   poses: Record<string, PoseBounds>
+  defaultFacing: 'left' | 'right'  // Default facing direction for this character
 }
 
 export interface CharacterConfig {

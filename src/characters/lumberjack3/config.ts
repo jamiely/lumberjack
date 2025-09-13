@@ -55,7 +55,8 @@ export const lumberjack3Config: CharacterConfig = {
       leftPosition: 90,  // From original PLAYER_LEFT_POSITION
       rightPosition: 390 // From original PLAYER_RIGHT_POSITION
     },
-    poses: LUMBERJACK3_POSES
+    poses: LUMBERJACK3_POSES,
+    defaultFacing: 'right'
   },
   mapGameStateToSprite: mapGameStateToLumberjack3Sprite,
   availableStates: ['idleFrame1', 'idleFrame2', 'chopAnticipation', 'chopImpact', 'hitStunned', 'recovery', 'knockedDown']

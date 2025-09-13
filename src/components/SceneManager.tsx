@@ -19,9 +19,11 @@ export default function SceneManager() {
   })
 
   const handleStartGame = () => {
-    // Select character for this game session
-    const characterType = selectCharacterTypeFromCurrentUrl()
-    setSelectedCharacter(characterType)
+    // Only select character if none selected (first time from attract)
+    if (!selectedCharacter) {
+      const characterType = selectCharacterTypeFromCurrentUrl()
+      setSelectedCharacter(characterType)
+    }
     setCurrentScene('play')
   }
 
@@ -39,13 +41,13 @@ export default function SceneManager() {
   }
 
   const handleRestart = () => {
-    // Select new character for restart
-    const characterType = selectCharacterTypeFromCurrentUrl()
-    setSelectedCharacter(characterType)
+    // Keep same character for restart
     setCurrentScene('play')
   }
 
   const handleReturnToAttract = () => {
+    // Clear character when returning to attract (allows new selection)
+    setSelectedCharacter(null)
     setCurrentScene('attract')
   }
 
@@ -73,6 +75,7 @@ export default function SceneManager() {
           highScore={highScore}
           isNewHighScore={finalScore > 0 && finalScore === highScore}
           finalGameState={finalGameState}
+          characterType={selectedCharacter}
           onRestart={handleRestart}
           onReturnToAttract={handleReturnToAttract}
         />

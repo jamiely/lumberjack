@@ -139,11 +139,27 @@ export default function GameBoard({
         }}
       />
 
-      {/* Tree segments */}
+      {/* Branches - render behind trunk */}
       {treeSegments.map((segment, index) => (
-        <div key={index}>
-          {/* Tree trunk segment */}
-          <div style={{
+        segment.branchSide !== 'none' && (
+          <BranchSprite
+            key={`branch-${index}`}
+            side={segment.branchSide}
+            style={{
+              position: 'absolute',
+              left: segment.branchSide === 'left' ? `${BRANCH_LEFT_POSITION}px` : `${BRANCH_RIGHT_POSITION}px`,
+              bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + BRANCH_VERTICAL_OFFSET}px`,
+              zIndex: 1 // Behind trunk
+            }}
+          />
+        )
+      ))}
+
+      {/* Tree trunk segments - render on top of branches */}
+      {treeSegments.map((_, index) => (
+        <div 
+          key={`trunk-${index}`}
+          style={{
             position: 'absolute',
             left: `${TREE_TRUNK_LEFT_POSITION}px`,
             bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + TREE_TRUNK_BOTTOM_OFFSET}px`,
@@ -151,21 +167,10 @@ export default function GameBoard({
             height: `${TREE_TRUNK_HEIGHT}px`,
             backgroundImage: `url(${TREE_TRUNK_SPRITE_PATH})`,
             backgroundSize: '100% 140%',
+            zIndex: 2 // On top of branches
             // border: TREE_TRUNK_BORDER // Removed - using realistic trunk sprite instead
-          }} />
-          
-          {/* Branch */}
-          {segment.branchSide !== 'none' && (
-            <BranchSprite
-              side={segment.branchSide}
-              style={{
-                position: 'absolute',
-                left: segment.branchSide === 'left' ? `${BRANCH_LEFT_POSITION}px` : `${BRANCH_RIGHT_POSITION}px`,
-                bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + BRANCH_VERTICAL_OFFSET}px`
-              }}
-            />
-          )}
-        </div>
+          }} 
+        />
       ))}
 
       {/* Player */}
