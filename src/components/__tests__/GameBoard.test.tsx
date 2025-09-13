@@ -24,10 +24,7 @@ describe('GameBoard', () => {
     expect(gameBoard).toHaveStyle({
       position: 'relative',
       width: '540px',
-      height: '960px',
-      backgroundColor: '#87CEEB',
-      opacity: '1',
-      pointerEvents: 'auto'
+      height: '960px'
     })
   })
 

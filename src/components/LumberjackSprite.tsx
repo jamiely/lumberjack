@@ -1,23 +1,25 @@
-import { SPRITE_SHEET_PATH, SPRITE_COORDS, SPRITE_SCALE_FACTOR, SPRITE_SCALED_SHEET_SIZE } from '../constants'
+import type { SpriteConfig } from '../constants'
 
 interface LumberjackSpriteProps {
   state: 'idle' | 'chopping' | 'hit'
   width: number
   height: number
   className?: string
+  spriteConfig: SpriteConfig
 }
 
 export default function LumberjackSprite({ 
   state, 
   width, 
   height, 
-  className = '' 
+  className = '',
+  spriteConfig
 }: LumberjackSpriteProps) {
-  const coords = SPRITE_COORDS[state]
+  const coords = spriteConfig.coordinates[state]
   
   // Calculate background-position from sprite coordinates with higher precision
-  const bgPosX = -Math.round(coords[0] * SPRITE_SCALE_FACTOR)
-  const bgPosY = -Math.round(coords[1] * SPRITE_SCALE_FACTOR)
+  const bgPosX = -Math.round(coords[0] * spriteConfig.scaleFactor)
+  const bgPosY = -Math.round(coords[1] * spriteConfig.scaleFactor)
   
   // Special clipping for hit sprite to remove overlapping content
   let clipPath = 'none'
@@ -32,8 +34,8 @@ export default function LumberjackSprite({
       style={{
         width: `${width}px`,
         height: `${height}px`,
-        backgroundImage: `url(${SPRITE_SHEET_PATH})`,
-        backgroundSize: `${SPRITE_SCALED_SHEET_SIZE}px ${SPRITE_SCALED_SHEET_SIZE}px`,
+        backgroundImage: `url(${spriteConfig.sheetPath})`,
+        backgroundSize: `${spriteConfig.scaledSheetSize}px ${spriteConfig.scaledSheetSize}px`,
         backgroundPosition: `${bgPosX}px ${bgPosY}px`,
         backgroundRepeat: 'no-repeat',
         overflow: 'hidden',

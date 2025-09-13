@@ -1,5 +1,6 @@
 import LumberjackSprite from './LumberjackSprite'
 import { SPRITE_PLAYER_WIDTH, SPRITE_PLAYER_HEIGHT, SPRITE_DISPLAY_SIZE, SPRITE_CENTERING_OFFSET } from '../constants'
+import { getDefaultSpriteConfig } from '../utils/spriteConfig'
 
 interface PlayerProps {
   playerSide: 'left' | 'right'
@@ -36,6 +37,7 @@ export default function Player({
         state={finalState}
         width={SPRITE_DISPLAY_SIZE}
         height={SPRITE_DISPLAY_SIZE}
+        spriteConfig={getDefaultSpriteConfig()}
       />
     </div>
   )

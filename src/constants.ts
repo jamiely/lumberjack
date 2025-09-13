@@ -92,3 +92,33 @@ export const SPRITE_COORDS = {
 
 // Player state timing
 export const CHOPPING_STATE_DURATION_MS = 200;
+
+// Sprite Configuration Interface
+export interface SpriteConfig {
+  sheetPath: string;
+  sourceSize: number;
+  individualSize: number;
+  displaySize: number;
+  scaleFactor: number;
+  scaledSheetSize: number;
+  coordinates: {
+    idle: [number, number, number, number];
+    chopping: [number, number, number, number];
+    hit: [number, number, number, number];
+  };
+}
+
+// Default sprite configuration (using current constants)
+export const DEFAULT_SPRITE_CONFIG: SpriteConfig = {
+  sheetPath: SPRITE_SHEET_PATH,
+  sourceSize: SPRITE_SOURCE_SIZE,
+  individualSize: SPRITE_INDIVIDUAL_SIZE,
+  displaySize: SPRITE_DISPLAY_SIZE,
+  scaleFactor: SPRITE_SCALE_FACTOR,
+  scaledSheetSize: SPRITE_SCALED_SHEET_SIZE,
+  coordinates: {
+    idle: [...SPRITE_COORDS.idle],
+    chopping: [...SPRITE_COORDS.chopping],
+    hit: [...SPRITE_COORDS.hit]
+  }
+};
