@@ -109,7 +109,7 @@ describe('GameBoard', () => {
       />
     )
     
-    // Should have idle sprite with background-position for idle state
+    // Should have idle sprite with background-position for idleFrame1 state (0px 0px)
     let player = container.querySelector('[style*="background-position: 0px 0px"]')
     expect(player).toBeInTheDocument()
     
@@ -122,8 +122,9 @@ describe('GameBoard', () => {
       />
     )
     
-    // Should have hit sprite with different background-position and clip-path
-    player = container.querySelector('[style*="clip-path: polygon(0% 0%, 70% 0%, 70% 100%, 0% 100%)"]')
+    // Should have hit sprite with different background-position for hitStunned state
+    // hitStunned is at coordinates [0, 512, 256, 768], so background-position should be 0px -440px
+    player = container.querySelector('[style*="background-position: 0px -440px"]')
     expect(player).toBeInTheDocument()
   })
 

@@ -108,6 +108,28 @@ export interface SpriteConfig {
   };
 }
 
+// Lumberjack2 Sprite Configuration Interface (extended poses)
+export interface Lumberjack2SpriteConfig {
+  sheetPath: string;
+  sheetWidth: number;
+  sheetHeight: number;
+  individualSize: number;
+  displaySize: number;
+  scaleFactor: number;
+  scaledSheetWidth: number;
+  scaledSheetHeight: number;
+  coordinates: {
+    idleFrame1: [number, number, number, number];
+    idleFrame2: [number, number, number, number];
+    chopAnticipation: [number, number, number, number];
+    chopImpact: [number, number, number, number];
+    chopFollowThrough: [number, number, number, number];
+    chopRecovery: [number, number, number, number];
+    hitStunned: [number, number, number, number];
+    knockedDown: [number, number, number, number];
+  };
+}
+
 // Default sprite configuration (using current constants)
 export const DEFAULT_SPRITE_CONFIG: SpriteConfig = {
   sheetPath: SPRITE_SHEET_PATH,
@@ -120,5 +142,49 @@ export const DEFAULT_SPRITE_CONFIG: SpriteConfig = {
     idle: [...SPRITE_COORDS.idle],
     chopping: [...SPRITE_COORDS.chopping],
     hit: [...SPRITE_COORDS.hit]
+  }
+};
+
+// Lumberjack2 Sprite Constants
+export const LUMBERJACK2_SPRITE_PATH = '/images/lumberjack2.png';
+export const LUMBERJACK2_SHEET_WIDTH = 768; // 3 columns × 256px
+export const LUMBERJACK2_SHEET_HEIGHT = 768; // 3 rows × 256px (we only use 2.67 rows)
+export const LUMBERJACK2_INDIVIDUAL_SIZE = 256; // Each sprite is 256×256
+export const LUMBERJACK2_DISPLAY_SIZE = 220; // Match display size with original
+export const LUMBERJACK2_SCALE_FACTOR = LUMBERJACK2_DISPLAY_SIZE / LUMBERJACK2_INDIVIDUAL_SIZE;
+export const LUMBERJACK2_SCALED_SHEET_WIDTH = Math.floor(LUMBERJACK2_SHEET_WIDTH * LUMBERJACK2_SCALE_FACTOR);
+export const LUMBERJACK2_SCALED_SHEET_HEIGHT = Math.floor(LUMBERJACK2_SHEET_HEIGHT * LUMBERJACK2_SCALE_FACTOR);
+
+// Lumberjack2 sprite coordinates based on your table
+export const LUMBERJACK2_COORDS = {
+  idleFrame1: [0, 0, 256, 256],
+  idleFrame2: [256, 0, 512, 256],
+  chopAnticipation: [512, 0, 768, 256],
+  chopImpact: [0, 256, 256, 512],
+  chopFollowThrough: [256, 256, 512, 512],
+  chopRecovery: [512, 256, 768, 512],
+  hitStunned: [0, 512, 256, 768],
+  knockedDown: [256, 512, 512, 768]
+} as const;
+
+// Lumberjack2 sprite configuration
+export const LUMBERJACK2_SPRITE_CONFIG: Lumberjack2SpriteConfig = {
+  sheetPath: LUMBERJACK2_SPRITE_PATH,
+  sheetWidth: LUMBERJACK2_SHEET_WIDTH,
+  sheetHeight: LUMBERJACK2_SHEET_HEIGHT,
+  individualSize: LUMBERJACK2_INDIVIDUAL_SIZE,
+  displaySize: LUMBERJACK2_DISPLAY_SIZE,
+  scaleFactor: LUMBERJACK2_SCALE_FACTOR,
+  scaledSheetWidth: LUMBERJACK2_SCALED_SHEET_WIDTH,
+  scaledSheetHeight: LUMBERJACK2_SCALED_SHEET_HEIGHT,
+  coordinates: {
+    idleFrame1: [...LUMBERJACK2_COORDS.idleFrame1],
+    idleFrame2: [...LUMBERJACK2_COORDS.idleFrame2],
+    chopAnticipation: [...LUMBERJACK2_COORDS.chopAnticipation],
+    chopImpact: [...LUMBERJACK2_COORDS.chopImpact],
+    chopFollowThrough: [...LUMBERJACK2_COORDS.chopFollowThrough],
+    chopRecovery: [...LUMBERJACK2_COORDS.chopRecovery],
+    hitStunned: [...LUMBERJACK2_COORDS.hitStunned],
+    knockedDown: [...LUMBERJACK2_COORDS.knockedDown]
   }
 };

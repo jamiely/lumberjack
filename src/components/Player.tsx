@@ -1,6 +1,6 @@
-import LumberjackSprite from './LumberjackSprite'
-import { SPRITE_PLAYER_WIDTH, SPRITE_PLAYER_HEIGHT, SPRITE_DISPLAY_SIZE, SPRITE_CENTERING_OFFSET } from '../constants'
-import { getDefaultSpriteConfig } from '../utils/spriteConfig'
+import Lumberjack2Sprite from './Lumberjack2Sprite'
+import { SPRITE_PLAYER_WIDTH, SPRITE_PLAYER_HEIGHT, LUMBERJACK2_DISPLAY_SIZE, SPRITE_CENTERING_OFFSET } from '../constants'
+import { getLumberjack2SpriteConfig, mapGameStateToLumberjack2Pose } from '../utils/spriteConfig'
 
 interface PlayerProps {
   playerSide: 'left' | 'right'
@@ -20,6 +20,7 @@ export default function Player({
   bottomOffset
 }: PlayerProps) {
   const finalState = gameOver ? 'hit' : playerState
+  const mappedPose = mapGameStateToLumberjack2Pose(finalState)
   
   return (
     <div style={{
@@ -33,11 +34,11 @@ export default function Player({
       justifyContent: 'center',
       alignItems: 'flex-end' // Bottom-align sprite with player area
     }}>
-      <LumberjackSprite 
-        state={finalState}
-        width={SPRITE_DISPLAY_SIZE}
-        height={SPRITE_DISPLAY_SIZE}
-        spriteConfig={getDefaultSpriteConfig()}
+      <Lumberjack2Sprite 
+        state={mappedPose}
+        width={LUMBERJACK2_DISPLAY_SIZE}
+        height={LUMBERJACK2_DISPLAY_SIZE}
+        spriteConfig={getLumberjack2SpriteConfig()}
       />
     </div>
   )

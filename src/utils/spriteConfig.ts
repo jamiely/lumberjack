@@ -1,5 +1,5 @@
-import type { SpriteConfig } from '../constants'
-import { DEFAULT_SPRITE_CONFIG } from '../constants'
+import type { SpriteConfig, Lumberjack2SpriteConfig } from '../constants'
+import { DEFAULT_SPRITE_CONFIG, LUMBERJACK2_SPRITE_CONFIG } from '../constants'
 
 /**
  * Get the default sprite configuration for the lumberjack character
@@ -12,14 +12,39 @@ export function getDefaultSpriteConfig(): SpriteConfig {
 
 /**
  * Get sprite configuration for a specific character type
- * Currently only supports the default character, but designed
- * to be extended for multiple character types in the future
+ * Currently supports 'default' (original lumberjack) and 'lumberjack2'
  */
-export function getSpriteConfig(characterType: 'default' = 'default'): SpriteConfig {
+export function getSpriteConfig(characterType: 'default' | 'lumberjack2' = 'default'): SpriteConfig | Lumberjack2SpriteConfig {
   switch (characterType) {
     case 'default':
       return DEFAULT_SPRITE_CONFIG
+    case 'lumberjack2':
+      return LUMBERJACK2_SPRITE_CONFIG
     default:
       return DEFAULT_SPRITE_CONFIG
+  }
+}
+
+/**
+ * Get the lumberjack2 sprite configuration with extended poses
+ */
+export function getLumberjack2SpriteConfig(): Lumberjack2SpriteConfig {
+  return LUMBERJACK2_SPRITE_CONFIG
+}
+
+/**
+ * Map original game states to lumberjack2 poses
+ * This provides backward compatibility while using the enhanced sprite sheet
+ */
+export function mapGameStateToLumberjack2Pose(gameState: 'idle' | 'chopping' | 'hit'): keyof Lumberjack2SpriteConfig['coordinates'] {
+  switch (gameState) {
+    case 'idle':
+      return 'idleFrame1'
+    case 'chopping':
+      return 'chopImpact' // Use the main impact frame for chopping
+    case 'hit':
+      return 'hitStunned'
+    default:
+      return 'idleFrame1'
   }
 }
