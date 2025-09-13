@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { TreeSegment, AnimatedSegment } from '../game/GameState'
 import Player from './Player'
+import type { CharacterType } from '../characters'
 import { BranchSprite } from './BranchSprite'
 import { GrassSprite } from './GrassSprite'
 import { BackgroundSprite } from './BackgroundSprite'
@@ -35,6 +36,7 @@ interface GameBoardProps {
   mode?: 'interactive' | 'static' | 'frozen'
   animatedSegments?: AnimatedSegment[]
   onRemoveAnimatedSegment?: (animationId: string) => void
+  characterType?: CharacterType | null
 }
 
 export default function GameBoard({ 
@@ -44,7 +46,8 @@ export default function GameBoard({
   gameOver, 
   mode = 'interactive',
   animatedSegments = [],
-  onRemoveAnimatedSegment
+  onRemoveAnimatedSegment,
+  characterType
 }: GameBoardProps) {
   const getOpacity = () => {
     if (mode === 'frozen') return 0.7
@@ -173,6 +176,7 @@ export default function GameBoard({
         leftPosition={PLAYER_LEFT_POSITION}
         rightPosition={PLAYER_RIGHT_POSITION}
         bottomOffset={PLAYER_BOTTOM_OFFSET}
+        characterType={characterType || 'lumberjack2'}
       />
 
       {/* Animated flying segments */}

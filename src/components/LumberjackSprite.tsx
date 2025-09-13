@@ -1,4 +1,4 @@
-import type { SpriteConfig } from '../constants'
+import type { SpriteConfig } from '../types/sprite'
 
 interface LumberjackSpriteProps {
   state: 'idle' | 'chopping' | 'hit'

@@ -9,12 +9,14 @@ import DebugPanel from '../DebugPanel'
 import { TimerBar } from '../TimerBar'
 import { TREE_TRUNK_LEFT_POSITION, TREE_TRUNK_WIDTH } from '../../constants'
 import type { GameState } from '../../game/GameState'
+import type { CharacterType } from '../../characters'
 
 interface PlayScreenProps {
   onGameOver: (score: number, gameState: GameState) => void
+  characterType?: CharacterType | null
 }
 
-export default function PlayScreen({ onGameOver }: PlayScreenProps) {
+export default function PlayScreen({ onGameOver, characterType }: PlayScreenProps) {
   const { gameState, chop, reset, toggleDebugMode, removeAnimatedSegment } = useGameState()
   
   // Initialize audio event handlers (subscribes to game events)
@@ -86,6 +88,7 @@ export default function PlayScreen({ onGameOver }: PlayScreenProps) {
           mode="interactive"
           animatedSegments={gameState.animatedSegments}
           onRemoveAnimatedSegment={removeAnimatedSegment}
+          characterType={characterType}
         />
         
         {/* Hidden title for accessibility/tests */}

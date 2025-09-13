@@ -1,50 +1,39 @@
-import type { SpriteConfig, Lumberjack2SpriteConfig } from '../constants'
-import { DEFAULT_SPRITE_CONFIG, LUMBERJACK2_SPRITE_CONFIG } from '../constants'
+// Legacy sprite configuration utilities
+// DEPRECATED: Use import { getCharacterConfig } from '../characters' instead
+
+import { lumberjack1Config, lumberjack2Config } from '../characters'
 
 /**
- * Get the default sprite configuration for the lumberjack character
- * This utility provides a centralized way to get sprite configurations
- * and will be the foundation for future character selection
+ * @deprecated Use getCharacterConfig('lumberjack1') from '../characters' instead
  */
-export function getDefaultSpriteConfig(): SpriteConfig {
-  return DEFAULT_SPRITE_CONFIG
+export function getDefaultSpriteConfig() {
+  return lumberjack1Config.spriteConfig
 }
 
 /**
- * Get sprite configuration for a specific character type
- * Currently supports 'default' (original lumberjack) and 'lumberjack2'
+ * @deprecated Use getCharacterConfig(characterType) from '../characters' instead
  */
-export function getSpriteConfig(characterType: 'default' | 'lumberjack2' = 'default'): SpriteConfig | Lumberjack2SpriteConfig {
+export function getSpriteConfig(characterType: 'default' | 'lumberjack2' = 'default') {
   switch (characterType) {
     case 'default':
-      return DEFAULT_SPRITE_CONFIG
+      return lumberjack1Config.spriteConfig
     case 'lumberjack2':
-      return LUMBERJACK2_SPRITE_CONFIG
+      return lumberjack2Config.spriteConfig
     default:
-      return DEFAULT_SPRITE_CONFIG
+      return lumberjack1Config.spriteConfig
   }
 }
 
 /**
- * Get the lumberjack2 sprite configuration with extended poses
+ * @deprecated Use getCharacterConfig('lumberjack2') from '../characters' instead
  */
-export function getLumberjack2SpriteConfig(): Lumberjack2SpriteConfig {
-  return LUMBERJACK2_SPRITE_CONFIG
+export function getLumberjack2SpriteConfig() {
+  return lumberjack2Config.spriteConfig
 }
 
 /**
- * Map original game states to lumberjack2 poses
- * This provides backward compatibility while using the enhanced sprite sheet
+ * @deprecated Use getCharacterConfig('lumberjack2').mapGameStateToSprite() instead
  */
-export function mapGameStateToLumberjack2Pose(gameState: 'idle' | 'chopping' | 'hit'): keyof Lumberjack2SpriteConfig['coordinates'] {
-  switch (gameState) {
-    case 'idle':
-      return 'idleFrame1'
-    case 'chopping':
-      return 'chopImpact' // Use the main impact frame for chopping
-    case 'hit':
-      return 'hitStunned'
-    default:
-      return 'idleFrame1'
-  }
+export function mapGameStateToLumberjack2Pose(gameState: 'idle' | 'chopping' | 'hit') {
+  return lumberjack2Config.mapGameStateToSprite(gameState)
 }

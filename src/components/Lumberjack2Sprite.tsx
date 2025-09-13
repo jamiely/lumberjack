@@ -1,4 +1,4 @@
-import type { Lumberjack2SpriteConfig } from '../constants'
+import type { Lumberjack2SpriteConfig } from '../types/sprite'
 
 type Lumberjack2State = 
   | 'idleFrame1' 

@@ -82,7 +82,7 @@ describe('GameBoard', () => {
     )
     
     // Player component should be positioned on left side (accounting for sprite centering offset)
-    let player = container.querySelector('[style*="left: 25px"]') // 90px - SPRITE_CENTERING_OFFSET (65px)
+    let player = container.querySelector('[style*="left: 48.5px"]') // 90px - LUMBERJACK2_CENTERING_OFFSET (41.5px)
     expect(player).toBeInTheDocument()
     
     rerender(
@@ -95,7 +95,7 @@ describe('GameBoard', () => {
     )
     
     // Player component should be positioned on right side (accounting for sprite centering offset)
-    player = container.querySelector('[style*="left: 325px"]') // 390px - SPRITE_CENTERING_OFFSET (65px)
+    player = container.querySelector('[style*="left: 348.5px"]') // 390px - LUMBERJACK2_CENTERING_OFFSET (41.5px)
     expect(player).toBeInTheDocument()
   })
 
@@ -123,8 +123,8 @@ describe('GameBoard', () => {
     )
     
     // Should have hit sprite with different background-position for hitStunned state
-    // hitStunned is at coordinates [0, 512, 256, 768], so background-position should be 0px -440px
-    player = container.querySelector('[style*="background-position: 0px -440px"]')
+    // hitStunned is at coordinates [0, 512, 256, 768], so background-position should be 0px -346px
+    player = container.querySelector('[style*="background-position: 0px -346px"]')
     expect(player).toBeInTheDocument()
   })
 
