@@ -55,19 +55,31 @@ export function useGameInput(
       // Check if click is within a valid game area
       if (!ClickInputService.isValidChopClick(target)) return
       
-      // Get the game board element to calculate click position
-      const gameBoard = target.closest('[data-testid="game-board"]') as HTMLElement
-      if (!gameBoard) return
+      // Get scaling information from the screen container
+      const scaling = ClickInputService.getScalingFromScreenContainer()
       
-      const gameBoardRect = gameBoard.getBoundingClientRect()
-      const clickX = e.clientX - gameBoardRect.left
-      
-      // Determine which side was clicked and call appropriate handler
-      const side = ClickInputService.getChopSideFromClick(clickX)
-      if (side === 'left') {
-        handlers.onChopLeft()
+      if (scaling) {
+        // Use scaled coordinate detection
+        const side = ClickInputService.getChopSideFromScaledClick(e.clientX, e.clientY, scaling)
+        if (side === 'left') {
+          handlers.onChopLeft()
+        } else {
+          handlers.onChopRight()
+        }
       } else {
-        handlers.onChopRight()
+        // Fallback to original method if scaling info unavailable
+        const gameBoard = target.closest('[data-testid="game-board"]') as HTMLElement
+        if (!gameBoard) return
+        
+        const gameBoardRect = gameBoard.getBoundingClientRect()
+        const clickX = e.clientX - gameBoardRect.left
+        
+        const side = ClickInputService.getChopSideFromClick(clickX)
+        if (side === 'left') {
+          handlers.onChopLeft()
+        } else {
+          handlers.onChopRight()
+        }
       }
     }
 
