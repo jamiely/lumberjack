@@ -22,7 +22,7 @@ export interface GameState {
   maxTime: number
 }
 
-import { INITIAL_TIME_REMAINING_SEC, MAX_TIME_SEC } from '../constants'
+import { INITIAL_TIME_REMAINING_SEC, MAX_TIME_SEC } from '../config/gameConfig'
 
 export const createInitialGameState = (): GameState => ({
   playerSide: 'left',

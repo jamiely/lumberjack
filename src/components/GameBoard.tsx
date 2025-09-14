@@ -1,16 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
 import type { TreeSegment, AnimatedSegment } from '../game/GameState'
 import Player from './Player'
 import type { CharacterType } from '../characters'
 import { BranchSprite } from './BranchSprite'
 import { GrassSprite } from './GrassSprite'
 import { BackgroundSprite } from './BackgroundSprite'
+import { useAnimationSystem } from '../hooks/useAnimationSystem'
 import {
   GAME_BOARD_WIDTH,
   GAME_BOARD_HEIGHT,
   PLAYER_BOTTOM_OFFSET,
   PLAYER_LEFT_POSITION,
-  PLAYER_RIGHT_POSITION,
+  PLAYER_RIGHT_POSITION
+} from '../config/uiConfig'
+import {
   TREE_TRUNK_WIDTH,
   TREE_TRUNK_HEIGHT,
   TREE_TRUNK_LEFT_POSITION,
@@ -20,13 +22,9 @@ import {
   BRANCH_LEFT_POSITION,
   BRANCH_RIGHT_POSITION,
   BRANCH_VERTICAL_OFFSET,
-  BRANCH_SPRITE_WIDTH,
-  ANIMATION_DURATION,
-  ANIMATION_SPEED,
-  ANIMATION_OUT_OF_BOUNDS_LEFT,
-  ANIMATION_OUT_OF_BOUNDS_RIGHT,
-  ANIMATED_BRANCH_OFFSET
-} from '../constants'
+  BRANCH_SPRITE_WIDTH
+} from '../config/treeConfig'
+import { ANIMATED_BRANCH_OFFSET } from '../config/animationConfig'
 
 interface GameBoardProps {
   treeSegments: TreeSegment[]
@@ -35,7 +33,6 @@ interface GameBoardProps {
   gameOver: boolean
   mode?: 'interactive' | 'static' | 'frozen'
   animatedSegments?: AnimatedSegment[]
-  onRemoveAnimatedSegment?: (animationId: string) => void
   characterType?: CharacterType | null
 }
 
@@ -46,7 +43,6 @@ export default function GameBoard({
   gameOver, 
   mode = 'interactive',
   animatedSegments = [],
-  onRemoveAnimatedSegment,
   characterType
 }: GameBoardProps) {
   const getOpacity = () => {
@@ -59,55 +55,7 @@ export default function GameBoard({
     return mode === 'interactive' ? 'auto' : 'none'
   }
 
-  const animationFrameRef = useRef<number>(0)
-  const [currentTime, setCurrentTime] = useState(0)
-
-  useEffect(() => {
-    if (animatedSegments.length === 0) {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-      return
-    }
-
-    let isActive = true
-
-    const animate = (timestamp: number) => {
-      if (!isActive) return
-      
-      setCurrentTime(timestamp)
-      
-      // Check for segments to remove
-      animatedSegments.forEach(segment => {
-        const elapsed = timestamp - segment.startTime
-        const distance = ANIMATION_SPEED * (elapsed / 1000)
-        
-        // Remove segment if animation is complete or out of bounds
-        if (elapsed > ANIMATION_DURATION) {
-          onRemoveAnimatedSegment?.(segment.animationId)
-        } else {
-          // Check if segment has moved out of bounds
-          const currentX = segment.startPosition.x + (segment.direction === 'right' ? distance : -distance)
-          if (currentX < ANIMATION_OUT_OF_BOUNDS_LEFT || currentX > ANIMATION_OUT_OF_BOUNDS_RIGHT) {
-            onRemoveAnimatedSegment?.(segment.animationId)
-          }
-        }
-      })
-
-      if (animatedSegments.length > 0 && isActive) {
-        animationFrameRef.current = requestAnimationFrame(animate)
-      }
-    }
-
-    animationFrameRef.current = requestAnimationFrame(animate)
-
-    return () => {
-      isActive = false
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-    }
-  }, [animatedSegments, onRemoveAnimatedSegment])
+  const { animationData } = useAnimationSystem(animatedSegments)
 
   return (
     <div style={{ 
@@ -185,21 +133,15 @@ export default function GameBoard({
       />
 
       {/* Animated flying segments */}
-      {animatedSegments.map(segment => {
-        const elapsed = currentTime - segment.startTime
-        const distance = ANIMATION_SPEED * (elapsed / 1000)
-        
-        const currentX = segment.startPosition.x + (segment.direction === 'right' ? distance : -distance)
-        const rotation = (elapsed * 0.36) % 360 // Smooth rotation - about 1 full rotation per second
-        
+      {animationData.map(animatedSegment => {
         return (
-          <div key={segment.animationId}>
+          <div key={animatedSegment.animationId}>
             {/* Wrapper div for rotating trunk+branch as single unit */}
             <div style={{
               position: 'absolute',
-              left: `${currentX}px`,
-              bottom: `${segment.startPosition.y}px`,
-              transform: `rotate(${rotation}deg)`,
+              left: `${animatedSegment.currentX}px`,
+              bottom: `${animatedSegment.startPosition.y}px`,
+              transform: `rotate(${animatedSegment.rotation}deg)`,
               transformOrigin: 'center center',
               zIndex: 10
             }}>
@@ -211,17 +153,16 @@ export default function GameBoard({
                 width: `${TREE_TRUNK_WIDTH}px`,
                 height: `${TREE_TRUNK_HEIGHT}px`,
                 backgroundImage: `url(${TREE_TRUNK_SPRITE_PATH})`,
-            backgroundSize: '100% 100%',
-                // border: TREE_TRUNK_BORDER // Removed - using realistic trunk sprite instead
+                backgroundSize: '100% 100%'
               }} />
               
               {/* Animated branch positioned relative to trunk within wrapper */}
-              {segment.branchSide !== 'none' && (
+              {animatedSegment.branchSide !== 'none' && (
                 <BranchSprite
-                  side={segment.branchSide}
+                  side={animatedSegment.branchSide}
                   style={{
                     position: 'absolute',
-                    left: segment.branchSide === 'left' ? `-${BRANCH_SPRITE_WIDTH}px` : `${BRANCH_SPRITE_WIDTH}px`,
+                    left: animatedSegment.branchSide === 'left' ? `-${BRANCH_SPRITE_WIDTH}px` : `${BRANCH_SPRITE_WIDTH}px`,
                     bottom: `${ANIMATED_BRANCH_OFFSET}px`
                   }}
                 />

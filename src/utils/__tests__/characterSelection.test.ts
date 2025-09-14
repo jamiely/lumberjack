@@ -24,6 +24,17 @@ describe('characterSelection', () => {
       expect(results.size).toBeGreaterThan(0)
       expect(results.size).toBeLessThanOrEqual(4)
     })
+
+    it('can select all four character types over many iterations', () => {
+      const results = new Set()
+      // Run many iterations to ensure all characters can be selected
+      for (let i = 0; i < 100; i++) {
+        results.add(getRandomCharacterType())
+      }
+      
+      // With 100 iterations, we should get all 4 characters
+      expect(results).toEqual(new Set(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']))
+    })
   })
 
   describe('getCharacterFromUrl', () => {

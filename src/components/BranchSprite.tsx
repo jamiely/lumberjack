@@ -1,5 +1,5 @@
 import React from 'react';
-import { BRANCH_SPRITE_PATH, BRANCH_SPRITE_WIDTH, BRANCH_SPRITE_HEIGHT } from '../constants';
+import { BRANCH_SPRITE_PATH, BRANCH_SPRITE_WIDTH, BRANCH_SPRITE_HEIGHT } from '../config/treeConfig';
 
 interface BranchSpriteProps {
   side: 'left' | 'right';

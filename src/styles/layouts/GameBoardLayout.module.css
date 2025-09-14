@@ -1,0 +1,47 @@
+.gameBoardContainer {
+  position: relative;
+  background-color: transparent;
+  overflow: hidden;
+}
+
+.backgroundSprite {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 0;
+}
+
+.grassSprite {
+  position: absolute;
+  left: 0px;
+  bottom: 40px;
+  z-index: 0;
+}
+
+.branchSprite {
+  position: absolute;
+  z-index: 1;
+}
+
+.trunkSegment {
+  position: absolute;
+  z-index: 2;
+  background-size: 100% 140%;
+}
+
+.animatedSegmentWrapper {
+  position: absolute;
+  z-index: 10;
+  transform-origin: center center;
+}
+
+.animatedTrunkSegment {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  background-size: 100% 100%;
+}
+
+.animatedBranchSprite {
+  position: absolute;
+}

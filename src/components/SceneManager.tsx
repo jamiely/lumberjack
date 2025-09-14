@@ -1,25 +1,29 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import AttractScreen from './scenes/AttractScreen'
 import PlayScreen from './scenes/PlayScreen'
 import GameOverScreen from './scenes/GameOverScreen'
 import type { GameState } from '../game/GameState'
 import type { CharacterType } from '../characters'
-import { selectCharacterTypeFromCurrentUrl, isCharacterForcedByCurrentUrl, getRandomCharacterType } from '../utils/characterSelection'
+import { selectCharacterTypeFromCurrentUrl, isCharacterForcedByCurrentUrl } from '../utils/characterSelection'
+import { HighScoreService, CharacterSelectionService } from '../services'
 
 export type Scene = 'attract' | 'play' | 'gameOver'
 
 export default function SceneManager() {
+  // Initialize services
+  const highScoreService = useMemo(() => new HighScoreService(), [])
+  const characterSelectionService = useMemo(() => {
+    const forcedCharacter = isCharacterForcedByCurrentUrl() ? selectCharacterTypeFromCurrentUrl() : undefined
+    return new CharacterSelectionService(forcedCharacter)
+  }, [])
+
   const [currentScene, setCurrentScene] = useState<Scene>('attract')
   const [finalScore, setFinalScore] = useState<number>(0)
   const [finalGameState, setFinalGameState] = useState<GameState | null>(null)
-  // Track whether character is forced by URL parameter
-  const [isCharacterForced] = useState<boolean>(() => isCharacterForcedByCurrentUrl())
+  const [isNewHighScore, setIsNewHighScore] = useState<boolean>(false)
   // Select character immediately on mount so it's available for attract screen
-  const [selectedCharacter, setSelectedCharacter] = useState<CharacterType>(() => selectCharacterTypeFromCurrentUrl())
-  const [highScore, setHighScore] = useState<number>(() => {
-    const stored = localStorage.getItem('lumberjack-high-score')
-    return stored ? parseInt(stored, 10) : 0
-  })
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterType>(() => characterSelectionService.selectCharacter())
+  const [highScore, setHighScore] = useState<number>(() => highScoreService.getHighScore())
 
   const handleStartGame = () => {
     setCurrentScene('play')
@@ -29,29 +33,32 @@ export default function SceneManager() {
     setFinalScore(score)
     setFinalGameState(gameState)
     
+    // Check if this is a new high score before updating
+    const newHighScore = highScoreService.isNewHighScore(score)
+    setIsNewHighScore(newHighScore)
+    
     // Update high score if needed
-    if (score > highScore) {
+    if (newHighScore) {
+      highScoreService.saveHighScore(score)
       setHighScore(score)
-      localStorage.setItem('lumberjack-high-score', score.toString())
     }
     
     setCurrentScene('gameOver')
   }
 
   const handleRestart = () => {
-    // Select new random character if not forced by URL parameter
-    if (!isCharacterForced) {
-      setSelectedCharacter(getRandomCharacterType())
+    // Select new character if not forced by URL parameter
+    if (!characterSelectionService.isCharacterForced()) {
+      setSelectedCharacter(characterSelectionService.getRandomCharacter())
     }
     setCurrentScene('play')
   }
 
   const handleReturnToAttract = () => {
-    // Select new character for next game: URL-forced character if present, otherwise new random
-    if (!isCharacterForced) {
-      setSelectedCharacter(getRandomCharacterType())
+    // Select new character for next game if not forced by URL parameter
+    if (!characterSelectionService.isCharacterForced()) {
+      setSelectedCharacter(characterSelectionService.getRandomCharacter())
     }
-    // If character is forced by URL, keep the current character (no change needed)
     setCurrentScene('attract')
   }
 
@@ -78,7 +85,7 @@ export default function SceneManager() {
         <GameOverScreen 
           finalScore={finalScore}
           highScore={highScore}
-          isNewHighScore={finalScore > 0 && finalScore === highScore}
+          isNewHighScore={isNewHighScore}
           finalGameState={finalGameState}
           characterType={selectedCharacter}
           onRestart={handleRestart}

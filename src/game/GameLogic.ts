@@ -2,12 +2,8 @@ import type { GameState, AnimatedSegment } from './GameState'
 import { createInitialGameState } from './GameState'
 import { addNewSegmentToTree } from './TreeSystem'
 import { gameEvents } from './GameEvents'
-import {
-  TIME_ADDED_PER_CHOP_SEC,
-  TIMER_WARNING_THRESHOLD_SEC,
-  TREE_TRUNK_LEFT_POSITION,
-  TREE_TRUNK_BOTTOM_OFFSET
-} from '../constants'
+import { TIME_ADDED_PER_CHOP_SEC, TIMER_WARNING_THRESHOLD_SEC } from '../config/gameConfig'
+import { TREE_TRUNK_LEFT_POSITION, TREE_TRUNK_BOTTOM_OFFSET } from '../config/treeConfig'
 
 export const checkCollision = (
   playerSide: 'left' | 'right', 

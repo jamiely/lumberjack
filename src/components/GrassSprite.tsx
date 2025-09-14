@@ -1,5 +1,5 @@
 import React from 'react';
-import { GRASS_SPRITE_PATH, GRASS_SPRITE_WIDTH, GRASS_SPRITE_HEIGHT } from '../constants';
+import { GRASS_SPRITE_PATH, GRASS_SPRITE_WIDTH, GRASS_SPRITE_HEIGHT } from '../config/treeConfig';
 
 interface GrassSpriteProps {
   className?: string;

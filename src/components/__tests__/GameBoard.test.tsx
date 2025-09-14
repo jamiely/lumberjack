@@ -258,10 +258,8 @@ describe('GameBoard', () => {
   })
 
   describe('animated segments', () => {
-    let mockRemoveAnimatedSegment: ReturnType<typeof vi.fn>
     
     beforeEach(() => {
-      mockRemoveAnimatedSegment = vi.fn()
       // Mock performance.now for consistent animation testing
       vi.spyOn(performance, 'now').mockReturnValue(1000)
       
@@ -299,7 +297,6 @@ describe('GameBoard', () => {
           playerState="idle"
           gameOver={false}
           animatedSegments={mockAnimatedSegments}
-          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
         />
       )
 
@@ -326,7 +323,6 @@ describe('GameBoard', () => {
           playerState="idle"
           gameOver={false}
           animatedSegments={mockAnimatedSegments}
-          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
         />
       )
 
@@ -353,7 +349,6 @@ describe('GameBoard', () => {
           playerState="idle"
           gameOver={false}
           animatedSegments={mockAnimatedSegments}
-          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
         />
       )
 
@@ -387,7 +382,6 @@ describe('GameBoard', () => {
           playerState="idle"
           gameOver={false}
           animatedSegments={mockAnimatedSegments}
-          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
         />
       )
 
@@ -404,7 +398,6 @@ describe('GameBoard', () => {
           playerState="idle"
           gameOver={false}
           animatedSegments={[]}
-          onRemoveAnimatedSegment={mockRemoveAnimatedSegment}
         />
       )
 

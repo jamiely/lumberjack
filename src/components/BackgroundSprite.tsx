@@ -1,5 +1,5 @@
 import React from 'react';
-import { BACKGROUND_SPRITE_PATH, BACKGROUND_SPRITE_WIDTH, BACKGROUND_SPRITE_HEIGHT } from '../constants';
+import { BACKGROUND_SPRITE_PATH, BACKGROUND_SPRITE_WIDTH, BACKGROUND_SPRITE_HEIGHT } from '../config/treeConfig';
 
 interface BackgroundSpriteProps {
   className?: string;
