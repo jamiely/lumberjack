@@ -36,6 +36,16 @@ export default function GameOverScreen({
   }, [onRestart])
 
   useEffect(() => {
+    const handleClick = () => {
+      // Any click restarts the game immediately
+      onRestart()
+    }
+
+    window.addEventListener('click', handleClick)
+    return () => window.removeEventListener('click', handleClick)
+  }, [onRestart])
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
