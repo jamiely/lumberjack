@@ -1,5 +1,5 @@
 import React from 'react';
-import { GRASS_SPRITE_PATH, GRASS_SPRITE_WIDTH, GRASS_SPRITE_HEIGHT } from '../config/treeConfig';
+import { TREE } from '../config/constants';
 
 interface GrassSpriteProps {
   className?: string;
@@ -11,14 +11,14 @@ export const GrassSprite: React.FC<GrassSpriteProps> = ({ className, style }) =>
     <div
       className={className}
       style={{
-        width: GRASS_SPRITE_WIDTH,
-        height: GRASS_SPRITE_HEIGHT,
+        width: TREE.GRASS_SPRITE_WIDTH,
+        height: TREE.GRASS_SPRITE_HEIGHT,
         overflow: 'hidden',
         ...style
       }}
     >
       <img 
-        src={GRASS_SPRITE_PATH}
+        src={TREE.GRASS_SPRITE_PATH}
         alt="Grass"
         style={{
           width: '100%',

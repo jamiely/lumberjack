@@ -1,30 +1,10 @@
-import type { ScalingOptions } from '../hooks/useViewportScaling'
+import { SCALING } from './constants';
+import type { ScalingOptions } from './types';
 
-// Default scaling configuration for the game
-export const DEFAULT_SCALING_OPTIONS: ScalingOptions = {
-  strategy: 'fit-to-screen',
-  minScale: 0.1,
-  maxScale: 10,
-  maintainAspectRatio: true
-}
-
-// Scaling options for development mode (can be more flexible)
-export const DEVELOPMENT_SCALING_OPTIONS: ScalingOptions = {
-  strategy: 'fit-to-screen',
-  minScale: 0.5,
-  maxScale: 3,
-  maintainAspectRatio: true
-}
-
-// Scaling options for arcade cabinet (more restrictive)
-export const ARCADE_SCALING_OPTIONS: ScalingOptions = {
-  strategy: 'fit-to-screen',
-  minScale: 1,
-  maxScale: 2,
-  maintainAspectRatio: true
-}
-
-// Function to get scaling options based on environment or URL parameters
+/**
+ * Get scaling options based on environment or URL parameters
+ * Moved from scalingConfig.ts
+ */
 export function getScalingOptions(): ScalingOptions {
   // Check URL parameters for scaling configuration
   const urlParams = new URLSearchParams(window.location.search)
@@ -33,14 +13,29 @@ export function getScalingOptions(): ScalingOptions {
   const maxScale = urlParams.get('maxScale')
   const maintainAspectRatio = urlParams.get('aspectRatio')
 
-  // Start with default options
-  let options = { ...DEFAULT_SCALING_OPTIONS }
+  // Start with default options - create fresh object to avoid const typing issues
+  let options: ScalingOptions = {
+    strategy: SCALING.DEFAULT_OPTIONS.strategy,
+    minScale: SCALING.DEFAULT_OPTIONS.minScale,
+    maxScale: SCALING.DEFAULT_OPTIONS.maxScale,
+    maintainAspectRatio: SCALING.DEFAULT_OPTIONS.maintainAspectRatio,
+  }
 
   // Check for environment-specific defaults
   if (import.meta.env.MODE === 'development') {
-    options = { ...DEVELOPMENT_SCALING_OPTIONS }
+    options = {
+      strategy: SCALING.DEVELOPMENT_OPTIONS.strategy,
+      minScale: SCALING.DEVELOPMENT_OPTIONS.minScale,
+      maxScale: SCALING.DEVELOPMENT_OPTIONS.maxScale,
+      maintainAspectRatio: SCALING.DEVELOPMENT_OPTIONS.maintainAspectRatio,
+    }
   } else if (window.location.pathname.includes('/arcade')) {
-    options = { ...ARCADE_SCALING_OPTIONS }
+    options = {
+      strategy: SCALING.ARCADE_OPTIONS.strategy,
+      minScale: SCALING.ARCADE_OPTIONS.minScale,
+      maxScale: SCALING.ARCADE_OPTIONS.maxScale,
+      maintainAspectRatio: SCALING.ARCADE_OPTIONS.maintainAspectRatio,
+    }
   }
 
   // Override with URL parameters if provided
@@ -63,7 +58,10 @@ export function getScalingOptions(): ScalingOptions {
   return options
 }
 
-// Debug helper to display current scaling information
+/**
+ * Debug helper to display current scaling information
+ * Moved from scalingConfig.ts
+ */
 export function getScalingDebugInfo(scaling: { 
   scale: number
   actualGameWidth: number

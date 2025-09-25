@@ -1,5 +1,5 @@
 import React from 'react';
-import { BRANCH_SPRITE_PATH, BRANCH_SPRITE_WIDTH, BRANCH_SPRITE_HEIGHT } from '../config/treeConfig';
+import { TREE } from '../config/constants';
 
 interface BranchSpriteProps {
   side: 'left' | 'right';
@@ -15,9 +15,9 @@ export const BranchSprite: React.FC<BranchSpriteProps> = ({ side, className, sty
     <div
       className={className}
       style={{
-        width: BRANCH_SPRITE_WIDTH,
-        height: BRANCH_SPRITE_HEIGHT,
-        backgroundImage: `url(${BRANCH_SPRITE_PATH})`,
+        width: TREE.BRANCH_SPRITE_WIDTH,
+        height: TREE.BRANCH_SPRITE_HEIGHT,
+        backgroundImage: `url(${TREE.BRANCH_SPRITE_PATH})`,
         backgroundSize: 'cover',
         transform,
         transformOrigin,

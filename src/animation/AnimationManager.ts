@@ -1,5 +1,5 @@
 import type { AnimatedSegment } from '../game/GameState'
-import { ANIMATION_DURATION, ANIMATION_SPEED, ANIMATION_OUT_OF_BOUNDS_LEFT, ANIMATION_OUT_OF_BOUNDS_RIGHT } from '../config/animationConfig'
+import { ANIMATION } from '../config/constants'
 
 export class AnimationManager {
   private static instance: AnimationManager
@@ -67,15 +67,15 @@ export class AnimationManager {
     const elapsed = timestamp - segment.startTime
     
     // Remove if animation duration exceeded
-    if (elapsed > ANIMATION_DURATION) {
+    if (elapsed > ANIMATION.ANIMATION_DURATION) {
       return true
     }
 
     // Remove if segment moved out of bounds
-    const distance = ANIMATION_SPEED * (elapsed / 1000)
+    const distance = ANIMATION.ANIMATION_SPEED * (elapsed / 1000)
     const currentX = segment.startPosition.x + (segment.direction === 'right' ? distance : -distance)
     
-    return currentX < ANIMATION_OUT_OF_BOUNDS_LEFT || currentX > ANIMATION_OUT_OF_BOUNDS_RIGHT
+    return currentX < ANIMATION.ANIMATION_OUT_OF_BOUNDS_LEFT || currentX > ANIMATION.ANIMATION_OUT_OF_BOUNDS_RIGHT
   }
 
   getAnimations(): Map<string, AnimatedSegment> {
@@ -85,7 +85,7 @@ export class AnimationManager {
   getCurrentAnimationData(timestamp: number): Array<AnimatedSegment & { currentX: number; rotation: number }> {
     return Array.from(this.animations.values()).map(segment => {
       const elapsed = timestamp - segment.startTime
-      const distance = ANIMATION_SPEED * (elapsed / 1000)
+      const distance = ANIMATION.ANIMATION_SPEED * (elapsed / 1000)
       const currentX = segment.startPosition.x + (segment.direction === 'right' ? distance : -distance)
       const rotation = (elapsed * 0.36) % 360 // About 1 full rotation per second
 

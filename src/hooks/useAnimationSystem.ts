@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { AnimatedSegment } from '../game/GameState'
-import { ANIMATION_SPEED } from '../config/animationConfig'
+import { ANIMATION } from '../config/constants'
 
 // Simplified animation system that works directly with segments
 export function useAnimationSystem(
@@ -11,7 +11,7 @@ export function useAnimationSystem(
   // Calculate animation data directly from segments
   const animationData = segments.map(segment => {
     const elapsed = currentTime - segment.startTime
-    const distance = ANIMATION_SPEED * (elapsed / 1000)
+    const distance = ANIMATION.ANIMATION_SPEED * (elapsed / 1000)
     const currentX = segment.startPosition.x + (segment.direction === 'right' ? distance : -distance)
     const rotation = (elapsed * 0.36) % 360 // About 1 full rotation per second
 

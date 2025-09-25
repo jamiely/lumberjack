@@ -22,7 +22,7 @@ export interface GameState {
   maxTime: number
 }
 
-import { INITIAL_TIME_REMAINING_SEC, MAX_TIME_SEC } from '../config/gameConfig'
+import { GAME } from '../config/constants'
 
 export const createInitialGameState = (): GameState => ({
   playerSide: 'left',
@@ -41,6 +41,6 @@ export const createInitialGameState = (): GameState => ({
     { branchSide: 'left' }
   ],
   animatedSegments: [],
-  timeRemaining: INITIAL_TIME_REMAINING_SEC,
-  maxTime: MAX_TIME_SEC
+  timeRemaining: GAME.INITIAL_TIME_REMAINING_SEC,
+  maxTime: GAME.MAX_TIME_SEC
 })

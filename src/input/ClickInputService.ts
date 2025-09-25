@@ -1,10 +1,10 @@
-import { TREE_TRUNK_LEFT_POSITION, TREE_TRUNK_WIDTH } from '../config/treeConfig'
+import { TREE } from '../config/constants'
 import { screenToGameCoordinates, type ViewportScaling } from '../hooks/useViewportScaling'
 
 export class ClickInputService {
   static getChopSideFromClick(clickX: number): 'left' | 'right' {
     // Calculate the tree center position using trunk configuration
-    const treeCenterX = TREE_TRUNK_LEFT_POSITION + TREE_TRUNK_WIDTH / 2
+    const treeCenterX = TREE.TREE_TRUNK_LEFT_POSITION + TREE.TREE_TRUNK_WIDTH / 2
     
     return clickX < treeCenterX ? 'left' : 'right'
   }

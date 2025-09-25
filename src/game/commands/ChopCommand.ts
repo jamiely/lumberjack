@@ -2,8 +2,7 @@ import type { GameState, AnimatedSegment } from '../GameState'
 import type { GameCommand, GameEvent } from './GameCommand'
 import { checkCollision } from '../GameLogic'
 import { addNewSegmentToTree } from '../TreeSystem'
-import { TIME_ADDED_PER_CHOP_SEC } from '../../config/gameConfig'
-import { TREE_TRUNK_LEFT_POSITION, TREE_TRUNK_BOTTOM_OFFSET } from '../../config/treeConfig'
+import { GAME, TREE } from '../../config/constants'
 
 export class ChopCommand implements GameCommand {
   private side: 'left' | 'right'
@@ -37,8 +36,8 @@ export class ChopCommand implements GameCommand {
       startTime: performance.now(),
       direction: this.side === 'left' ? 'right' : 'left', // Fly opposite to player
       startPosition: {
-        x: TREE_TRUNK_LEFT_POSITION, // Tree trunk x position
-        y: TREE_TRUNK_BOTTOM_OFFSET   // Bottom segment y position
+        x: TREE.TREE_TRUNK_LEFT_POSITION, // Tree trunk x position
+        y: TREE.TREE_TRUNK_BOTTOM_OFFSET   // Bottom segment y position
       }
     }
 
@@ -49,7 +48,7 @@ export class ChopCommand implements GameCommand {
       score: state.score + 1,
       treeSegments: addNewSegmentToTree(state.treeSegments),
       animatedSegments: [...state.animatedSegments, animatedSegment],
-      timeRemaining: Math.min(state.maxTime, state.timeRemaining + TIME_ADDED_PER_CHOP_SEC)
+      timeRemaining: Math.min(state.maxTime, state.timeRemaining + GAME.TIME_ADDED_PER_CHOP_SEC)
     }
   }
 

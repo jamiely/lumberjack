@@ -1,7 +1,7 @@
 import React from 'react'
 import { useViewportScaling, type ScalingOptions } from '../hooks/useViewportScaling'
-import { GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT } from '../config/uiConfig'
-import { getScalingOptions } from '../config/scalingConfig'
+import { UI } from '../config/constants'
+import { getScalingOptions } from '../config/configUtils'
 
 interface ScreenContainerProps {
   children: React.ReactNode
@@ -42,8 +42,8 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
       <div
         className="game-content"
         style={{
-          width: `${GAME_BOARD_WIDTH}px`,
-          height: `${GAME_BOARD_HEIGHT}px`,
+          width: `${UI.GAME_BOARD_WIDTH}px`,
+          height: `${UI.GAME_BOARD_HEIGHT}px`,
           backgroundColor,
           position: 'relative',
           transform: `scale(${scaling.scale})`,

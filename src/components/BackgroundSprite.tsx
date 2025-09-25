@@ -1,5 +1,5 @@
 import React from 'react';
-import { BACKGROUND_SPRITE_PATH, BACKGROUND_SPRITE_WIDTH, BACKGROUND_SPRITE_HEIGHT } from '../config/treeConfig';
+import { TREE } from '../config/constants';
 
 interface BackgroundSpriteProps {
   className?: string;
@@ -11,14 +11,14 @@ export const BackgroundSprite: React.FC<BackgroundSpriteProps> = ({ className, s
     <div
       className={className}
       style={{
-        width: BACKGROUND_SPRITE_WIDTH,
-        height: BACKGROUND_SPRITE_HEIGHT,
+        width: TREE.BACKGROUND_SPRITE_WIDTH,
+        height: TREE.BACKGROUND_SPRITE_HEIGHT,
         overflow: 'hidden',
         ...style
       }}
     >
       <img 
-        src={BACKGROUND_SPRITE_PATH}
+        src={TREE.BACKGROUND_SPRITE_PATH}
         alt="Forest Background"
         style={{
           width: '100%',

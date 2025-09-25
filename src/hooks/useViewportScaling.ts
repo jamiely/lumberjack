@@ -1,24 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT } from '../config/uiConfig'
+import { UI } from '../config/constants'
+import type { ViewportScaling, ScalingOptions } from '../config/types'
 
-export interface ViewportScaling {
-  scale: number
-  containerWidth: number
-  containerHeight: number
-  offsetX: number
-  offsetY: number
-  actualGameWidth: number
-  actualGameHeight: number
-}
+export type { ViewportScaling, ScalingOptions }
 
-export interface ScalingOptions {
-  strategy?: 'fit-to-screen' | 'fit-to-width' | 'fit-to-height'
-  minScale?: number
-  maxScale?: number
-  maintainAspectRatio?: boolean
-}
-
-const TARGET_ASPECT_RATIO = GAME_BOARD_WIDTH / GAME_BOARD_HEIGHT // 540/960 = 9:16
+const TARGET_ASPECT_RATIO = UI.GAME_BOARD_WIDTH / UI.GAME_BOARD_HEIGHT // 540/960 = 9:16
 
 export function useViewportScaling(options: ScalingOptions = {}): ViewportScaling {
   const {
@@ -69,20 +55,20 @@ function calculateScaling(
 
   if (!maintainAspectRatio) {
     // Simple fill strategy - stretch to fit
-    scale = Math.min(viewportWidth / GAME_BOARD_WIDTH, viewportHeight / GAME_BOARD_HEIGHT)
+    scale = Math.min(viewportWidth / UI.GAME_BOARD_WIDTH, viewportHeight / UI.GAME_BOARD_HEIGHT)
     containerWidth = viewportWidth
     containerHeight = viewportHeight
   } else {
     // Maintain aspect ratio
     switch (strategy) {
       case 'fit-to-width':
-        scale = viewportWidth / GAME_BOARD_WIDTH
+        scale = viewportWidth / UI.GAME_BOARD_WIDTH
         containerWidth = viewportWidth
         containerHeight = containerWidth / TARGET_ASPECT_RATIO
         break
       
       case 'fit-to-height':
-        scale = viewportHeight / GAME_BOARD_HEIGHT
+        scale = viewportHeight / UI.GAME_BOARD_HEIGHT
         containerHeight = viewportHeight
         containerWidth = containerHeight * TARGET_ASPECT_RATIO
         break
@@ -91,12 +77,12 @@ function calculateScaling(
       default:
         if (viewportAspectRatio > TARGET_ASPECT_RATIO) {
           // Viewport is wider than game - fit to height
-          scale = viewportHeight / GAME_BOARD_HEIGHT
+          scale = viewportHeight / UI.GAME_BOARD_HEIGHT
           containerHeight = viewportHeight
           containerWidth = containerHeight * TARGET_ASPECT_RATIO
         } else {
           // Viewport is taller than game - fit to width
-          scale = viewportWidth / GAME_BOARD_WIDTH
+          scale = viewportWidth / UI.GAME_BOARD_WIDTH
           containerWidth = viewportWidth
           containerHeight = containerWidth / TARGET_ASPECT_RATIO
         }
@@ -108,8 +94,8 @@ function calculateScaling(
   scale = Math.max(minScale, Math.min(maxScale, scale))
   
   // Recalculate container dimensions based on clamped scale
-  const actualGameWidth = GAME_BOARD_WIDTH * scale
-  const actualGameHeight = GAME_BOARD_HEIGHT * scale
+  const actualGameWidth = UI.GAME_BOARD_WIDTH * scale
+  const actualGameHeight = UI.GAME_BOARD_HEIGHT * scale
   
   // Calculate centering offsets
   const offsetX = Math.max(0, (viewportWidth - actualGameWidth) / 2)

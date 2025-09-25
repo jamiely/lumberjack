@@ -5,26 +5,7 @@ import { BranchSprite } from './BranchSprite'
 import { GrassSprite } from './GrassSprite'
 import { BackgroundSprite } from './BackgroundSprite'
 import { useAnimationSystem } from '../hooks/useAnimationSystem'
-import {
-  GAME_BOARD_WIDTH,
-  GAME_BOARD_HEIGHT,
-  PLAYER_BOTTOM_OFFSET,
-  PLAYER_LEFT_POSITION,
-  PLAYER_RIGHT_POSITION
-} from '../config/uiConfig'
-import {
-  TREE_TRUNK_WIDTH,
-  TREE_TRUNK_HEIGHT,
-  TREE_TRUNK_LEFT_POSITION,
-  TREE_TRUNK_BOTTOM_OFFSET,
-  TREE_SEGMENT_VERTICAL_SPACING,
-  TREE_TRUNK_SPRITE_PATH,
-  BRANCH_LEFT_POSITION,
-  BRANCH_RIGHT_POSITION,
-  BRANCH_VERTICAL_OFFSET,
-  BRANCH_SPRITE_WIDTH
-} from '../config/treeConfig'
-import { ANIMATED_BRANCH_OFFSET } from '../config/animationConfig'
+import { UI, TREE, ANIMATION } from '../config/constants'
 
 interface GameBoardProps {
   treeSegments: TreeSegment[]
@@ -60,8 +41,8 @@ export default function GameBoard({
   return (
     <div style={{ 
       position: 'relative', 
-      width: `${GAME_BOARD_WIDTH}px`, 
-      height: `${GAME_BOARD_HEIGHT}px`, 
+      width: `${UI.GAME_BOARD_WIDTH}px`, 
+      height: `${UI.GAME_BOARD_HEIGHT}px`, 
       backgroundColor: 'transparent', // Let background sprite show through
       overflow: 'hidden',
       opacity: getOpacity(),
@@ -95,8 +76,8 @@ export default function GameBoard({
             side={segment.branchSide}
             style={{
               position: 'absolute',
-              left: segment.branchSide === 'left' ? `${BRANCH_LEFT_POSITION}px` : `${BRANCH_RIGHT_POSITION}px`,
-              bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + BRANCH_VERTICAL_OFFSET}px`,
+              left: segment.branchSide === 'left' ? `${TREE.BRANCH_LEFT_POSITION}px` : `${TREE.BRANCH_RIGHT_POSITION}px`,
+              bottom: `${index * TREE.TREE_SEGMENT_VERTICAL_SPACING + TREE.BRANCH_VERTICAL_OFFSET}px`,
               zIndex: 1 // Behind trunk
             }}
           />
@@ -109,11 +90,11 @@ export default function GameBoard({
           key={`trunk-${index}`}
           style={{
             position: 'absolute',
-            left: `${TREE_TRUNK_LEFT_POSITION}px`,
-            bottom: `${index * TREE_SEGMENT_VERTICAL_SPACING + TREE_TRUNK_BOTTOM_OFFSET}px`,
-            width: `${TREE_TRUNK_WIDTH}px`,
-            height: `${TREE_TRUNK_HEIGHT}px`,
-            backgroundImage: `url(${TREE_TRUNK_SPRITE_PATH})`,
+            left: `${TREE.TREE_TRUNK_LEFT_POSITION}px`,
+            bottom: `${index * TREE.TREE_SEGMENT_VERTICAL_SPACING + TREE.TREE_TRUNK_BOTTOM_OFFSET}px`,
+            width: `${TREE.TREE_TRUNK_WIDTH}px`,
+            height: `${TREE.TREE_TRUNK_HEIGHT}px`,
+            backgroundImage: `url(${TREE.TREE_TRUNK_SPRITE_PATH})`,
             backgroundSize: '100% 140%',
             zIndex: 2 // On top of branches
             // border: TREE_TRUNK_BORDER // Removed - using realistic trunk sprite instead
@@ -126,9 +107,9 @@ export default function GameBoard({
         playerSide={playerSide}
         playerState={playerState}
         gameOver={gameOver}
-        leftPosition={PLAYER_LEFT_POSITION}
-        rightPosition={PLAYER_RIGHT_POSITION}
-        bottomOffset={PLAYER_BOTTOM_OFFSET}
+        leftPosition={UI.PLAYER_LEFT_POSITION}
+        rightPosition={UI.PLAYER_RIGHT_POSITION}
+        bottomOffset={UI.PLAYER_BOTTOM_OFFSET}
         characterType={characterType || 'lumberjack2'}
       />
 
@@ -150,9 +131,9 @@ export default function GameBoard({
                 position: 'absolute',
                 left: '0px',
                 bottom: '0px',
-                width: `${TREE_TRUNK_WIDTH}px`,
-                height: `${TREE_TRUNK_HEIGHT}px`,
-                backgroundImage: `url(${TREE_TRUNK_SPRITE_PATH})`,
+                width: `${TREE.TREE_TRUNK_WIDTH}px`,
+                height: `${TREE.TREE_TRUNK_HEIGHT}px`,
+                backgroundImage: `url(${TREE.TREE_TRUNK_SPRITE_PATH})`,
                 backgroundSize: '100% 100%'
               }} />
               
@@ -162,8 +143,8 @@ export default function GameBoard({
                   side={animatedSegment.branchSide}
                   style={{
                     position: 'absolute',
-                    left: animatedSegment.branchSide === 'left' ? `-${BRANCH_SPRITE_WIDTH}px` : `${BRANCH_SPRITE_WIDTH}px`,
-                    bottom: `${ANIMATED_BRANCH_OFFSET}px`
+                    left: animatedSegment.branchSide === 'left' ? `-${TREE.BRANCH_SPRITE_WIDTH}px` : `${TREE.BRANCH_SPRITE_WIDTH}px`,
+                    bottom: `${ANIMATION.ANIMATED_BRANCH_OFFSET}px`
                   }}
                 />
               )}

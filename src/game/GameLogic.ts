@@ -2,8 +2,7 @@ import type { GameState, AnimatedSegment } from './GameState'
 import { createInitialGameState } from './GameState'
 import { addNewSegmentToTree } from './TreeSystem'
 import { gameEvents } from './GameEvents'
-import { TIME_ADDED_PER_CHOP_SEC, TIMER_WARNING_THRESHOLD_SEC } from '../config/gameConfig'
-import { TREE_TRUNK_LEFT_POSITION, TREE_TRUNK_BOTTOM_OFFSET } from '../config/treeConfig'
+import { GAME, TREE } from '../config/constants'
 
 export const checkCollision = (
   playerSide: 'left' | 'right', 
@@ -43,8 +42,8 @@ export const performChop = (
     startTime: performance.now(),
     direction: side === 'left' ? 'right' : 'left', // Fly opposite to player
     startPosition: {
-      x: TREE_TRUNK_LEFT_POSITION, // Tree trunk x position
-      y: TREE_TRUNK_BOTTOM_OFFSET   // Bottom segment y position
+      x: TREE.TREE_TRUNK_LEFT_POSITION, // Tree trunk x position
+      y: TREE.TREE_TRUNK_BOTTOM_OFFSET   // Bottom segment y position
     }
   }
 
@@ -57,7 +56,7 @@ export const performChop = (
     score: gameState.score + 1,
     treeSegments: addNewSegmentToTree(gameState.treeSegments),
     animatedSegments: [...gameState.animatedSegments, animatedSegment],
-    timeRemaining: Math.min(gameState.maxTime, gameState.timeRemaining + TIME_ADDED_PER_CHOP_SEC)
+    timeRemaining: Math.min(gameState.maxTime, gameState.timeRemaining + GAME.TIME_ADDED_PER_CHOP_SEC)
   }
 }
 
@@ -83,7 +82,7 @@ export const updateTimer = (
   const newTimeRemaining = Math.max(0, gameState.timeRemaining - deltaTime)
   
   // Emit timer warning when time is running low (less than 1 second)
-  if (newTimeRemaining <= TIMER_WARNING_THRESHOLD_SEC && gameState.timeRemaining > TIMER_WARNING_THRESHOLD_SEC) {
+  if (newTimeRemaining <= GAME.TIMER_WARNING_THRESHOLD_SEC && gameState.timeRemaining > GAME.TIMER_WARNING_THRESHOLD_SEC) {
     gameEvents.emit('timerWarning')
   }
   

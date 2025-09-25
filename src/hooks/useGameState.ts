@@ -6,7 +6,7 @@ import { ResetCommand } from '../game/commands/ResetCommand'
 import { ToggleDebugCommand } from '../game/commands/ToggleDebugCommand'
 import { TickCommand } from '../game/commands/TickCommand'
 import { ResetPlayerStateCommand } from '../game/commands/ResetPlayerStateCommand'
-import { TIMER_UPDATE_INTERVAL_MS, CHOPPING_STATE_DURATION_MS } from '../config/gameConfig'
+import { GAME } from '../config/constants'
 
 export function useGameState() {
   // Create game state machine
@@ -30,7 +30,7 @@ export function useGameState() {
 
     const interval = setInterval(() => {
       stateMachine.dispatch(new TickCommand(0.1)) // Update every 100ms
-    }, TIMER_UPDATE_INTERVAL_MS)
+    }, GAME.TIMER_UPDATE_INTERVAL_MS)
 
     return () => clearInterval(interval)
   }, [gameState.gameOver, stateMachine])
@@ -40,7 +40,7 @@ export function useGameState() {
     if (gameState.playerState === 'chopping') {
       const timer = setTimeout(() => {
         stateMachine.dispatch(new ResetPlayerStateCommand())
-      }, CHOPPING_STATE_DURATION_MS)
+      }, GAME.CHOPPING_STATE_DURATION_MS)
 
       return () => clearTimeout(timer)
     }

@@ -1,6 +1,6 @@
 import type { GameState } from '../GameState'
 import type { GameCommand, GameEvent } from './GameCommand'
-import { TIMER_WARNING_THRESHOLD_SEC } from '../../config/gameConfig'
+import { GAME } from '../../config/constants'
 
 export class TickCommand implements GameCommand {
   private deltaTime: number
@@ -39,7 +39,7 @@ export class TickCommand implements GameCommand {
     const newTimeRemaining = Math.max(0, currentTime - this.deltaTime)
     
     // Emit timer warning when time is running low (less than 1 second)
-    if (newTimeRemaining <= TIMER_WARNING_THRESHOLD_SEC) {
+    if (newTimeRemaining <= GAME.TIMER_WARNING_THRESHOLD_SEC) {
       events.push({ type: 'timerWarning' })
     }
     
