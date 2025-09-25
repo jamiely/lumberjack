@@ -13,8 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 - `npm run test:watch` - Run tests in watch mode (recommended during development)
 
 ### Quality Gates (ALWAYS run before completing tasks)
-1. **Run tests**: `npm test` - ALL tests must pass
-2. **Run linting**: `npm run lint` - NO linting errors allowed
+2. **Run tests, linting, and e2e tests**: `npm run check` - NO test failures, linting errors, or e2e test failures allowed
 3. **Run build**: `npm run build` - Build must succeed
 
 ## 📁 KEY PROJECT FILES AND THEIR PURPOSE
