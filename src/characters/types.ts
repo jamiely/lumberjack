@@ -1,4 +1,4 @@
-export type CharacterType = 'lumberjack1' | 'lumberjack2' | 'lumberjack3' | 'lumberjack4'
+export type CharacterType = 'lumberjack1' | 'lumberjack2' | 'lumberjack3' | 'lumberjack4' | 'lumberjack5'
 
 export type GameState = 'idle' | 'chopping' | 'hit'
 

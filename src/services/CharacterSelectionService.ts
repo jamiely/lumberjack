@@ -7,7 +7,7 @@ export interface ICharacterSelectionService {
 }
 
 export class CharacterSelectionService implements ICharacterSelectionService {
-  private readonly availableCharacters: CharacterType[] = ['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']
+  private readonly availableCharacters: CharacterType[] = ['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4', 'lumberjack5']
   private forcedCharacter: CharacterType | null = null
 
   constructor(forcedCharacter?: CharacterType) {

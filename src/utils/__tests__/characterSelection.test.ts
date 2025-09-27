@@ -10,7 +10,7 @@ describe('characterSelection', () => {
   describe('getRandomCharacterType', () => {
     it('returns a valid character type', () => {
       const result = getRandomCharacterType()
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4', 'lumberjack5']).toContain(result)
     })
 
     it('returns different characters on multiple calls (statistically)', () => {
@@ -20,20 +20,20 @@ describe('characterSelection', () => {
         results.add(getRandomCharacterType())
       }
       
-      // Should get at least one result, possibly all four
+      // Should get at least one result, possibly all five
       expect(results.size).toBeGreaterThan(0)
-      expect(results.size).toBeLessThanOrEqual(4)
+      expect(results.size).toBeLessThanOrEqual(5)
     })
 
-    it('can select all four character types over many iterations', () => {
+    it('can select all five character types over many iterations', () => {
       const results = new Set()
       // Run many iterations to ensure all characters can be selected
       for (let i = 0; i < 100; i++) {
         results.add(getRandomCharacterType())
       }
       
-      // With 100 iterations, we should get all 4 characters
-      expect(results).toEqual(new Set(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']))
+      // With 100 iterations, we should get all 5 characters
+      expect(results).toEqual(new Set(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4', 'lumberjack5']))
     })
   })
 
@@ -50,6 +50,9 @@ describe('characterSelection', () => {
 
       const params4 = new URLSearchParams('?character=lumberjack4')
       expect(getCharacterFromUrl(params4)).toBe('lumberjack4')
+
+      const params5 = new URLSearchParams('?character=lumberjack5')
+      expect(getCharacterFromUrl(params5)).toBe('lumberjack5')
     })
 
     it('returns null for invalid character type', () => {
@@ -77,13 +80,13 @@ describe('characterSelection', () => {
     it('returns random character when URL parameter is invalid', () => {
       const params = new URLSearchParams('?character=invalid')
       const result = selectCharacterType(params)
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4', 'lumberjack5']).toContain(result)
     })
 
     it('returns random character when no URL parameter exists', () => {
       const params = new URLSearchParams('')
       const result = selectCharacterType(params)
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4', 'lumberjack5']).toContain(result)
     })
   })
 
@@ -101,7 +104,7 @@ describe('characterSelection', () => {
       })
 
       const result = selectCharacterTypeFromCurrentUrl()
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4', 'lumberjack5']).toContain(result)
     })
 
     it('uses window location when available', () => {
@@ -134,7 +137,7 @@ describe('characterSelection', () => {
       })
 
       const result = selectCharacterTypeFromCurrentUrl()
-      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4']).toContain(result)
+      expect(['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4', 'lumberjack5']).toContain(result)
     })
   })
 })
