@@ -30,31 +30,6 @@ src/
 
 ## Major Consolidation Opportunities
 
-### 1. Configuration Fragmentation **[HIGH IMPACT]**
-
-**Current State**: Configuration is scattered across 6 separate files:
-- `src/config/gameConfig.ts` - Game timing constants (9 lines)
-- `src/config/uiConfig.ts` - UI dimensions (17 lines) 
-- `src/config/scalingConfig.ts` - Scaling options (80 lines)
-- `src/config/animationConfig.ts` - Animation constants (10 lines)
-- `src/config/audioConfig.ts` - Audio settings (8 lines)
-- `src/config/treeConfig.ts` - Tree-related constants (47 lines)
-
-**Historical Context**: Based on comments in `audioConfig.ts`, there was previously a single `constants.ts` file that has been split into these separate files. While this separation improved organization, it may have gone too far, creating maintenance overhead.
-
-**Problems**:
-- Configuration is spread thin across many small files
-- Related constants are separated (e.g., UI and game dimensions)
-- Import overhead - need multiple imports for related configs
-- Hard to see full configuration picture
-
-**Consolidation Opportunity**: Hybrid approach with logical groupings:
-- **constants.ts**: All 49 constants + complex config objects with extra documentation
-- **configUtils.ts**: Functions like `getScalingOptions()` and `getScalingDebugInfo()`  
-- **types/**: Shared types like `ScalingOptions` moved from hooks dependency
-- **Migration**: Big bang approach - update all 15+ import paths simultaneously
-- **Result**: 6 files → 3 files with clear separation of concerns
-
 ### 2. Character Configuration Duplication **[HIGH IMPACT]**
 
 **Current State**: Highly repetitive character config files:
