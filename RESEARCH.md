@@ -202,3 +202,31 @@ import type { CharacterConfig, GameState, PoseBounds } from '../types'
 ## Conclusion
 
 The codebase shows good architectural foundations with clean separation of concerns, but has naturally evolved to contain significant duplication and fragmentation. The identified consolidation opportunities would substantially improve maintainability while preserving the existing clean architecture principles. The recommended phased approach minimizes risk while maximizing impact.
+
+## Next Feature: Character Config Consolidation
+
+### Goal
+- Replace the five hand-maintained `src/characters/lumberjack*/config.ts` files with a shared configuration system so that adding or changing a character only requires pose data and truly unique details.
+- Ensure the new system feeds both the existing `src/characters/index.ts` registry and the newer `src/characters/core/CharacterFactory.ts` flow without duplicate type definitions.
+
+### Current Pain Points
+- Positioning and dimension numbers (bottom offset, left/right positions, display size relationships) are copy/pasted across all characters.
+- Each config contains a near-identical game-state mapping function that only swaps string literals.
+- Two `CharacterConfig` shapes exist (`src/characters/types.ts` and `src/characters/core/Character.ts`), forcing conversion helpers in `CharacterRegistration.ts`.
+- When a constant changes (for example the player width), all five files must be edited and re-tested.
+
+### Proposed Direction
+- Introduce a `sharedConfig` module under `src/characters/` that exports reusable positioning defaults, centering calculations, and a builder that turns per-character pose data plus overrides into the final structure expected by the registry and factory.
+- Co-locate the updated `CharacterConfig` TypeScript definition in one place, and update dependant modules to rely on that single source of truth.
+- Migrate each lumberjack config to a thin data file that provides sprite sheet metadata, pose definitions, and any overrides that differ from the defaults.
+- Remove the temporary legacy conversion inside `CharacterRegistration.ts` once the unified config format is adopted.
+
+### Deliverables
+- Shared utilities and types that eliminate repeated literals across character configs.
+- Updated character config files that use the builder and import shared defaults instead of re-declaring them.
+- Registry and factory modules that read the consolidated config shape directly, with associated tests updated to cover the new flow.
+
+### Risks & Mitigations
+- **Runtime regressions:** Ensure all character selection and animation tests continue to cover the default sprite mapping. Add targeted unit coverage around the builder if necessary.
+- **Type churn:** Perform the type merge in a dedicated step so type errors surface early, keeping the refactor manageable.
+- **Asset-specific quirks:** Document any per-character deviations (for example flipped default facing) in the new data files so future assets remain easy to integrate.
