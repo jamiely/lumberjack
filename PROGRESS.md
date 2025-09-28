@@ -1,5 +1,14 @@
 # Development Progress
 
+## Character Config Consolidation
+**Date:** September 10, 2025 - 12:35 PM
+
+- ✅ Introduced `src/characters/sharedConfig.ts` with a reusable builder, centering helper, and state mapper.
+- ✅ Refactored every lumberjack config to consume the builder so positioning defaults and state lists are generated consistently.
+- ✅ Updated the scene factory and renderer layers to rely on the canonical character config and register lumberjack5 without conversions.
+- ✅ Added targeted unit coverage for the shared builder and refreshed lumberjack5 expectations to match real sprite data.
+- ✅ Validation: `npm run check`, `npm run build`.
+
 ## MVP Implementation - Basic Movement and Tree Chopping
 **Date:** September 9, 2025 - 2:45 PM
 

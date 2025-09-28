@@ -1,8 +1,8 @@
-import type { Character, CharacterConfig } from './Character'
-import type { CharacterType } from '../index'
+import type { Character } from './Character'
+import type { CharacterConfig, CharacterType } from '../types'
 
 export class CharacterFactory {
-  private static characterConfigs: Record<string, CharacterConfig> = {}
+  private static characterConfigs: Partial<Record<CharacterType, CharacterConfig>> = {}
 
   static registerCharacter(type: CharacterType, config: CharacterConfig): void {
     this.characterConfigs[type] = config
@@ -27,5 +27,4 @@ export class CharacterFactory {
   static isRegistered(type: CharacterType): boolean {
     return type in this.characterConfigs
   }
-
 }

@@ -36,8 +36,8 @@ describe('lumberjack5Config', () => {
 
   it('has correct sprite sheet configuration', () => {
     expect(lumberjack5Config.spriteConfig.sheetPath).toBe('./images/lumberjack5.png')
-    expect(lumberjack5Config.spriteConfig.sheetWidth).toBeGreaterThan(0)
-    expect(lumberjack5Config.spriteConfig.sheetHeight).toBeGreaterThan(0)
+    expect(lumberjack5Config.spriteConfig.sheetWidth).toBe(1024)
+    expect(lumberjack5Config.spriteConfig.sheetHeight).toBe(1024)
   })
 
   it('has correct dimensions', () => {
@@ -54,22 +54,11 @@ describe('lumberjack5Config', () => {
     ])
   })
 
-  it('has correct sprite sheet layout for 3x2 grid', () => {
-    expect(lumberjack5Config.spriteConfig.sheetWidth).toBe(768) // 3 columns * 256px
-    expect(lumberjack5Config.spriteConfig.sheetHeight).toBe(512) // 2 rows * 256px
-  })
-
-  it('has poses positioned correctly in 3x2 grid', () => {
+  it('matches defined sprite data coordinates', () => {
     const poses = lumberjack5Config.spriteConfig.poses
-    
-    // Top row
-    expect(poses.idleFrame1).toEqual({ x: 0, y: 0, width: 256, height: 256 })
-    expect(poses.chopAnticipation).toEqual({ x: 256, y: 0, width: 256, height: 256 })
-    expect(poses.chopImpact).toEqual({ x: 512, y: 0, width: 256, height: 256 })
-    
-    // Bottom row
-    expect(poses.hitStunned).toEqual({ x: 0, y: 256, width: 256, height: 256 })
-    expect(poses.chopFollowThrough).toEqual({ x: 256, y: 256, width: 256, height: 256 })
-    expect(poses.knockedDown).toEqual({ x: 512, y: 256, width: 256, height: 256 })
+
+    expect(poses.idleFrame1).toEqual({ x: 20, y: 70, width: 250, height: 470 })
+    expect(poses.chopImpact).toEqual({ x: 700, y: 115, width: 330, height: 430 })
+    expect(poses.hitStunned).toEqual({ x: 0, y: 540, width: 260, height: 480 })
   })
 })

@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Character } from '../characters/core/Character'
+import UniversalSprite from './UniversalSprite'
 
 export interface CharacterRendererProps {
   character: Character
@@ -18,21 +19,12 @@ export function CharacterRenderer({
   className,
   style
 }: CharacterRendererProps) {
-  const getSpriteForState = (state: 'idle' | 'chopping' | 'hit'): string => {
-    switch (state) {
-      case 'idle':
-        return character.config.sprites.idle
-      case 'chopping':
-        return character.config.sprites.chopping
-      case 'hit':
-        return character.config.sprites.hit
-      default:
-        return character.config.sprites.idle
-    }
-  }
+  const { spriteConfig, mapGameStateToSprite } = character.config
+  const poseKey = mapGameStateToSprite(state)
+  const { width, height } = spriteConfig.dimensions
 
-  const spriteUrl = getSpriteForState(state)
-  const { width, height } = character.config.dimensions
+  const scaledWidth = width * scale
+  const scaledHeight = height * scale
 
   return (
     <div
@@ -41,14 +33,17 @@ export function CharacterRenderer({
         position: 'absolute',
         left: `${position.x}px`,
         bottom: `${position.y}px`,
-        width: `${width * scale}px`,
-        height: `${height * scale}px`,
-        backgroundImage: `url(${spriteUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        width: `${scaledWidth}px`,
+        height: `${scaledHeight}px`,
         ...style
       }}
-    />
+    >
+      <UniversalSprite
+        characterConfig={character.config}
+        spriteState={poseKey}
+        width={scaledWidth}
+        height={scaledHeight}
+      />
+    </div>
   )
 }

@@ -1,25 +1,8 @@
-export interface CharacterSprites {
-  idle: string
-  chopping: string
-  hit: string
-}
+import type { CharacterConfig, CharacterType } from '../types'
 
-export interface CharacterAnimations {
-  choppingDuration: number
-  hitDuration?: number
-}
-
-export interface CharacterConfig {
-  name: string
-  sprites: CharacterSprites
-  animations: CharacterAnimations
-  dimensions: {
-    width: number
-    height: number
-  }
-}
+export type { CharacterConfig }
 
 export interface Character {
-  type: string
+  type: CharacterType
   config: CharacterConfig
 }
