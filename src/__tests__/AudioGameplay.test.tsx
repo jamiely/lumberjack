@@ -82,7 +82,7 @@ describe('Audio Gameplay End-to-End Tests', () => {
       render(<App />);
 
       // Start from attract screen
-      expect(screen.getByText(/LUMBERJACK/i)).toBeInTheDocument();
+      expect(screen.getByRole('img', { name: /Lumberjack/i })).toBeInTheDocument();
 
       // Start the game
       await act(async () => {
@@ -292,7 +292,7 @@ describe('Audio Gameplay End-to-End Tests', () => {
       render(<App />);
 
       // Should handle suspended context gracefully
-      expect(screen.getByText(/LUMBERJACK/i)).toBeInTheDocument();
+      expect(screen.getByRole('img', { name: /Lumberjack/i })).toBeInTheDocument();
     });
   });
 

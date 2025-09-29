@@ -5,7 +5,7 @@ test.describe('Complete Scene Flow', () => {
     await page.goto('/?testMode=true');
 
     // 1. Verify Attract Screen
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('LUMBERJACK');
+    await expect(page.getByRole('heading', { level: 1, name: 'Lumberjack' })).toBeVisible();
     await expect(page.getByText('PRESS ANY BUTTON TO PLAY')).toBeVisible();
     await expect(page.getByText('highscore')).toBeVisible();
     await expect(page.getByText('CONTROLS:')).toBeVisible();
@@ -79,7 +79,7 @@ test.describe('Complete Scene Flow', () => {
 
   test('handles auto-return from game over screen', async ({ page }) => {
     await page.goto('/?testMode=true');
-    await expect(page.getByText('Lumberjack')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByAltText('Lumberjack')).toBeVisible({ timeout: 5000 });
 
     // Start game and immediately trigger game over
     await page.keyboard.press('Enter');
@@ -89,7 +89,7 @@ test.describe('Complete Scene Flow', () => {
     await expect(page.getByText('GAME OVER!')).toBeVisible({ timeout: 5000 });
     
     // Wait for countdown and auto-return (should happen within 5 seconds)
-    await expect(page.getByText('Lumberjack')).toBeVisible({ timeout: 6000 });
+    await expect(page.getByAltText('Lumberjack')).toBeVisible({ timeout: 6000 });
     await expect(page.getByText('PRESS ANY BUTTON TO PLAY')).toBeVisible();
   });
 

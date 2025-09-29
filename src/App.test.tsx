@@ -7,7 +7,7 @@ describe('App Integration Tests', () => {
   it('renders attract screen initially', () => {
     render(<App />)
     
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('LUMBERJACK')
+    expect(screen.getByRole('heading', { level: 1, name: /Lumberjack/i })).toBeInTheDocument()
     expect(screen.getByText('PRESS ANY BUTTON TO PLAY')).toBeInTheDocument()
     expect(screen.getByText(/All time highscore:/)).toBeInTheDocument()
     expect(screen.getByText(/CONTROLS:/)).toBeInTheDocument()
@@ -18,7 +18,7 @@ describe('App Integration Tests', () => {
     render(<App />)
     
     // Should start on attract screen
-    expect(screen.getByText('LUMBERJACK')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: /Lumberjack/i })).toBeInTheDocument()
     
     // Press any key to start game
     await user.keyboard('{ArrowLeft}')

@@ -9,7 +9,7 @@ describe('Complete Gameplay Integration', () => {
     render(<App />)
     
     // Should start on attract screen
-    expect(screen.getByText('LUMBERJACK')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /Lumberjack/i })).toBeInTheDocument()
     
     // Start game to transition to play screen
     await user.keyboard('{Enter}')

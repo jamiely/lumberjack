@@ -107,14 +107,19 @@ export default function AttractScreen({ highScore, characterType, onStartGame }:
           left: '50%',
           transform: 'translate(-50%, -50%)',
           zIndex: 10,
-          textAlign: 'center'
+          textAlign: 'center',
+          width: '540px'
         }}>
           <h1 style={{ 
             fontSize: '3rem', 
             margin: '0',
             textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
           }}>
-           LUMBERJACK 
+            <img 
+              src="/images/title.png" 
+              alt="Lumberjack" 
+              style={{ width: '90%', height: 'auto', display: 'block', margin: '0 auto' }} 
+            />
           </h1>
         </div>
 
