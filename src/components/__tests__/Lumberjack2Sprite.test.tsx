@@ -1,9 +1,11 @@
 import { render } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import UniversalSprite from '../UniversalSprite'
-import { lumberjack2Config } from '../../characters'
+import { getCharacterConfig } from '../../characters'
 
 describe('UniversalSprite with Lumberjack2', () => {
+
+  const lumberjack2Config = getCharacterConfig('lumberjack2')
 
   const defaultProps = {
     characterConfig: lumberjack2Config,

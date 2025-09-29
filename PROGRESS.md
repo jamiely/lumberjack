@@ -3,6 +3,10 @@
 ## Character Config Consolidation
 **Date:** September 10, 2025 - 12:35 PM
 
+- ✅ Promoted `src/characters/descriptors.ts` to the single source of truth for character metadata (sheet details, poses, facing).
+- ✅ Added `descriptorBuilder` utilities and `registry` exports so factories, services, and React components all consume the same generated configs.
+- ✅ Updated selection services, registry accessors, and tests to iterate the descriptor-driven registry (no more hard-coded character arrays).
+- ✅ Documented the workflow in `GAME_DESIGN.md` and extended unit coverage with `descriptorBuilder` tests to guard against drift.
 - ✅ Introduced `src/characters/sharedConfig.ts` with a reusable builder, centering helper, and state mapper.
 - ✅ Refactored every lumberjack config to consume the builder so positioning defaults and state lists are generated consistently.
 - ✅ Updated the scene factory and renderer layers to rely on the canonical character config and register lumberjack5 without conversions.

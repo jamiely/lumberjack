@@ -515,3 +515,9 @@ Based on answers provided in QUESTIONS.md, here are the confirmed requirements:
 - **Operation**: Local only, manual intervention acceptable
 
 This specification provides a clear, focused scope for MVP development while allowing for future visual and audio enhancements.
+## Character Descriptor Workflow
+- Playable characters are declared in `src/characters/descriptors.ts`. Each entry lists sheet metadata, pose bounds, available poses, and the game-state-to-pose mapping exactly as provided by art.
+- The descriptor data is transformed by `src/characters/descriptorBuilder.ts` and emitted through `src/characters/registry.ts`. Runtime systems (selection, rendering, factories) must read from these exports rather than bespoke config files.
+- When adding a new character, copy an existing descriptor block, update sprite values, and make sure `availableStates` and `statePoseMap` capture every pose the art team expects.
+- Tests cover the descriptor builder (`src/characters/__tests__/descriptorBuilder.test.ts`) and the registry-driven defaults. Update or extend them whenever descriptor structure changes.
+- Always run `npm run check` followed by `npm run build` after editing descriptors to verify lint, type, test, and build pipelines.

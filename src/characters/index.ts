@@ -1,22 +1,11 @@
-import type { CharacterType, CharacterConfig } from './types'
-import { lumberjack1Config } from './lumberjack1/config'
-import { lumberjack2Config } from './lumberjack2/config'
-import { lumberjack3Config } from './lumberjack3/config'
-import { lumberjack4Config } from './lumberjack4/config'
-import { lumberjack5Config } from './lumberjack5/config'
+import type { CharacterConfig, CharacterType } from './types'
+import { characterDescriptors } from './descriptors'
+import { characterConfigs, characterEntries } from './registry'
 
-// Character Registry
-const characterRegistry: Record<CharacterType, CharacterConfig> = {
-  lumberjack1: lumberjack1Config,
-  lumberjack2: lumberjack2Config,
-  lumberjack3: lumberjack3Config,
-  lumberjack4: lumberjack4Config,
-  lumberjack5: lumberjack5Config
-}
+export const registry: Record<CharacterType, CharacterConfig> = characterConfigs
 
-// Character Selection Functions
 export function getCharacterConfig(characterType: CharacterType): CharacterConfig {
-  const config = characterRegistry[characterType]
+  const config = registry[characterType]
   if (!config) {
     throw new Error(`Unknown character type: ${characterType}`)
   }
@@ -24,17 +13,21 @@ export function getCharacterConfig(characterType: CharacterType): CharacterConfi
 }
 
 export function getAllCharacters(): CharacterConfig[] {
-  return Object.values(characterRegistry)
+  return characterEntries.map(([, config]) => config)
 }
 
 export function getCharacterTypes(): CharacterType[] {
-  return Object.keys(characterRegistry) as CharacterType[]
+  return characterDescriptors.map(descriptor => descriptor.id as CharacterType)
 }
 
 export function isValidCharacterType(type: string): type is CharacterType {
-  return type in characterRegistry
+  return type in registry
 }
 
 // Re-export types and configs for convenience
 export type { CharacterType, CharacterConfig, GameState } from './types'
-export { lumberjack1Config, lumberjack2Config, lumberjack3Config, lumberjack4Config, lumberjack5Config }
+export {
+  characterDescriptors,
+  characterEntries,
+  characterConfigs
+}

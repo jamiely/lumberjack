@@ -1,4 +1,6 @@
-export type CharacterType = 'lumberjack1' | 'lumberjack2' | 'lumberjack3' | 'lumberjack4' | 'lumberjack5'
+import { characterDescriptors } from './descriptors'
+
+export type CharacterType = (typeof characterDescriptors)[number]['id']
 
 export type GameState = 'idle' | 'chopping' | 'hit'
 

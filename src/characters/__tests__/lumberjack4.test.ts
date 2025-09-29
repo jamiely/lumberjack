@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { lumberjack4Config } from '../lumberjack4/config'
+import { getCharacterConfig } from '../index'
 
 describe('lumberjack4Config', () => {
+  const lumberjack4Config = getCharacterConfig('lumberjack4')
+
   it('has correct id and name', () => {
     expect(lumberjack4Config.id).toBe('lumberjack4')
     expect(lumberjack4Config.name).toBe('Enhanced Lumberjack')

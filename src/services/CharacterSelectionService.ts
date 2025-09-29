@@ -1,4 +1,5 @@
 import type { CharacterType } from '../characters'
+import { getCharacterTypes } from '../characters'
 
 export interface ICharacterSelectionService {
   selectCharacter(): CharacterType
@@ -7,11 +8,12 @@ export interface ICharacterSelectionService {
 }
 
 export class CharacterSelectionService implements ICharacterSelectionService {
-  private readonly availableCharacters: CharacterType[] = ['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4', 'lumberjack5']
+  private readonly availableCharacters: CharacterType[]
   private forcedCharacter: CharacterType | null = null
 
-  constructor(forcedCharacter?: CharacterType) {
-    this.forcedCharacter = forcedCharacter || null
+  constructor(forcedCharacter?: CharacterType, availableCharacters: CharacterType[] = getCharacterTypes()) {
+    this.availableCharacters = [...availableCharacters]
+    this.forcedCharacter = forcedCharacter ?? null
   }
 
   selectCharacter(): CharacterType {

@@ -1,25 +1,12 @@
-import { getCharacterConfig } from '../index'
+import { characterDescriptors, getCharacterConfig, getCharacterTypes } from '../index'
 
 describe('Character Orientation Configuration', () => {
   describe('default facing directions', () => {
-    it('should have lumberjack1 facing left by default', () => {
-      const config = getCharacterConfig('lumberjack1')
-      expect(config.spriteConfig.defaultFacing).toBe('left')
-    })
-
-    it('should have lumberjack2 facing right by default', () => {
-      const config = getCharacterConfig('lumberjack2')
-      expect(config.spriteConfig.defaultFacing).toBe('right')
-    })
-
-    it('should have lumberjack3 facing right by default', () => {
-      const config = getCharacterConfig('lumberjack3')
-      expect(config.spriteConfig.defaultFacing).toBe('right')
-    })
-
-    it('should have lumberjack4 facing right by default', () => {
-      const config = getCharacterConfig('lumberjack4')
-      expect(config.spriteConfig.defaultFacing).toBe('right')
+    characterDescriptors.forEach(descriptor => {
+      it(`should have ${descriptor.id} facing ${descriptor.defaultFacing} by default`, () => {
+        const config = getCharacterConfig(descriptor.id)
+        expect(config.spriteConfig.defaultFacing).toBe(descriptor.defaultFacing)
+      })
     })
   })
 
@@ -53,9 +40,7 @@ describe('Character Orientation Configuration', () => {
 
   describe('configuration consistency', () => {
     it('should have all character configs with defaultFacing property', () => {
-      const characterTypes = ['lumberjack1', 'lumberjack2', 'lumberjack3', 'lumberjack4'] as const
-      
-      characterTypes.forEach(characterType => {
+      getCharacterTypes().forEach(characterType => {
         const config = getCharacterConfig(characterType)
         expect(config.spriteConfig).toHaveProperty('defaultFacing')
         expect(config.spriteConfig.defaultFacing).toMatch(/^(left|right)$/)
