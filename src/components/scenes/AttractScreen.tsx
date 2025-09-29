@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { ScreenContainer } from '../ScreenContainer'
 import GameBoard from '../GameBoard'
 import { createInitialGameState } from '../../game/GameState'
@@ -15,6 +15,12 @@ export default function AttractScreen({ highScore, characterType, onStartGame }:
   const initialGameState = createInitialGameState()
   const { initializeAudio, isInitialized, audioState } = useAudioContext()
   const { playBackgroundMusic } = useGameAudio()
+
+  const [showInstructions, setShowInstructions] = useState(() => {
+    if (typeof window === 'undefined') return false
+    const params = new URLSearchParams(window.location.search)
+    return params.get('testMode') === 'true'
+  })
 
   // Initialize audio and play background music on user interaction
   const initializeAudioOnFirstInteraction = useCallback(() => {
@@ -58,6 +64,28 @@ export default function AttractScreen({ highScore, characterType, onStartGame }:
     window.addEventListener('click', handleClick)
     return () => window.removeEventListener('click', handleClick)
   }, [initializeAudioOnFirstInteraction, onStartGame])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined
+
+    const params = new URLSearchParams(window.location.search)
+    const forceInstructions = params.get('testMode') === 'true'
+
+    if (forceInstructions) {
+      if (!showInstructions) {
+        setShowInstructions(true)
+      }
+      return undefined
+    }
+
+    if (showInstructions) return undefined
+
+    const timeoutId = window.setTimeout(() => {
+      setShowInstructions(true)
+    }, 5000)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [showInstructions])
 
   return (
     <ScreenContainer backgroundColor="transparent">
@@ -116,7 +144,7 @@ export default function AttractScreen({ highScore, characterType, onStartGame }:
             textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
           }}>
             <img 
-              src="/images/title.png" 
+              src="./images/title.png" 
               alt="Lumberjack" 
               style={{ width: '90%', height: 'auto', display: 'block', margin: '0 auto' }} 
             />
@@ -124,64 +152,66 @@ export default function AttractScreen({ highScore, characterType, onStartGame }:
         </div>
 
         {/* Bottom Overlay - Controls and Play */}
-        <div style={{
-          position: 'absolute',
-          bottom: '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 10,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          backgroundColor: 'rgba(44, 82, 52, 0.9)',
-          padding: '20px 30px',
-          borderRadius: '15px',
-          border: '3px solid rgba(255,255,255,0.3)'
-        }}>
-          <div style={{ 
-            fontSize: '1rem', 
-            marginBottom: '1rem',
-            animation: 'blink 2s infinite',
-            fontWeight: 'bold'
+        {showInstructions && (
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            backgroundColor: 'rgba(44, 82, 52, 0.9)',
+            padding: '20px 30px',
+            borderRadius: '15px',
+            border: '3px solid rgba(255,255,255,0.3)'
           }}>
-            PRESS ANY BUTTON TO PLAY
-          </div>
-
-          <div style={{ 
-            fontSize: '0.9rem', 
-            color: '#cccccc',
-            lineHeight: '1.3',
-            textAlign: 'center'
-          }}>
-            <div style={{ marginBottom: '0.3rem' }}>CONTROLS:</div>
-            <div style={{ marginBottom: '0.3rem' }}>LEFT ARROW = CHOP LEFT</div>
-            <div>RIGHT ARROW = CHOP RIGHT</div>
-          </div>
-
-
-          {audioState === 'error' && (
             <div style={{ 
-              marginTop: '1rem',
-              padding: '10px 15px',
-              backgroundColor: 'rgba(255, 0, 0, 0.2)',
-              border: '2px solid rgba(255, 0, 0, 0.6)',
-              borderRadius: '8px',
-              fontSize: '0.8rem',
-              color: '#ffaaaa',
+              fontSize: '1rem', 
+              marginBottom: '1rem',
+              animation: 'blink 2s infinite',
+              fontWeight: 'bold'
+            }}>
+              PRESS ANY BUTTON TO PLAY
+            </div>
+
+            <div style={{ 
+              fontSize: '0.9rem', 
+              color: '#cccccc',
               lineHeight: '1.3',
               textAlign: 'center'
             }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>
-                🔇 AUDIO UNAVAILABLE
-              </div>
-              <div>
-                Audio could not be initialized.
-                <br />
-                The game will work without sound.
-              </div>
+              <div style={{ marginBottom: '0.3rem' }}>CONTROLS:</div>
+              <div style={{ marginBottom: '0.3rem' }}>LEFT ARROW = CHOP LEFT</div>
+              <div>RIGHT ARROW = CHOP RIGHT</div>
             </div>
-          )}
-        </div>
+
+
+            {audioState === 'error' && (
+              <div style={{ 
+                marginTop: '1rem',
+                padding: '10px 15px',
+                backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                border: '2px solid rgba(255, 0, 0, 0.6)',
+                borderRadius: '8px',
+                fontSize: '0.8rem',
+                color: '#ffaaaa',
+                lineHeight: '1.3',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>
+                  🔇 AUDIO UNAVAILABLE
+                </div>
+                <div>
+                  Audio could not be initialized.
+                  <br />
+                  The game will work without sound.
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <style>{`
           @keyframes blink {

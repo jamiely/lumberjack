@@ -1,15 +1,43 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from './App'
 
+const resetLocation = () => window.history.replaceState({}, '', '/')
+const enableTestMode = () => window.history.replaceState({}, '', '/?testMode=true')
+
 describe('App Integration Tests', () => {
+  beforeEach(() => {
+    resetLocation()
+    enableTestMode()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    resetLocation()
+  })
   it('renders attract screen initially', () => {
     render(<App />)
     
     expect(screen.getByRole('heading', { level: 1, name: /Lumberjack/i })).toBeInTheDocument()
     expect(screen.getByText('PRESS ANY BUTTON TO PLAY')).toBeInTheDocument()
     expect(screen.getByText(/All time highscore:/)).toBeInTheDocument()
+    expect(screen.getByText(/CONTROLS:/)).toBeInTheDocument()
+  })
+
+  it('delays instructions for five seconds when not forced', async () => {
+    vi.useFakeTimers()
+    resetLocation()
+    render(<App />)
+
+    expect(screen.queryByText('PRESS ANY BUTTON TO PLAY')).not.toBeInTheDocument()
+    expect(screen.queryByText(/CONTROLS:/)).not.toBeInTheDocument()
+
+    act(() => {
+      vi.advanceTimersByTime(5000)
+    })
+
+    expect(screen.getByText('PRESS ANY BUTTON TO PLAY')).toBeInTheDocument()
     expect(screen.getByText(/CONTROLS:/)).toBeInTheDocument()
   })
 
