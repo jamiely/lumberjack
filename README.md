@@ -33,9 +33,14 @@ npm test
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start development server with hot reload |
-| `npm run build` | Lint, TypeScript check, and production build |
+| `npm run build` | Lint, TypeScript check, and GitHub Pages production build |
+| `npm run build:pages` | Build web output for GitHub Pages (`/lumberjack/` base) |
+| `npm run build:desktop:web` | Build web output for desktop packaging (`./` base) |
 | `npm run preview` | Preview production build locally |
 | `npm run check` | Run complete quality checks (typecheck, tests, lint, e2e) |
+| `npm run desktop:dev` | Run Electron app against local Vite dev server |
+| `npm run desktop:dist:mac` | Create macOS desktop package for local validation |
+| `npm run desktop:dist:win` | Create Windows portable desktop package |
 | `npm run lint` | Run ESLint code quality checks |
 | `npm run lint:fix` | Auto-fix ESLint issues |
 | `npm test` | Run all unit/integration tests once |
@@ -109,6 +114,29 @@ npm run test:e2e:html
 - New features require corresponding test coverage
 
 The project uses modern ESM-only configuration and requires Node.js with ES2022 support.
+
+## Desktop Offline Builds (Electron)
+
+The project supports Electron desktop packaging so the game can run offline without browser setup.
+
+### Local macOS validation
+
+```bash
+# Run desktop app in development
+npm run desktop:dev
+
+# Build packaged macOS artifact for local smoke test
+npm run desktop:dist:mac
+```
+
+### Windows portable build
+
+```bash
+# Build Windows portable executable
+npm run desktop:dist:win
+```
+
+Artifacts are generated in `release/`.
 
 ## Game Features
 

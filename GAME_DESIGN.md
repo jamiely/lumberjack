@@ -28,7 +28,7 @@ Timberman is an arcade-style casual game where players control a lumberjack char
 - **Aspect Ratio**: 9:16 (portrait)
 - **Resolution**: 1080x1920 or similar vertical resolution
 - **Viewing Distance**: Standing position, ~2-3 feet from screen
-- **Deployment**: Full-screen browser (Chrome kiosk mode)
+- **Deployment**: Full-screen browser (Chrome kiosk mode) or packaged Electron desktop app
 
 #### Responsive Design Strategy
 - **Target Aspect Ratio**: 9:16 (portrait) for consistency
@@ -194,6 +194,7 @@ interface ArcadeState {
 - **Auto-Attract Mode**: Demo/attract screen when idle
 - **Performance**: Solid 60fps on PC with dedicated graphics
 - **Browser Deployment**: Chrome kiosk mode for deployment
+- **Desktop Deployment**: Electron packaged app for offline Windows/macOS runtime
 - **Credit System**: Configurable between free play and coin-operated modes
 
 ### Screen Layout Details
@@ -509,7 +510,7 @@ Based on answers provided in QUESTIONS.md, here are the confirmed requirements:
 ### Technical Specs
 - **Hardware**: PC with dedicated graphics card
 - **Performance**: 60fps target
-- **Deployment**: Chrome browser kiosk mode
+- **Deployment**: Chrome browser kiosk mode or Electron desktop packaging
 - **Development**: Arrow keys for testing
 - **Storage**: Local high scores only
 - **Operation**: Local only, manual intervention acceptable

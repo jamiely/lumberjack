@@ -37,6 +37,6 @@ export default typescript.config(
     },
   },
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    ignores: ['dist/**', 'dist-electron/**', 'release/**', 'node_modules/**'],
   }
 )
