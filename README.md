@@ -146,6 +146,14 @@ npm run desktop:dist:linux
 
 Artifacts are generated in `release/`.
 
+## Web Offline Mode (iOS/Android)
+
+The web build supports offline gameplay through a PWA service worker.
+
+- First launch must be online so assets can be cached.
+- For iOS Safari, add the site to Home Screen for the most reliable offline behavior.
+- iOS may evict cached data under storage pressure, which can require another online launch to refresh the cache.
+
 ## Game Features
 
 - **Scene-Based Navigation**: Professional game flow with attract screen, gameplay, and game over
