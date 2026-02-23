@@ -1,4 +1,4 @@
-name: Windows Desktop Build
+name: Desktop Builds
 
 on:
   workflow_dispatch:
@@ -6,6 +6,9 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
+permissions:
+  contents: write
 
 jobs:
   build-windows-desktop:
@@ -42,3 +45,64 @@ jobs:
           name: lumberjack-windows-portable
           path: release/*.exe
           if-no-files-found: error
+
+      - name: Compute release date
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: release_meta
+        shell: bash
+        run: echo "release_date=$(date -u +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.release_meta.outputs.release_date }}
+          name: ${{ steps.release_meta.outputs.release_date }}
+          artifacts: release/*.exe
+          allowUpdates: true
+          replacesArtifacts: true
+          artifactErrorsFailBuild: true
+          generateReleaseNotes: true
+
+  build-macos-desktop:
+    runs-on: macos-latest
+    needs: build-windows-desktop
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Package macOS desktop app
+        run: npm run desktop:dist:mac
+
+      - name: Upload macOS desktop artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumberjack-macos-zip
+          path: release/*.zip
+          if-no-files-found: error
+
+      - name: Compute release date
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: release_meta
+        shell: bash
+        run: echo "release_date=$(date -u +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Attach macOS build to GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.release_meta.outputs.release_date }}
+          name: ${{ steps.release_meta.outputs.release_date }}
+          artifacts: release/*.zip
+          allowUpdates: true
+          artifactErrorsFailBuild: true
