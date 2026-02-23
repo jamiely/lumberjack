@@ -15,8 +15,9 @@
     "desktop:build": "tsc -p tsconfig.electron.json",
     "desktop:dev": "npm run desktop:build && concurrently -k \"npm run dev\" \"npm run desktop:dev:electron\"",
     "desktop:dev:electron": "wait-on tcp:5173 && cross-env ELECTRON_START_URL=http://localhost:5173 electron dist-electron/main.js",
-    "desktop:dist:mac": "npm run build:desktop:web && npm run desktop:build && electron-builder --mac zip --publish never",
-    "desktop:dist:win": "npm run build:desktop:web && npm run desktop:build && electron-builder --win portable --publish never",
+    "desktop:dist:mac": "npm run build:desktop:web && npm run desktop:build && electron-builder --mac zip dmg --publish never",
+    "desktop:dist:win": "npm run build:desktop:web && npm run desktop:build && electron-builder --win portable nsis --publish never",
+    "desktop:dist:linux": "npm run build:desktop:web && npm run desktop:build && electron-builder --linux AppImage deb --publish never",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
@@ -73,7 +74,8 @@
     "asar": true,
     "mac": {
       "target": [
-        "zip"
+        "zip",
+        "dmg"
       ],
       "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
     },
@@ -81,6 +83,29 @@
       "target": [
         {
           "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
           "arch": [
             "x64"
           ]

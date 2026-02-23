@@ -39,8 +39,9 @@ npm test
 | `npm run preview` | Preview production build locally |
 | `npm run check` | Run complete quality checks (typecheck, tests, lint, e2e) |
 | `npm run desktop:dev` | Run Electron app against local Vite dev server |
-| `npm run desktop:dist:mac` | Create macOS desktop package for local validation |
-| `npm run desktop:dist:win` | Create Windows portable desktop package |
+| `npm run desktop:dist:mac` | Create macOS desktop packages (`.zip` + `.dmg`) |
+| `npm run desktop:dist:win` | Create Windows desktop packages (`portable` + installer) |
+| `npm run desktop:dist:linux` | Create Linux desktop packages (`AppImage` + `.deb`) |
 | `npm run lint` | Run ESLint code quality checks |
 | `npm run lint:fix` | Auto-fix ESLint issues |
 | `npm test` | Run all unit/integration tests once |
@@ -132,8 +133,15 @@ npm run desktop:dist:mac
 ### Windows portable build
 
 ```bash
-# Build Windows portable executable
+# Build Windows executable packages
 npm run desktop:dist:win
+```
+
+### Linux build
+
+```bash
+# Build Linux AppImage and deb packages
+npm run desktop:dist:linux
 ```
 
 Artifacts are generated in `release/`.
