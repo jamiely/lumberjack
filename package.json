@@ -2,6 +2,10 @@
   "name": "lumberjack2",
   "private": true,
   "version": "0.0.0",
+  "author": {
+    "name": "Jamie Ly",
+    "email": "jamie.ly@gmail.com"
+  },
   "main": "dist-electron/main.js",
   "type": "module",
   "scripts": {
