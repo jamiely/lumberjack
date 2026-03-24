@@ -4,6 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 
 ## 🎯 CRITICAL WORKFLOW INSTRUCTIONS
 
+### Git Workflow
+- Always commit your changes when you modify files for a task unless the user explicitly tells you not to commit.
+- Prefer pushing immediately after committing when the user asks for a commit or when the task clearly implies delivering the committed change upstream.
+
 ### Essential Commands (ALWAYS use these)
 - `npm run dev` - Start development server
 - `npm run build` - Build for production (includes lint + TypeScript check)
