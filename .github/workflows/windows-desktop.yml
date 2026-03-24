@@ -46,18 +46,12 @@ jobs:
           path: release/*.exe
           if-no-files-found: error
 
-      - name: Compute release date
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        id: release_meta
-        shell: bash
-        run: echo "release_date=$(date -u +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
-
       - name: Publish GitHub Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.release_meta.outputs.release_date }}
-          name: ${{ steps.release_meta.outputs.release_date }}
+          tag: latest
+          name: latest
           artifacts: release/*.exe
           allowUpdates: true
           replacesArtifacts: true
@@ -93,20 +87,15 @@ jobs:
             release/*.dmg
           if-no-files-found: error
 
-      - name: Compute release date
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        id: release_meta
-        shell: bash
-        run: echo "release_date=$(date -u +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
-
       - name: Attach macOS build to GitHub Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.release_meta.outputs.release_date }}
-          name: ${{ steps.release_meta.outputs.release_date }}
+          tag: latest
+          name: latest
           artifacts: release/*.zip,release/*.dmg
           allowUpdates: true
+          replacesArtifacts: true
           artifactErrorsFailBuild: true
 
   build-linux-desktop:
@@ -138,18 +127,13 @@ jobs:
             release/*.deb
           if-no-files-found: error
 
-      - name: Compute release date
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        id: release_meta
-        shell: bash
-        run: echo "release_date=$(date -u +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
-
       - name: Attach Linux build to GitHub Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.release_meta.outputs.release_date }}
-          name: ${{ steps.release_meta.outputs.release_date }}
+          tag: latest
+          name: latest
           artifacts: release/*.AppImage,release/*.deb
           allowUpdates: true
+          replacesArtifacts: true
           artifactErrorsFailBuild: true
