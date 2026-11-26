@@ -144,7 +144,16 @@ npm run desktop:dist:win
 npm run desktop:dist:linux
 ```
 
-Artifacts are generated in `release/`.
+Artifacts are generated in `release/`. The Windows build produces `Lumberjack-<version>-win-x64-portable.exe` and `Lumberjack-<version>-win-x64-setup.exe`; pushes to `main` publish them to the rolling `latest` GitHub release.
+
+### Portrait displays and fullscreen
+
+The desktop window opens maximized to the display's work area in whatever orientation the monitor has, so a rotated (portrait) cabinet screen is filled rather than overflowed by a fixed-size window.
+
+- Launch with `--fullscreen` (for example `Lumberjack-0.0.0-win-x64-portable.exe --fullscreen`) to start fullscreen. This is how the arcade cabinet's LaunchBox entry starts it.
+- Press **F11** to toggle fullscreen while the game runs.
+- The 9:16 board scales to fit the window and stays centered: on a tall screen it fills the height (1050x1680 shows it at 945x1680), on a wide one it is pillarboxed. `tests/e2e/portrait.spec.ts` checks the attract, play and game-over scenes stay in frame at 1050x1680, 1080x1920 and 1920x1080.
+- `npm run desktop:smoke` builds the desktop app, launches it hidden and checks that it loads and its window matches the display work area.
 
 ## Web Offline Mode (iOS/Android)
 

@@ -37,6 +37,12 @@ export default typescript.config(
     },
   },
   {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: { console: 'readonly', process: 'readonly', setTimeout: 'readonly', clearTimeout: 'readonly' },
+    },
+  },
+  {
     ignores: ['dist/**', 'dist-electron/**', 'release/**', 'node_modules/**'],
   }
 )

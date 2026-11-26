@@ -19,6 +19,7 @@
     "desktop:build": "tsc -p tsconfig.electron.json",
     "desktop:dev": "npm run desktop:build && concurrently -k \"npm run dev\" \"npm run desktop:dev:electron\"",
     "desktop:dev:electron": "wait-on tcp:5173 && cross-env ELECTRON_START_URL=http://localhost:5173 electron dist-electron/main.js",
+    "desktop:smoke": "npm run build:desktop:web && npm run desktop:build && node scripts/electron-smoke.mjs",
     "desktop:dist:mac": "npm run build:desktop:web && npm run desktop:build && electron-builder --mac zip dmg --publish never",
     "desktop:dist:win": "npm run build:desktop:web && npm run desktop:build && electron-builder --win portable nsis --publish never",
     "desktop:dist:linux": "npm run build:desktop:web && npm run desktop:build && electron-builder --linux AppImage deb --publish never",
@@ -98,8 +99,13 @@
             "x64"
           ]
         }
-      ],
-      "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
+      ]
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-win-${arch}-portable.${ext}"
+    },
+    "nsis": {
+      "artifactName": "${productName}-${version}-win-${arch}-setup.${ext}"
     },
     "linux": {
       "target": [
