@@ -12,12 +12,23 @@ async function expectBoardFits(page: Page, width: number, height: number) {
   expect(Math.max(box!.width / width, box!.height / height)).toBeCloseTo(1, 2);
 }
 
-for (const [width, height] of [[1050, 1680], [1080, 1920], [1920, 1080]]) {
+// Big headings and lines stay on one line inside the board (they once wrapped in a half-width card).
+async function expectOneLine(page: Page, text: string | RegExp) {
+  const lines = await page.getByText(text).evaluate((node) => {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    return new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size;
+  });
+  expect(lines, String(text)).toBe(1);
+}
+
+for (const [width, height] of [[1050, 1680], [1080, 1920], [540, 1260], [1920, 1080]]) {
   test(`keeps every scene in frame at ${width}x${height}`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto('/?testMode=true');
 
     await expect(page.getByText('PRESS ANY BUTTON TO PLAY')).toBeInViewport({ ratio: 1 });
+    await expectOneLine(page, 'PRESS ANY BUTTON TO PLAY');
     await expectBoardFits(page, width, height);
 
     await page.keyboard.press('Enter');
@@ -30,6 +41,7 @@ for (const [width, height] of [[1050, 1680], [1080, 1920], [1920, 1080]]) {
     await page.keyboard.press('ArrowLeft');
     await expect(page.getByText('PRESS ANY BUTTON TO PLAY AGAIN')).toBeInViewport({ ratio: 1, timeout: 5000 });
     await expect(page.getByText(/YOUR SCORE:/)).toBeInViewport({ ratio: 1 });
+    for (const text of ['GAME OVER!', /YOUR SCORE:/, 'PRESS ANY BUTTON TO PLAY AGAIN']) await expectOneLine(page, text);
     await expectBoardFits(page, width, height);
   });
 }

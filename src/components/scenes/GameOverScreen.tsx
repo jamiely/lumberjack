@@ -88,6 +88,10 @@ export default function GameOverScreen({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
+          // left: 50% alone shrinks the card to half the board, wrapping GAME OVER! and the score.
+          width: 'max-content',
+          maxWidth: '92%',
+          boxSizing: 'border-box',
           zIndex: 10,
           display: 'flex',
           flexDirection: 'column',
